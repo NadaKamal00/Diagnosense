@@ -1,7 +1,9 @@
 import 'package:application/utils/responsive_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'edit_profile.dart';
+import 'edit_identity_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -57,6 +59,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ? userName!
                 : "Unknown Name",
         onTap: () {},
+        onLongPress: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Username can't be changed")),
+          );
+        },
       ),
     );
 
@@ -67,7 +74,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           icon: Icons.email_outlined,
           label: "Email Address",
           value: userEmail!,
-          onTap: () {},
+          onTap: () => _navigateToEditIdentity("email", userEmail),
+          onLongPress: () => _showContextMenu(context, "Email", userEmail),
         ),
       );
     }
@@ -79,7 +87,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           icon: Icons.phone_android,
           label: "Phone Number",
           value: userPhone!,
-          onTap: () {},
+          onTap: () => _navigateToEditIdentity("phone", userPhone),
+          onLongPress:
+              () => _showContextMenu(context, "Phone Number", userPhone),
         ),
       );
     }
@@ -202,17 +212,76 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void _navigateToEditIdentity(String type, String? initialValue) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) => EditIdentityScreen(
+              type: type,
+              initialValue: initialValue ?? '',
+            ),
+      ),
+    ).then((_) {
+      _loadUserData();
+    });
+  }
+
+  void _showContextMenu(BuildContext context, String type, String? value) {
+    if (value == null || value.isEmpty) return;
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (bottomSheetContext) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.copy),
+                title: Text('Copy $type'),
+                onTap: () {
+                  Clipboard.setData(ClipboardData(text: value));
+                  Navigator.pop(bottomSheetContext);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Copied to clipboard")),
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.edit),
+                title: Text('Edit $type'),
+                onTap: () {
+                  Navigator.pop(bottomSheetContext);
+                  if (type == 'Email') {
+                    _navigateToEditIdentity('email', value);
+                  } else {
+                    _navigateToEditIdentity('phone', value);
+                  }
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildProfileRow({
     required Responsive res,
     required IconData icon,
     required String label,
     required String value,
     required VoidCallback onTap,
+    required VoidCallback onLongPress,
   }) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
+        onLongPress: onLongPress,
         child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: (16 * res.scale).toDouble(),

@@ -6,7 +6,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:application/bottom_nav_bar/Home/full%20medical%20file/timeline.dart';
 import 'package:application/bottom_nav_bar/Home/history/history.dart';
 import 'package:application/bottom_nav_bar/Home/lab%20results/lap_reports.dart';
-import 'package:application/bottom_nav_bar/Settings/profile.dart';
+import 'package:application/bottom_nav_bar/Settings/profile/profile.dart';
 import '../../../shared/widgets/custom_search_bar.dart';
 import '../radiology/radiology.dart';
 import 'medications.dart';

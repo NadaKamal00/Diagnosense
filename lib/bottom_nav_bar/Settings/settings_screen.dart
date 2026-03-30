@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../auth/login_screen.dart';
 import '../../core/utils/api_service.dart';
-import 'profile.dart';
+import 'profile/profile.dart';
 import 'language.dart';
 import 'privacy.dart';
 import 'support.dart';
