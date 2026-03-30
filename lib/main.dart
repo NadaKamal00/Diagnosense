@@ -7,8 +7,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(
-    DevicePreview(enabled: !kReleaseMode, builder: (context) => const MyApp()),
-    // const MyApp(),
+    // DevicePreview(enabled: !kReleaseMode, builder: (context) => const MyApp()),
+    const MyApp(),
   );
 }
 

@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/utils/api_service.dart';
+import 'home_shimmer.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isLoadingTasks = true;
   List<dynamic> _tasks = [];
   String? _patientName;
+  bool _isLoadingUser = true;
 
   @override
   void initState() {
@@ -42,6 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (mounted) {
       setState(() {
         _patientName = name;
+        _isLoadingUser = false;
       });
     }
   }
@@ -116,33 +119,35 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(height: 20 * res.scale),
 
                   /// Header
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Hello, ${_patientName ?? 'User'}!',
-                            style: TextStyle(
-                              fontSize: 18 * res.scale,
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xFF0E1A34),
+                  _isLoadingUser
+                      ? HomeShimmer.buildHeaderShimmer(context, res.scale)
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Hello, ${_patientName ?? 'User'}!',
+                                  style: TextStyle(
+                                    fontSize: 18 * res.scale,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFF0E1A34),
+                                  ),
+                                ),
+                                Text(
+                                  'Welcome back.',
+                                  style: TextStyle(
+                                    fontSize: 15 * res.scale,
+                                    fontWeight: FontWeight.w400,
+                                    color: const Color(0xFF8A94A6),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          Text(
-                            'Welcome back.',
-                            style: TextStyle(
-                              fontSize: 15 * res.scale,
-                              fontWeight: FontWeight.w400,
-                              color: const Color(0xFF8A94A6),
-                            ),
-                          ),
-                        ],
-                      ),
-                      _buildNotificationIcon(context, res.scale),
-                    ],
-                  ),
+                            _buildNotificationIcon(context, res.scale),
+                          ],
+                        ),
 
                   SizedBox(height: 22 * res.scale),
 
@@ -156,76 +161,82 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   SizedBox(height: 30 * res.scale),
 
-                  /// --- Medical File Title ---
-                  Text(
-                    'Medical Files',
-                    style: TextStyle(
-                      fontSize: 18 * res.scale,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF0E1A34),
-                    ),
-                  ),
-
-                  SizedBox(height: 15 * res.scale),
-
-                  /// Medical Items Row (History, Lab, Radiology)
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildMedicalItem(
-                          context,
-                          'History',
-                          'assets/Icons/history.svg',
-                          const Color(0xFFE4ECFF),
-                          const Color(0xFF3B82F6),
-                          res.scale,
-                          () => Navigator.of(context, rootNavigator: true).push(
-                            MaterialPageRoute(
-                              builder:
-                                  (context) => const MedicalHistoryScreen(),
+                  _isLoadingUser
+                      ? HomeShimmer.buildMedicalFilesShimmer(res.scale)
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            /// --- Medical File Title ---
+                            Text(
+                              'Medical Files',
+                              style: TextStyle(
+                                fontSize: 18 * res.scale,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFF0E1A34),
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 12 * res.scale),
-                      Expanded(
-                        child: _buildMedicalItem(
-                          context,
-                          'Lab Results',
-                          'assets/Icons/lap-reports.svg',
-                          const Color(0xFFCCFFD6),
-                          const Color(0xFF34A853),
-                          res.scale,
-                          () => Navigator.of(context, rootNavigator: true).push(
-                            MaterialPageRoute(
-                              builder: (context) => const LabResultsScreen(),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 12 * res.scale),
-                      Expanded(
-                        child: _buildMedicalItem(
-                          context,
-                          'Radiology',
-                          'assets/Icons/radiology.svg',
-                          const Color.fromARGB(255, 255, 236, 228),
-                          const Color(0xFFB93815),
-                          res.scale,
-                          () => Navigator.of(context, rootNavigator: true).push(
-                            MaterialPageRoute(
-                              builder: (context) => const RadiologyScreen(),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                            SizedBox(height: 15 * res.scale),
 
-                  SizedBox(height: 15 * res.scale),
+                            /// Medical Items Row (History, Lab, Radiology)
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildMedicalItem(
+                                    context,
+                                    'History',
+                                    'assets/Icons/history.svg',
+                                    const Color(0xFFE4ECFF),
+                                    const Color(0xFF3B82F6),
+                                    res.scale,
+                                    () => Navigator.of(context, rootNavigator: true).push(
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) => const MedicalHistoryScreen(),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 12 * res.scale),
+                                Expanded(
+                                  child: _buildMedicalItem(
+                                    context,
+                                    'Lab Results',
+                                    'assets/Icons/lap-reports.svg',
+                                    const Color(0xFFCCFFD6),
+                                    const Color(0xFF34A853),
+                                    res.scale,
+                                    () => Navigator.of(context, rootNavigator: true).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => const LabResultsScreen(),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 12 * res.scale),
+                                Expanded(
+                                  child: _buildMedicalItem(
+                                    context,
+                                    'Radiology',
+                                    'assets/Icons/radiology.svg',
+                                    const Color.fromARGB(255, 255, 236, 228),
+                                    const Color(0xFFB93815),
+                                    res.scale,
+                                    () => Navigator.of(context, rootNavigator: true).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => const RadiologyScreen(),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
 
-                  /// View Full Medical File Button
-                  _buildFullFileButton(context, res.scale),
+                            SizedBox(height: 15 * res.scale),
+
+                            /// View Full Medical File Button
+                            _buildFullFileButton(context, res.scale),
+                          ],
+                        ),
 
                   SizedBox(height: 30 * res.scale),
                 ],
@@ -279,10 +290,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildUpcomingTasksCard(BuildContext context, double scale) {
     if (_isLoadingTasks) {
-      return Padding(
-        padding: EdgeInsets.symmetric(vertical: 20 * scale),
-        child: const Center(child: CircularProgressIndicator()),
-      );
+      return HomeShimmer.buildUpcomingTasksShimmer(scale);
     }
 
     final incompleteTasks =
@@ -460,31 +468,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildNextVisitCard(double scale) {
     if (_isLoadingNextVisit) {
-      return Container(
-        width: double.infinity,
-        padding: EdgeInsets.all(20 * scale),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF3A80F5), Color(0xFF2B65D9)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(16 * scale),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF74A9FF),
-              blurRadius: 22 * scale,
-              offset: Offset(0, 8 * scale),
-            ),
-          ],
-        ),
-        child: Center(
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 20 * scale),
-            child: CircularProgressIndicator(color: Colors.white),
-          ),
-        ),
-      );
+      return HomeShimmer.buildNextVisitShimmer(scale);
     }
 
     if (_nextVisitData == null) {
