@@ -64,6 +64,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SnackBar(content: Text("Username can't be changed")),
           );
         },
+        showArrow: false,
       ),
     );
 
@@ -76,6 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           value: userEmail!,
           onTap: () => _navigateToEditIdentity("email", userEmail),
           onLongPress: () => _showContextMenu(context, "Email", userEmail),
+          showArrow: true,
         ),
       );
     }
@@ -90,6 +92,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           onTap: () => _navigateToEditIdentity("phone", userPhone),
           onLongPress:
               () => _showContextMenu(context, "Phone Number", userPhone),
+          showArrow: true,
         ),
       );
     }
@@ -139,7 +142,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(
-                          (28 * res.scale).toDouble(),
+                          (20 * res.scale).toDouble(),
                         ),
                         boxShadow: [
                           BoxShadow(
@@ -168,44 +171,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     SizedBox(height: (50 * res.scale).toDouble()),
 
-                    SizedBox(
-                      width: double.infinity,
-                      height: (55 * res.scale).toDouble(),
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (_) => EditProfileScreen(
-                                    initialName: userName ?? '',
-                                    initialEmail: userEmail ?? '',
-                                    initialPhone: userPhone ?? '',
-                                  ),
-                            ),
-                          );
-                          // Refresh profile data after returning from edit screen
-                          _loadUserData();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF2563EB),
-                          elevation: 2,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              (16 * res.scale).toDouble(),
-                            ),
-                          ),
-                        ),
-                        child: Text(
-                          'Edit Profile Information',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: (16 * res.scale).toDouble(),
-                          ),
-                        ),
-                      ),
-                    ),
+                    // SizedBox(
+                    //   width: double.infinity,
+                    //   height: (55 * res.scale).toDouble(),
+                    //   child: ElevatedButton(
+                    //     onPressed: () async {
+                    //       await Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //           builder:
+                    //               (_) => EditProfileScreen(
+                    //                 initialName: userName ?? '',
+                    //                 initialEmail: userEmail ?? '',
+                    //                 initialPhone: userPhone ?? '',
+                    //               ),
+                    //         ),
+                    //       );
+                    //       _loadUserData();
+                    //     },
+                    //     style: ElevatedButton.styleFrom(
+                    //       backgroundColor: const Color(0xFF2563EB),
+                    //       elevation: 2,
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(
+                    //           (16 * res.scale).toDouble(),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     child: Text(
+                    //       'Edit Profile Information',
+                    //       style: TextStyle(
+                    //         color: Colors.white,
+                    //         fontWeight: FontWeight.bold,
+                    //         fontSize: (16 * res.scale).toDouble(),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
@@ -276,6 +278,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required String value,
     required VoidCallback onTap,
     required VoidCallback onLongPress,
+    required bool showArrow,
   }) {
     return Material(
       color: Colors.transparent,
@@ -306,7 +309,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               SizedBox(width: (16 * res.scale).toDouble()),
 
-              /// Label & Premium Value
+              /// title and vaue
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,20 +329,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: (17 * res.scale).toDouble(),
-                        color: const Color(0xFF1F2937),
-                        fontWeight: FontWeight.w700,
+                        fontSize: 17 * res.scale,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF0E1A34),
                       ),
                     ),
                   ],
                 ),
               ),
 
-              Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: (14 * res.scale).toDouble(),
-                color: const Color(0xFFD1D5DB),
-              ),
+              if (showArrow)
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: (14 * res.scale).toDouble(),
+                  color: const Color(0xFFD1D5DB),
+                ),
             ],
           ),
         ),

@@ -252,7 +252,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           context,
           rootNavigator: true,
         ).push(MaterialPageRoute(builder: (context) => const ProfileScreen()));
-        // Refresh data after returning from edit
         _loadUserData();
       },
       child: Container(

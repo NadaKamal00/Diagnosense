@@ -174,7 +174,7 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
                 ),
                 child: TextFormField(
                   controller: _controller,
-                  autofocus: true,
+                  autofocus: false,
                   keyboardType:
                       isEmail
                           ? TextInputType.emailAddress
