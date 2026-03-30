@@ -6,12 +6,10 @@ class PrivacyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. حساب الـ Scale Factor الموحد (500 للتابلت / 375 للموبايل)
     final res = Responsive(context);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAff),
-      // AppBar متجاوب ومنسق للتابلت والموبايل
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -43,14 +41,12 @@ class PrivacyScreen extends StatelessWidget {
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Padding(
-          // الحفاظ على المسافات الأصلية (25 horizontal, 20 vertical)
           padding: EdgeInsets.symmetric(
             horizontal: 25 * res.scale,
             vertical: 20 * res.scale,
           ),
           child: Column(
             children: [
-              /// الخط الفاصل العلوي المتجاوب
               Divider(
                 height: 1 * res.scale,
                 thickness: 1 * res.scale,
@@ -59,22 +55,20 @@ class PrivacyScreen extends StatelessWidget {
 
               SizedBox(height: 30 * res.scale),
 
-              /// الحاوية الرئيسية للبيانات (Data Box) المتجاوبة
               Container(
                 width: double.infinity,
-                padding: EdgeInsets.all(24 * res.scale), // مساحة داخلية متجاوبة
+                padding: EdgeInsets.all(24 * res.scale),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(24 * res.scale),
                   border: Border.all(
                     color: const Color(0xFFEAEAEA),
-                    width: 2 * res.scale, // سمك الإطار متجاوب
+                    width: 2 * res.scale,
                   ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    /// قسم Data Policy
                     Text(
                       'Data Policy',
                       style: TextStyle(
@@ -90,13 +84,12 @@ class PrivacyScreen extends StatelessWidget {
                         fontSize: 13 * res.scale,
                         color: const Color(0xFF0E1A34),
                         fontWeight: FontWeight.w400,
-                        height: 1.5, // لراحة العين
+                        height: 1.5,
                       ),
                     ),
 
                     SizedBox(height: 35 * res.scale),
 
-                    /// قسم Access Log
                     Text(
                       'Access Log',
                       style: TextStyle(

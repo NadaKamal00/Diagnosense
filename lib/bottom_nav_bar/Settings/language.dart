@@ -13,7 +13,6 @@ class _LanguageScreenState extends State<LanguageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // 1. حساب الـ Scale Factor الموحد (500 للتابلت / 375 للموبايل)
     final res = Responsive(context);
 
     return Scaffold(
@@ -47,14 +46,12 @@ class _LanguageScreenState extends State<LanguageScreen> {
         automaticallyImplyLeading: false,
       ),
       body: Padding(
-        // الحفاظ على المسافات الأصلية (25، 20) مع جعلها متجاوبة
         padding: EdgeInsets.symmetric(
           horizontal: 25 * res.scale,
           vertical: 20 * res.scale,
         ),
         child: Column(
           children: [
-            /// الخط الفاصل العلوي (نفس خصائص الكود الأصلي)
             Divider(
               height: 1 * res.scale,
               thickness: 1 * res.scale,
@@ -63,7 +60,6 @@ class _LanguageScreenState extends State<LanguageScreen> {
 
             SizedBox(height: 30 * res.scale),
 
-            /// --- اختيار لغة English ---
             _buildLanguageOption(
               scale: res.scale,
               title: "English",
@@ -77,7 +73,6 @@ class _LanguageScreenState extends State<LanguageScreen> {
 
             SizedBox(height: 20 * res.scale),
 
-            /// --- اختيار لغة Arabic ---
             _buildLanguageOption(
               scale: res.scale,
               title: "Arabic (العربية)",
@@ -94,7 +89,6 @@ class _LanguageScreenState extends State<LanguageScreen> {
     );
   }
 
-  /// ويدجت خيار اللغة بنفس مقاسات الـ Padding والـ Radius الأصلية
   Widget _buildLanguageOption({
     required double scale,
     required String title,
@@ -103,16 +97,19 @@ class _LanguageScreenState extends State<LanguageScreen> {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12 * scale), // نفس الرقم الأصلي
+      borderRadius: BorderRadius.circular(12 * scale),
       child: Container(
         width: double.infinity,
-        // المسافات الداخلية الأصلية (20، 18)
-        padding: EdgeInsets.symmetric(horizontal: 20 * scale, vertical: 18 * scale),
+        padding: EdgeInsets.symmetric(
+          horizontal: 20 * scale,
+          vertical: 18 * scale,
+        ),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(15 * scale), // نفس الرقم الأصلي
+          borderRadius: BorderRadius.circular(15 * scale),
           border: Border.all(
-            color: isSelected ? const Color(0xFF3B82F6) : const Color(0xFFE2E8F0),
+            color:
+                isSelected ? const Color(0xFF3B82F6) : const Color(0xFFE2E8F0),
             width: (isSelected ? 2 : 1.5) * scale,
           ),
         ),
@@ -122,14 +119,14 @@ class _LanguageScreenState extends State<LanguageScreen> {
             Text(
               title,
               style: TextStyle(
-                fontSize: 16 * scale, // نفس الرقم الأصلي
+                fontSize: 16 * scale,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 color: const Color(0xFF0E1A34),
               ),
             ),
             if (isSelected)
               CircleAvatar(
-                radius: 5 * scale, // نفس الرقم الأصلي
+                radius: 5 * scale,
                 backgroundColor: const Color(0xFF3B82F6),
               ),
           ],

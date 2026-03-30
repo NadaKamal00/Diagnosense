@@ -5,22 +5,22 @@ class NotificationSettingsScreen extends StatefulWidget {
   const NotificationSettingsScreen({super.key});
 
   @override
-  State<NotificationSettingsScreen> createState() => _NotificationSettingsScreenState();
+  State<NotificationSettingsScreen> createState() =>
+      _NotificationSettingsScreenState();
 }
 
-class _NotificationSettingsScreenState extends State<NotificationSettingsScreen> {
+class _NotificationSettingsScreenState
+    extends State<NotificationSettingsScreen> {
   bool pushEnabled = true;
   bool emailEnabled = true;
   bool smsEnabled = false;
 
   @override
   Widget build(BuildContext context) {
-    // 1. حساب الـ Scale Factor الموحد (500 للتابلت / 375 للموبايل)
     final res = Responsive(context);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAff),
-      // استخدام PreferredSize لحل مشكلة "اللزق" في التابلت
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -63,10 +63,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
           Expanded(
             child: ListView(
               physics: const BouncingScrollPhysics(),
-              // الحفاظ على المسافات الأصلية (20 horizontal, 25 vertical)
               padding: EdgeInsets.symmetric(
-                  horizontal: 20 * res.scale,
-                  vertical: 25 * res.scale
+                horizontal: 20 * res.scale,
+                vertical: 25 * res.scale,
               ),
               children: [
                 _buildSettingCard(
@@ -102,8 +101,11 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
     required ValueChanged<bool?> onChanged,
   }) {
     return Container(
-      margin: EdgeInsets.only(bottom: 16 * scale), // المسافة الأصلية
-      padding: EdgeInsets.symmetric(horizontal: 16 * scale, vertical: 8 * scale), // المسافة الأصلية
+      margin: EdgeInsets.only(bottom: 16 * scale),
+      padding: EdgeInsets.symmetric(
+        horizontal: 16 * scale,
+        vertical: 8 * scale,
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(34 * scale),
@@ -119,7 +121,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
       child: Theme(
         data: ThemeData(
           checkboxTheme: CheckboxThemeData(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5 * scale)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5 * scale),
+            ),
           ),
         ),
         child: CheckboxListTile(

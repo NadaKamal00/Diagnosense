@@ -47,7 +47,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       final token = prefs.getString('auth_token');
 
       if (token == null) {
-        // Fallback: If no token, just clear and go back
         await prefs.clear();
         if (!mounted) return;
         Navigator.pushAndRemoveUntil(
@@ -120,132 +119,135 @@ class _SettingsScreenState extends State<SettingsScreen> {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: res.isTablet ? 450 * res.scale : res.width,
-            ),
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              padding: EdgeInsets.symmetric(
-                horizontal: res.isTablet ? 5 * res.scale : 20 * res.scale,
-                vertical: 10,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 20 * res.scale),
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: EdgeInsets.symmetric(
+            horizontal:
+                res.isTablet
+                    ? (40 * res.scale).toDouble()
+                    : (20 * res.scale).toDouble(),
+            vertical: (20 * res.scale).toDouble(),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: (20 * res.scale).toDouble()),
 
-                  _buildProfileSection(context, res.scale),
+              _buildProfileSection(context, res.scale, res.isTablet),
 
-                  SizedBox(
-                    height: res.isTablet ? 35 * res.scale : 25 * res.scale,
+              SizedBox(height: res.isTablet ? 35 * res.scale : 25 * res.scale),
+
+              _buildSectionTitle('Account Settings', res.scale),
+              _buildSettingsGroup(
+                [
+                  _buildSettingsItem(
+                    icon: Icons.notifications_none_outlined,
+                    iconColor:
+                        _notificationsEnabled ? Colors.cyan : Colors.grey,
+                    title: 'Allow Notifications',
+                    scale: res.scale,
+                    isTablet: res.isTablet,
+                    trailingOverride: CupertinoSwitch(
+                      value: _notificationsEnabled,
+                      activeColor: Colors.green,
+                      onChanged: (value) {
+                        setState(() {
+                          _notificationsEnabled = value;
+                        });
+                      },
+                    ),
+                    onTap: () {
+                      setState(() {
+                        _notificationsEnabled = !_notificationsEnabled;
+                      });
+                    },
                   ),
-
-                  _buildSectionTitle('Account Settings', res.scale),
-                  _buildSettingsGroup(
-                    [
-                      _buildSettingsItem(
-                        icon: Icons.notifications_none_outlined,
-                        iconColor:
-                            _notificationsEnabled ? Colors.cyan : Colors.grey,
-                        title: 'Allow Notifications',
-                        scale: res.scale,
-                        trailingOverride: CupertinoSwitch(
-                          value: _notificationsEnabled,
-                          activeColor: Colors.green,
-                          onChanged: (value) {
-                            setState(() {
-                              _notificationsEnabled = value;
-                            });
-                          },
-                        ),
-                        onTap: () {
-                          setState(() {
-                            _notificationsEnabled = !_notificationsEnabled;
-                          });
-                        },
-                      ),
-                      _buildSettingsItem(
-                        icon: Icons.dark_mode_outlined,
-                        iconColor: _isDarkMode ? Colors.purple : Colors.grey,
-                        title: 'Dark Mode',
-                        scale: res.scale,
-                        trailingOverride: CupertinoSwitch(
-                          value: _isDarkMode,
-                          activeColor: Colors.purple,
-                          onChanged: (value) {
-                            setState(() {
-                              _isDarkMode = value;
-                            });
-                          },
-                        ),
-                        onTap: () {
-                          setState(() {
-                            _isDarkMode = !_isDarkMode;
-                          });
-                        },
-                      ),
-                      _buildSettingsItem(
-                        icon: Icons.language_outlined,
-                        iconColor: Colors.orange,
-                        title: 'Language',
-                        trailingText: 'English',
-                        scale: res.scale,
-                        onTap:
-                            () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const LanguageScreen(),
-                              ),
-                            ),
-                      ),
-                      _buildSettingsItem(
-                        icon: Icons.lock_outline,
-                        iconColor: Colors.green,
-                        title: 'Privacy Policy',
-                        scale: res.scale,
-                        onTap:
-                            () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const PrivacyScreen(),
-                              ),
-                            ),
-                      ),
-                      _buildSettingsItem(
-                        icon: Icons.help_outline,
-                        iconColor: Colors.teal,
-                        title: 'Support & FAQ',
-                        scale: res.scale,
-                        onTap:
-                            () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const SupportScreen(),
-                              ),
-                            ),
-                      ),
-                    ],
-                    res.scale,
-                    res.isTablet,
+                  _buildSettingsItem(
+                    icon: Icons.dark_mode_outlined,
+                    iconColor: _isDarkMode ? Colors.purple : Colors.grey,
+                    title: 'Dark Mode',
+                    scale: res.scale,
+                    isTablet: res.isTablet,
+                    trailingOverride: CupertinoSwitch(
+                      value: _isDarkMode,
+                      activeColor: Colors.purple,
+                      onChanged: (value) {
+                        setState(() {
+                          _isDarkMode = value;
+                        });
+                      },
+                    ),
+                    onTap: () {
+                      setState(() {
+                        _isDarkMode = !_isDarkMode;
+                      });
+                    },
                   ),
-
-                  SizedBox(height: 60 * res.scale),
-
-                  _buildLogoutButton(res.scale),
-
-                  SizedBox(height: 30 * res.scale),
+                  _buildSettingsItem(
+                    icon: Icons.language_outlined,
+                    iconColor: Colors.orange,
+                    title: 'Language',
+                    trailingText: 'English',
+                    scale: res.scale,
+                    isTablet: res.isTablet,
+                    onTap:
+                        () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LanguageScreen(),
+                          ),
+                        ),
+                  ),
+                  _buildSettingsItem(
+                    icon: Icons.lock_outline,
+                    iconColor: Colors.green,
+                    title: 'Privacy Policy',
+                    scale: res.scale,
+                    isTablet: res.isTablet,
+                    onTap:
+                        () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const PrivacyScreen(),
+                          ),
+                        ),
+                  ),
+                  _buildSettingsItem(
+                    icon: Icons.help_outline,
+                    iconColor: Colors.teal,
+                    title: 'Support & FAQ',
+                    scale: res.scale,
+                    isTablet: res.isTablet,
+                    onTap:
+                        () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SupportScreen(),
+                          ),
+                        ),
+                  ),
                 ],
+                res.scale,
+                res.isTablet,
               ),
-            ),
+
+              SizedBox(height: 60 * res.scale),
+
+              _buildLogoutButton(res.scale, res.isTablet),
+
+              SizedBox(height: 30 * res.scale),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildProfileSection(BuildContext context, double scale) {
+  Widget _buildProfileSection(
+    BuildContext context,
+    double scale,
+    bool isTablet,
+  ) {
     return GestureDetector(
       onTap: () async {
         await Navigator.of(
@@ -255,7 +257,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         _loadUserData();
       },
       child: Container(
-        padding: EdgeInsets.all(18 * scale),
+        padding: EdgeInsets.symmetric(
+          horizontal: isTablet ? 24 * scale : 18 * scale,
+          vertical: isTablet ? 24 * scale : 18 * scale,
+        ),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20 * scale),
@@ -320,7 +325,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildSettingsGroup(List<Widget> items, double scale, bool isTablet) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: isTablet ? 8 * scale : 0),
+      padding: EdgeInsets.symmetric(vertical: isTablet ? 12 * scale : 0),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20 * scale),
@@ -355,6 +360,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     String? trailingText,
     Widget? trailingOverride,
     required double scale,
+    required bool isTablet,
     required VoidCallback onTap,
   }) {
     return ListTile(
@@ -363,16 +369,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
         borderRadius: BorderRadius.circular(20 * scale),
       ),
       contentPadding: EdgeInsets.symmetric(
-        horizontal: 16 * scale,
-        vertical: 2 * scale,
+        horizontal: isTablet ? 24 * scale : 16 * scale,
+        vertical: isTablet ? 6 * scale : 2 * scale,
       ),
       leading: Container(
-        padding: EdgeInsets.all(8 * scale),
+        width: (isTablet ? 50 : 40) * scale,
+        height: (isTablet ? 50 : 40) * scale,
+        alignment: Alignment.center,
         decoration: BoxDecoration(
           color: iconColor.withOpacity(0.1),
           borderRadius: BorderRadius.circular(10 * scale),
         ),
-        child: Icon(icon, color: iconColor, size: 22 * scale),
+        child: Icon(
+          icon,
+          color: iconColor,
+          size: 22 * scale,
+        ),
       ),
       title: Text(
         title,
@@ -406,7 +418,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildLogoutButton(double scale) {
+  Widget _buildLogoutButton(double scale, bool isTablet) {
     return InkWell(
       onTap: _isLoggingOut ? null : _handleLogout,
       borderRadius: BorderRadius.circular(20 * scale),
@@ -414,7 +426,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       highlightColor: Colors.red.withOpacity(0.05),
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.symmetric(vertical: 16 * scale),
+        padding: EdgeInsets.symmetric(
+          vertical: isTablet ? 20 * scale : 16 * scale,
+        ),
         decoration: BoxDecoration(
           color: const Color(0xFFFFF1F1),
           borderRadius: BorderRadius.circular(20 * scale),

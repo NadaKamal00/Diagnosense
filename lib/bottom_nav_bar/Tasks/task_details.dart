@@ -16,7 +16,8 @@ class TaskDetailsScreen extends StatefulWidget {
 class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
   bool _isLoading = true;
   bool _isCompleting = false;
-  bool _hasStatusChanged = false; // Track if status was toggled for list refresh
+  bool _hasStatusChanged =
+      false; // Track if status was toggled for list refresh
   Map<String, dynamic>? _taskData;
   String? _errorMessage;
 
@@ -123,7 +124,6 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
         _taskData?['visit']?['date']?.toString() ?? dueDate;
     final String visitTime = _taskData?['visit']?['time']?.toString() ?? '';
 
-    // State-Driven UI Logic
     final Color deadlineColor;
     final Color deadlineBg;
     final Color badgeBg;
@@ -140,14 +140,14 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
       instrBg = const Color(0xFFF9FAFB);
       instrBorder = Colors.black.withOpacity(0.05);
     } else if (isOverdue) {
-      deadlineColor = const Color(0xFFEF4444); // Red
+      deadlineColor = const Color(0xFFEF4444);
       deadlineBg = const Color(0xFFFEF2F2);
-      badgeBg = const Color(0xFFEFF6FF); // Brand Light Blue
-      badgeText = const Color(0xFF2563EB); // Brand Blue
-      instrBg = const Color.fromARGB(255, 255, 249, 232); // Amber light
+      badgeBg = const Color(0xFFEFF6FF);
+      badgeText = const Color(0xFF2563EB);
+      instrBg = const Color.fromARGB(255, 255, 249, 232);
       instrBorder = Colors.amber.withOpacity(0.3);
     } else {
-      deadlineColor = const Color(0xFF10B981); // Green
+      deadlineColor = const Color(0xFF10B981);
       deadlineBg = const Color(0xFFECFDF5);
       badgeBg = const Color(0xFFEFF6FF);
       badgeText = const Color(0xFF2563EB);
@@ -447,7 +447,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                 children: [
                   _buildButton(
                     isCompleted ? "Completed" : "Mark as Done",
-                    !isCompleted, // Gradient only if not completed
+                    !isCompleted,
                     isCompleted
                         ? const Color(0xFF34A853)
                         : const Color(0xFF2563EB),

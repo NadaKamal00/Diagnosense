@@ -1,22 +1,14 @@
-import 'package:application/auth/Sign%20Up/signup_screen.dart';
-import 'package:application/auth/forgot%20password/verify_account_screen.dart';
-import 'package:application/auth/login_screen.dart';
-import 'package:application/bottom_nav_bar/Settings/settings_screen.dart';
-import 'package:application/bottom_nav_bar/_navigation_menu.dart';
 import 'package:application/splash_screen.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'auth/forgot password/reset_password.dart';
-import 'onboarding_screen.dart';
-import 'bottom_nav_bar/Home/home_screen.dart';
 
 void main() {
   runApp(
-    // DevicePreview(enabled: !kReleaseMode, builder: (context) => const MyApp()),
-    const MyApp(),
+    DevicePreview(enabled: !kReleaseMode, builder: (context) => const MyApp()),
+    // const MyApp(),
   );
 }
 
