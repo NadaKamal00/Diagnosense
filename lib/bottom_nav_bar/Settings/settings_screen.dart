@@ -247,16 +247,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildProfileSection(BuildContext context, double scale) {
     return GestureDetector(
-      onTap:
-          () async {
-            await Navigator.of(context, rootNavigator: true).push(
-              MaterialPageRoute(
-                builder: (context) => const ProfileScreen(),
-              ),
-            );
-            // Refresh data after returning from edit
-            _loadUserData();
-          },
+      onTap: () async {
+        await Navigator.of(
+          context,
+          rootNavigator: true,
+        ).push(MaterialPageRoute(builder: (context) => const ProfileScreen()));
+        // Refresh data after returning from edit
+        _loadUserData();
+      },
       child: Container(
         padding: EdgeInsets.all(18 * scale),
         decoration: BoxDecoration(
@@ -421,10 +419,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         decoration: BoxDecoration(
           color: const Color(0xFFFFF1F1),
           borderRadius: BorderRadius.circular(20 * scale),
-          border: Border.all(
-            color: Colors.red.withOpacity(0.15),
-            width: 1.0,
-          ),
+          border: Border.all(color: Colors.red.withOpacity(0.15), width: 1.0),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
