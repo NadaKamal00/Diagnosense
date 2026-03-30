@@ -1,0 +1,339 @@
+import 'package:flutter/material.dart';
+import 'package:application/utils/responsive_helper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../forgot password/verify_account_screen.dart';
+import '../../core/utils/api_service.dart';
+import '../../widgets/app_logo.dart';
+import '../../widgets/custom_feedback_box.dart';
+
+class FirstLoginScreen extends StatefulWidget {
+  const FirstLoginScreen({super.key});
+
+  @override
+  State<FirstLoginScreen> createState() => _FirstLoginScreenState();
+}
+
+class _FirstLoginScreenState extends State<FirstLoginScreen> {
+  final TextEditingController _inputController = TextEditingController();
+  bool _isLoading = false;
+  String? _validationError;
+  String? _feedbackMessage;
+  bool _isFeedbackSuccess = false;
+
+  bool _isNumeric(String s) => RegExp(r'^[0-9]+$').hasMatch(s);
+  bool _isEmail(String s) => s.contains('@');
+
+  @override
+  void dispose() {
+    _inputController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final res = Responsive(context);
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8FAFF),
+      resizeToAvoidBottomInset: true,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Positioned(
+              top: 10 * res.scale,
+              left: 10 * res.scale,
+              child: IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: Icon(
+                  Icons.arrow_back_ios,
+                  color: const Color(0xFF000000),
+                  size: 20 * res.scale,
+                ),
+              ),
+            ),
+
+            Center(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                padding: EdgeInsets.symmetric(
+                  horizontal: 22 * res.scale,
+                  vertical: 20 * res.scale,
+                ),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: res.isTablet ? 450 * res.scale : res.width,
+                  ),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20 * res.scale,
+                      vertical: 35 * res.scale,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Color(0xFFF8FAFF),
+                      borderRadius: BorderRadius.circular(28 * res.scale),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF3E3E3E).withOpacity(0.25),
+                          blurRadius: 53.7 * res.scale,
+                          spreadRadius: -3 * res.scale,
+                          offset: Offset(0, 10 * res.scale),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(height: 30 * res.scale),
+
+                        /// Logo
+                        const AppLogo(),
+
+                        SizedBox(height: 20 * res.scale),
+
+                        /// Title
+                        Text(
+                          'Login to your account',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 24 * res.scale,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFF0E1A34),
+                          ),
+                        ),
+
+                        SizedBox(height: 8 * res.scale),
+
+                        /// Subtitle
+                        Text(
+                          "Enter your email or phone number to receive your verification code",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 15 * res.scale,
+                            color: const Color(0xFF8A94A6),
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+
+                        SizedBox(height: 25 * res.scale),
+
+                        /// Input Field: Email or Phone
+                        _buildInputField(res.scale),
+
+                        if (_feedbackMessage != null &&
+                            _validationError == null)
+                          Padding(
+                            padding: EdgeInsets.only(top: 20 * res.scale),
+                            child: CustomFeedbackBox(
+                              message: _feedbackMessage!,
+                              isSuccess: _isFeedbackSuccess,
+                              scale: res.scale,
+                            ),
+                          ),
+
+                        if (_validationError != null)
+                          Padding(
+                            padding: EdgeInsets.only(top: 15 * res.scale),
+                            child: Text(
+                              _validationError!,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 13 * res.scale,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ),
+
+                        SizedBox(height: 20 * res.scale),
+
+                        /// زر الإرسال (Send Code Button)
+                        _buildSendButton(context, res.scale),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInputField(double scale) {
+    return TextField(
+      controller: _inputController,
+      keyboardType: TextInputType.emailAddress,
+      style: TextStyle(fontSize: 15 * scale, fontWeight: FontWeight.w600),
+      onChanged: (_) {
+        if (_validationError != null || _feedbackMessage != null) {
+          setState(() {
+            _validationError = null;
+            _feedbackMessage = null;
+          });
+        }
+      },
+      decoration: InputDecoration(
+        hintText: "Email or Phone number",
+        hintStyle: TextStyle(
+          color: const Color(0xFF8A94A6),
+          fontSize: 15 * scale,
+          fontWeight: FontWeight.w400,
+        ),
+        filled: true,
+        fillColor: Colors.transparent,
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: 20 * scale,
+          vertical: 18 * scale,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12 * scale),
+          borderSide: const BorderSide(color: Color(0xFFD1D5DB), width: 1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12 * scale),
+          borderSide: const BorderSide(color: Color(0xFF3B82F6), width: 2),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSendButton(BuildContext context, double scale) {
+    return GestureDetector(
+      onTap: () async {
+        if (_isLoading) return;
+
+        final identity = _inputController.text.trim();
+        if (identity.isEmpty) {
+          setState(() {
+            _validationError = 'Please enter an email or phone number';
+          });
+          return;
+        }
+
+        // Phone Number Validation (Numeric check)
+        if (_isNumeric(identity) && identity.length != 11) {
+          setState(() {
+            _validationError = 'Phone number must be exactly 11 digits';
+            _feedbackMessage = null;
+          });
+          return;
+        }
+
+        setState(() {
+          _isLoading = true;
+          _validationError = null;
+          _feedbackMessage = null;
+        });
+
+        try {
+          final data = await ApiService().sendForgotPasswordOTP(identity);
+
+          if (!mounted) return;
+
+          final bool success = data['success'] == true;
+          final int? statusCode = data['status_code'];
+
+          setState(() {
+            _isFeedbackSuccess = success;
+            if (success) {
+              _feedbackMessage =
+                  _isEmail(identity)
+                      ? "An OTP has been sent to your email for login. Please check your inbox"
+                      : "An OTP has been sent to your phone number for login. Please check your SMS";
+            } else {
+              // If not successful OR status is 404, show "not registered"
+              if (!success || statusCode == 404) {
+                _feedbackMessage =
+                    _isEmail(identity)
+                        ? "This email is not registered in our system"
+                        : "This phone number is not registered in our system";
+              } else {
+                _feedbackMessage = "An error occurred. Please try again.";
+              }
+            }
+          });
+
+          if (success) {
+            final prefs = await SharedPreferences.getInstance();
+            final token = data['data']?['token'] ?? data['token'];
+            if (token != null) {
+              await prefs.setString('auth_token', token);
+            }
+
+            // Optional: Add small delay to let user see the success message
+            await Future.delayed(const Duration(seconds: 2));
+            if (!mounted) return;
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder:
+                    (context) => VerifyAccountScreen(
+                      purpose: OTPPurpose.signup,
+                      userContact: identity,
+                    ),
+              ),
+            );
+          }
+        } catch (e) {
+          if (!mounted) return;
+          setState(() {
+            _isFeedbackSuccess = false;
+            _feedbackMessage = "Please, check your internet connection";
+          });
+        } finally {
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+            });
+          }
+        }
+      },
+      child: Container(
+        width: double.infinity,
+        height: 50 * scale,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors:
+                _isLoading
+                    ? [const Color(0xFF93C5FD), const Color(0xFF60A5FA)]
+                    : const [Color(0xFF2563EB), Color(0xFF3B82F6)],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+          borderRadius: BorderRadius.circular(12 * scale),
+          boxShadow: [
+            if (!_isLoading)
+              BoxShadow(
+                color: const Color(0xFF2563EB).withOpacity(0.25),
+                blurRadius: 15 * scale,
+                offset: Offset(0, 6 * scale),
+              ),
+          ],
+        ),
+        child: Center(
+          child:
+              _isLoading
+                  ? SizedBox(
+                    height: 24 * scale,
+                    width: 24 * scale,
+                    child: const CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2.5,
+                    ),
+                  )
+                  : Text(
+                    'Send Code',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16 * scale,
+                      letterSpacing: 1,
+                    ),
+                  ),
+        ),
+      ),
+    );
+  }
+}
