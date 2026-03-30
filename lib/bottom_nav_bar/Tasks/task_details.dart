@@ -3,6 +3,7 @@ import 'package:application/utils/responsive_helper.dart';
 import 'package:application/utils/task_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import '../Home/home_shimmer.dart';
 
 class TaskDetailsScreen extends StatefulWidget {
   final int taskId;
@@ -188,7 +189,13 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
 
       body:
           _isLoading
-              ? const Center(child: CircularProgressIndicator())
+              ? SingleChildScrollView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: (isTablet ? 24 : 20) * scaleFactor,
+                  vertical: 34 * scaleFactor,
+                ),
+                child: HomeShimmer.buildTaskDetailsShimmer(scale: scaleFactor),
+              )
               : _errorMessage != null
               ? Center(
                 child: Padding(
@@ -445,16 +452,18 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _buildButton(
-                    isCompleted ? "Completed" : "Mark as Done",
-                    !isCompleted,
-                    isCompleted
-                        ? const Color(0xFF34A853)
-                        : const Color(0xFF2563EB),
-                    scaleFactor,
-                    onTap: _onToggleStatus,
-                    isLoading: _isCompleting,
-                  ),
+                  _isLoading
+                      ? HomeShimmer.buildButtonShimmer(scale: scaleFactor)
+                      : _buildButton(
+                          isCompleted ? "Completed" : "Mark as Done",
+                          !isCompleted,
+                          isCompleted
+                              ? const Color(0xFF34A853)
+                              : const Color(0xFF2563EB),
+                          scaleFactor,
+                          onTap: _onToggleStatus,
+                          isLoading: _isCompleting,
+                        ),
                   SizedBox(height: 20 * scaleFactor),
                   InkWell(
                     onTap: () => Navigator.pop(context, _hasStatusChanged),

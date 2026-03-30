@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../_navigation_menu.dart';
 import '../../core/utils/api_service.dart';
+import '../Home/home_shimmer.dart';
 
 class TaskScreen extends StatefulWidget {
   const TaskScreen({super.key});
@@ -113,7 +114,7 @@ class _TaskScreenState extends State<TaskScreen> {
           Expanded(
             child:
                 _isLoading
-                    ? const Center(child: CircularProgressIndicator())
+                    ? HomeShimmer.buildTaskShimmerList(res.scale)
                     : _tasks.isEmpty
                     ? Center(
                       child: Text(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import '../../../core/utils/api_service.dart';
 import '../../../shared/widgets/custom_search_bar.dart';
+import '../home_shimmer.dart';
 
 class MedicationsScreen extends StatefulWidget {
   const MedicationsScreen({super.key});
@@ -188,9 +189,10 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
           Expanded(
             child:
                 _isLoading
-                    ? const Center(
-                      child: CircularProgressIndicator(color: Color(0xFF2563EB)),
-                    )
+                    ? HomeShimmer.buildMedicationListShimmer(
+                        scale: res.scale,
+                        isTablet: res.isTablet,
+                      )
                     : _errorMessage != null
                     ? Center(
                       child: Column(

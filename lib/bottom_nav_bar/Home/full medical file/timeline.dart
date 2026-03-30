@@ -1,6 +1,7 @@
 import 'package:application/utils/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import '../../../core/utils/api_service.dart';
+import '../home_shimmer.dart';
 
 class VisitTimelineScreen extends StatefulWidget {
   const VisitTimelineScreen({super.key});
@@ -104,11 +105,10 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
           Expanded(
             child:
                 _isLoading
-                    ? const Center(
-                      child: CircularProgressIndicator(
-                        color: Color(0xFF2563EB),
-                      ),
-                    )
+                    ? HomeShimmer.buildTimelineListShimmer(
+                        scale: res.scale,
+                        isTablet: res.isTablet,
+                      )
                     : _errorMessage != null
                     ? Center(
                       child: Text(
