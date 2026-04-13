@@ -1,4 +1,5 @@
 import 'package:application/bottom_nav_bar/Home/lab%20results/view_report_details.dart';
+import 'package:application/core/utils/api_service.dart';
 import 'package:application/utils/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import '../../../shared/widgets/custom_search_bar.dart';
@@ -11,54 +12,18 @@ class LabResultsScreen extends StatefulWidget {
 }
 
 class _LabResultsScreenState extends State<LabResultsScreen> {
-  final List<Map<String, dynamic>> allReports = [
-    {
-      'title': 'Complete Blood Count (CBC)',
-      'doctor': 'Dr.Ahmed',
-      'date': 'Nov 15, 2023',
-      'iconColor': const Color(0xFFDCFCE7),
-      'icon': Icons.description_outlined,
-    },
-    {
-      'title': 'Lipid Panel Assessment.pdf',
-      'doctor': 'Dr.Ahmed',
-      'date': 'Nov 15, 2023',
-      'iconColor': const Color(0xFFFFF7ED),
-      'icon': Icons.insert_drive_file_outlined,
-    },
-    {
-      'title': 'Thyroid Function Test',
-      'doctor': 'Dr.Ahmed',
-      'date': '2023-10-22',
-      'iconColor': const Color(0xFFDCFCE7),
-      'icon': Icons.description_outlined,
-    },
-  ];
-
-  List<Map<String, dynamic>> filteredReports = [];
+  Future<Map<String, dynamic>>? _reportsFuture;
+  String _searchQuery = "";
 
   @override
   void initState() {
     super.initState();
-    filteredReports = allReports;
+    _reportsFuture = ApiService().getLabReports();
   }
 
   void _runSearch(String enteredKeyword) {
-    List<Map<String, dynamic>> results = [];
-    if (enteredKeyword.isEmpty) {
-      results = allReports;
-    } else {
-      results =
-          allReports
-              .where(
-                (report) => report['title'].toLowerCase().contains(
-                  enteredKeyword.toLowerCase(),
-                ),
-              )
-              .toList();
-    }
     setState(() {
-      filteredReports = results;
+      _searchQuery = enteredKeyword;
     });
   }
 
@@ -116,42 +81,91 @@ class _LabResultsScreenState extends State<LabResultsScreen> {
 
           /// --- List of Reports ---
           Expanded(
-            child:
-                filteredReports.isNotEmpty
-                    ? ListView.builder(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: (res.isTablet ? 24 : 20) * res.scale,
-                      ),
-                      itemCount: filteredReports.length,
-                      itemBuilder:
-                          (context, index) => _buildLabCard(
-                            context,
-                            res.scale,
-                            res.isTablet,
-                            title: filteredReports[index]['title'],
-                            doctor: filteredReports[index]['doctor'],
-                            date: filteredReports[index]['date'],
-                            iconColor: filteredReports[index]['iconColor'],
-                            icon: filteredReports[index]['icon'],
-                            onView: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder:
-                                      (_) => const ViewReportDetailsScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                    )
-                    : Center(
-                      child: Text(
-                        'No results found',
-                        style: TextStyle(
-                          fontSize: 16 * res.scale,
-                          color: Colors.grey,
-                        ),
+            child: FutureBuilder<Map<String, dynamic>>(
+              future: _reportsFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      'Error loading reports',
+                      style: TextStyle(
+                        fontSize: 16 * res.scale,
+                        color: Colors.red,
                       ),
                     ),
+                  );
+                }
+
+                final data = snapshot.data;
+                if (data == null || data['success'] == false) {
+                  return Center(
+                    child: Text(
+                      data?['message'] ?? 'Failed to load reports',
+                      style: TextStyle(
+                        fontSize: 16 * res.scale,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  );
+                }
+
+                final List<dynamic> allReports = data['data'] ?? [];
+
+                final filteredReports =
+                    allReports.where((report) {
+                      final title = (report['name'] ?? '').toLowerCase();
+                      return title.contains(_searchQuery.toLowerCase());
+                    }).toList();
+
+                if (filteredReports.isEmpty) {
+                  return Center(
+                    child: Text(
+                      'No results found',
+                      style: TextStyle(
+                        fontSize: 16 * res.scale,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: (res.isTablet ? 24 : 20) * res.scale,
+                  ),
+                  itemCount: filteredReports.length,
+                  itemBuilder: (context, index) {
+                    final report = filteredReports[index];
+                    final bool isEven = index % 2 == 0;
+
+                    return _buildLabCard(
+                      context,
+                      res.scale,
+                      res.isTablet,
+                      title: report['name'] ?? 'Unknown Report',
+                      doctor: report['doctor'] ?? 'Unknown Doctor',
+                      date: report['date'] ?? 'Unknown Date',
+                      iconColor:
+                          isEven
+                              ? const Color(0xFFDCFCE7)
+                              : const Color(0xFFFFEDD5),
+                      icon: Icons.description_outlined,
+                      onView: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const ViewReportDetailsScreen(),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),

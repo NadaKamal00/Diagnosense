@@ -2,6 +2,7 @@ import 'package:application/utils/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../Home/home_shimmer.dart';
 import 'edit_identity_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -129,7 +130,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       body:
           _isLoading
-              ? const Center(child: CircularProgressIndicator())
+              ? Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: (20 * res.scale).toDouble(),
+                  vertical: (24 * res.scale).toDouble(),
+                ),
+                child: HomeShimmer.buildProfileShimmerList(res),
+              )
               : SingleChildScrollView(
                 padding: EdgeInsets.symmetric(
                   horizontal: (20 * res.scale).toDouble(),

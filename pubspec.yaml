@@ -14,7 +14,6 @@ dependencies:
   cupertino_icons: ^1.0.8
   introduction_screen: ^4.0.0
   material_symbols_icons: ^4.2906.0
-  image_picker: ^1.0.7
   share_plus: ^10.1.0
   path_provider: ^2.1.3
   dio: ^5.5.0

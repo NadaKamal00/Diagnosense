@@ -147,149 +147,150 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all((24 * res.scale).toDouble()),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                isEmail ? 'EMAIL ADDRESS' : 'PHONE NUMBER',
-                style: TextStyle(
-                  fontSize: (12 * res.scale).toDouble(),
-                  color: const Color(0xFF8A94A6),
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.8,
-                ),
-              ),
-              SizedBox(height: (8 * res.scale).toDouble()),
-              Container(
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: (10 * res.scale).toDouble(),
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: TextFormField(
-                  controller: _controller,
-                  autofocus: false,
-                  keyboardType:
-                      isEmail
-                          ? TextInputType.emailAddress
-                          : TextInputType.number,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all((24 * res.scale).toDouble()),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  isEmail ? 'EMAIL ADDRESS' : 'PHONE NUMBER',
                   style: TextStyle(
-                    fontSize: (16 * res.scale).toDouble(),
-                    color: const Color(0xFF1F2937),
-                    fontWeight: FontWeight.w500,
+                    fontSize: (12 * res.scale).toDouble(),
+                    color: const Color(0xFF8A94A6),
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.8,
                   ),
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white,
-                    prefixIcon: Padding(
-                      padding: EdgeInsets.only(
-                        left: (16 * res.scale).toDouble(),
-                        right: (12 * res.scale).toDouble(),
+                ),
+                SizedBox(height: (8 * res.scale).toDouble()),
+                Container(
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: (10 * res.scale).toDouble(),
+                        offset: const Offset(0, 4),
                       ),
-                      child: Icon(
+                    ],
+                  ),
+                  child: TextFormField(
+                    controller: _controller,
+                    autofocus: false,
+                    keyboardType:
                         isEmail
-                            ? Icons.email_outlined
-                            : Icons.phone_android_outlined,
-                        color: const Color(0xFF3B82F6),
-                        size: (22 * res.scale).toDouble(),
+                            ? TextInputType.emailAddress
+                            : TextInputType.number,
+                    style: TextStyle(
+                      fontSize: (16 * res.scale).toDouble(),
+                      color: const Color(0xFF1F2937),
+                      fontWeight: FontWeight.w500,
+                    ),
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      prefixIcon: Padding(
+                        padding: EdgeInsets.only(
+                          left: (16 * res.scale).toDouble(),
+                          right: (12 * res.scale).toDouble(),
+                        ),
+                        child: Icon(
+                          isEmail
+                              ? Icons.email_outlined
+                              : Icons.phone_android_outlined,
+                          color: const Color(0xFF3B82F6),
+                          size: (22 * res.scale).toDouble(),
+                        ),
+                      ),
+                      prefixIconConstraints: const BoxConstraints(
+                        minWidth: 0,
+                        minHeight: 0,
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: (16 * res.scale).toDouble(),
+                        vertical: (16 * res.scale).toDouble(),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          (12 * res.scale).toDouble(),
+                        ),
+                        borderSide: BorderSide(
+                          color: isErrorState ? Colors.red : Colors.transparent,
+                          width: isErrorState ? 1.5 : 0,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          (12 * res.scale).toDouble(),
+                        ),
+                        borderSide: BorderSide(
+                          color: isErrorState ? Colors.red : Colors.transparent,
+                          width: isErrorState ? 1.5 : 0,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          (12 * res.scale).toDouble(),
+                        ),
+                        borderSide: BorderSide(
+                          color:
+                              isErrorState ? Colors.red : const Color(0xFF2563EB),
+                          width: 1.5,
+                        ),
                       ),
                     ),
-                    prefixIconConstraints: const BoxConstraints(
-                      minWidth: 0,
-                      minHeight: 0,
-                    ),
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: (16 * res.scale).toDouble(),
-                      vertical: (16 * res.scale).toDouble(),
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(
-                        (12 * res.scale).toDouble(),
-                      ),
-                      borderSide: BorderSide(
-                        color: isErrorState ? Colors.red : Colors.transparent,
-                        width: isErrorState ? 1.5 : 0,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(
-                        (12 * res.scale).toDouble(),
-                      ),
-                      borderSide: BorderSide(
-                        color: isErrorState ? Colors.red : Colors.transparent,
-                        width: isErrorState ? 1.5 : 0,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(
-                        (12 * res.scale).toDouble(),
-                      ),
-                      borderSide: BorderSide(
-                        color:
-                            isErrorState ? Colors.red : const Color(0xFF2563EB),
-                        width: 1.5,
-                      ),
-                    ),
+                    onChanged: (val) {
+                      if (_apiErrorText != null) {
+                        setState(() => _apiErrorText = null);
+                      }
+                      _validateRealTime(val);
+                    },
                   ),
-                  onChanged: (val) {
-                    if (_apiErrorText != null) {
-                      setState(() => _apiErrorText = null);
-                    }
-                    _validateRealTime(val);
-                  },
                 ),
-              ),
-              SizedBox(height: (12 * res.scale).toDouble()),
-              Text(
-                instructionText,
-                style: TextStyle(
-                  color: isErrorState ? Colors.red : const Color(0xFF94A3B8),
-                  fontSize: (12 * res.scale).toDouble(),
+                SizedBox(height: (12 * res.scale).toDouble()),
+                Text(
+                  instructionText,
+                  style: TextStyle(
+                    color: isErrorState ? Colors.red : const Color(0xFF94A3B8),
+                    fontSize: (12 * res.scale).toDouble(),
+                  ),
                 ),
-              ),
-              const Spacer(),
-              SizedBox(
-                width: double.infinity,
-                height: (55 * res.scale).toDouble(),
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _handleSave,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2563EB),
-                    elevation: 2,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        (16 * res.scale).toDouble(),
+                SizedBox(height: (32 * res.scale).toDouble()),
+                SizedBox(
+                  width: double.infinity,
+                  height: (55 * res.scale).toDouble(),
+                  child: ElevatedButton(
+                    onPressed: _isLoading ? null : _handleSave,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF2563EB),
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          (16 * res.scale).toDouble(),
+                        ),
                       ),
                     ),
+                    child:
+                        _isLoading
+                            ? SizedBox(
+                              height: (20 * res.scale).toDouble(),
+                              width: (20 * res.scale).toDouble(),
+                              child: const CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                            : Text(
+                              'Save Changes',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: (16 * res.scale).toDouble(),
+                              ),
+                            ),
                   ),
-                  child:
-                      _isLoading
-                          ? SizedBox(
-                            height: (20 * res.scale).toDouble(),
-                            width: (20 * res.scale).toDouble(),
-                            child: const CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          )
-                          : Text(
-                            'Save Changes',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: (16 * res.scale).toDouble(),
-                            ),
-                          ),
                 ),
-              ),
-              SizedBox(height: (20 * res.scale).toDouble()),
-            ],
+              ],
+            ),
           ),
         ),
       ),

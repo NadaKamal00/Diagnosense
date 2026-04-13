@@ -200,7 +200,6 @@ class _ViewReportDetailsScreenState extends State<ViewReportDetailsScreen> {
                   BoxShadow(
                     color: Colors.black.withOpacity(0.25),
                     blurRadius: 4 * res.scale,
-                    // offset: Offset(0, 5 * res.scale),
                   ),
                 ],
               ),

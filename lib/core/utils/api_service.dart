@@ -110,7 +110,9 @@ class ApiService {
       final token = response.data['data']?['token']?.toString() ?? "";
       if (token.isNotEmpty) {
         await prefs.setString('auth_token', token);
-        print("API Debug: Saved Token to SharedPreferences: ${token.substring(0, 5)}...");
+        print(
+          "API Debug: Saved Token to SharedPreferences: ${token.substring(0, 5)}...",
+        );
       }
 
       // --- Save User Info (Parsing 'data' -> 'user' structure) ---
@@ -120,13 +122,17 @@ class ApiService {
         final email = userData['email']?.toString() ?? "";
         final phone = userData['phone']?.toString() ?? "";
 
-        print("API Debug: Saving to SharedPreferences -> name: $name, email: $email, phone: $phone");
+        print(
+          "API Debug: Saving to SharedPreferences -> name: $name, email: $email, phone: $phone",
+        );
         await prefs.setString('user_name', name);
         await prefs.setString('user_email', email);
         await prefs.setString('user_phone', phone);
 
         final savedName = prefs.getString('user_name');
-        print("API Debug: Verification after save -> key: 'user_name', value in prefs: $savedName");
+        print(
+          "API Debug: Verification after save -> key: 'user_name', value in prefs: $savedName",
+        );
       }
     }
 
@@ -467,22 +473,30 @@ class ApiService {
       if (response.data is Map<String, dynamic>) {
         final result = Map<String, dynamic>.from(response.data);
         if (result['success'] == true) {
-          print('DEBUG: [ProfileAPI] Success! Attempting to persist updated info...');
-          print('DEBUG: [ProfileAPI] Data to save: name: $name, email: $email, phone: $phone');
-          
+          print(
+            'DEBUG: [ProfileAPI] Success! Attempting to persist updated info...',
+          );
+          print(
+            'DEBUG: [ProfileAPI] Data to save: name: $name, email: $email, phone: $phone',
+          );
+
           await prefs.setString('user_name', name);
           await prefs.setString('user_email', email);
           await prefs.setString('user_phone', phone);
-          
+
           final verifyName = prefs.getString('user_name');
-          print('DEBUG: [ProfileAPI] Verification check after setString -> user_name: $verifyName');
+          print(
+            'DEBUG: [ProfileAPI] Verification check after setString -> user_name: $verifyName',
+          );
         }
         return result;
       }
 
       return {'success': false, 'message': 'Invalid response from server.'};
     } on DioException catch (e) {
-      print('DEBUG: [ProfileAPI] DioException: ${e.response?.statusCode} | ${e.response?.data}');
+      print(
+        'DEBUG: [ProfileAPI] DioException: ${e.response?.statusCode} | ${e.response?.data}',
+      );
       if (e.response?.data is Map<String, dynamic>) {
         return Map<String, dynamic>.from(e.response!.data);
       }
@@ -490,6 +504,65 @@ class ApiService {
     } catch (e) {
       print('DEBUG: [ProfileAPI] CATCH: $e');
       return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Fetches the patient's medical history.
+  /// Endpoint: GET /api/patient/medical-history
+  Future<Map<String, dynamic>> getMedicalHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
+
+    try {
+      final response = await get(
+        '/api/patient/medical-history',
+        options: Options(
+          headers: {if (token != null) 'Authorization': 'Bearer $token'},
+        ),
+      );
+
+      if (response.data is Map<String, dynamic>) {
+        final Map<String, dynamic> responseData =
+            Map<String, dynamic>.from(response.data);
+        if (response.statusCode == 200) {
+          responseData['success'] = true;
+        }
+        return responseData;
+      }
+      return {
+        'success': false,
+        'message': 'Invalid response format',
+        'data': null,
+      };
+    } catch (e) {
+      return {'success': false, 'message': e.toString(), 'data': null};
+    }
+  }
+
+  /// Fetches the patient's lab reports.
+  /// Endpoint: GET /api/patient/lab-reports
+  Future<Map<String, dynamic>> getLabReports() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
+
+    try {
+      final response = await get(
+        '/api/patient/lab-reports',
+        options: Options(
+          headers: {if (token != null) 'Authorization': 'Bearer $token'},
+        ),
+      );
+
+      if (response.data is Map<String, dynamic>) {
+        return Map<String, dynamic>.from(response.data);
+      }
+      return {
+        'success': false,
+        'message': 'Invalid response format',
+        'data': null,
+      };
+    } catch (e) {
+      return {'success': false, 'message': e.toString(), 'data': null};
     }
   }
 }

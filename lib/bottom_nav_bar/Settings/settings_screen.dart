@@ -8,6 +8,7 @@ import 'profile/profile.dart';
 import 'language.dart';
 import 'privacy.dart';
 import 'support.dart';
+import '../Home/home_shimmer.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -22,6 +23,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String? _userEmail;
   bool _notificationsEnabled = true;
   bool _isDarkMode = false;
+  bool _isProfileLoading = true;
 
   @override
   void initState() {
@@ -30,11 +32,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _loadUserData() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _userName = prefs.getString('user_name');
-      _userEmail = prefs.getString('user_email');
-    });
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (mounted) {
+        setState(() {
+          _userName = prefs.getString('user_name');
+          _userEmail = prefs.getString('user_email');
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading user data in Settings: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isProfileLoading = false;
+        });
+      }
+    }
   }
 
   Future<void> _handleLogout() async {
@@ -248,6 +262,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     double scale,
     bool isTablet,
   ) {
+    if (_isProfileLoading) {
+      return HomeShimmer.buildProfileShimmer(scale: scale, isTablet: isTablet);
+    }
     return GestureDetector(
       onTap: () async {
         await Navigator.of(
@@ -281,7 +298,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _userName ?? 'Loading...',
+                    _userName ?? 'Guest Patient',
                     style: TextStyle(
                       fontSize: 17 * scale,
                       fontWeight: FontWeight.bold,
@@ -289,7 +306,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
                   Text(
-                    _userEmail ?? 'Loading...',
+                    _userEmail ?? 'No email provided',
                     style: TextStyle(
                       fontSize: 13 * scale,
                       color: const Color(0xFF8A94A6),

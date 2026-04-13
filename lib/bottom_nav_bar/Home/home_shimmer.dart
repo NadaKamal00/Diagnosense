@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+import '../../utils/responsive_helper.dart';
 
 class HomeShimmer {
   static Widget buildFullHomeShimmer(BuildContext context, double scale) {
@@ -991,6 +992,415 @@ class HomeShimmer {
           ],
         );
       },
+    );
+  }
+
+  static Widget buildProfileShimmer({required double scale, required bool isTablet}) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: isTablet ? 24 * scale : 18 * scale,
+        vertical: isTablet ? 24 * scale : 18 * scale,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20 * scale),
+        border: Border.all(color: const Color(0xFFE5E7EB), width: 0.5 * scale),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10 * scale,
+            offset: Offset(0, 4 * scale),
+          ),
+        ],
+      ),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey[300]!,
+        highlightColor: Colors.grey[100]!,
+        child: Row(
+          children: [
+            SizedBox(width: 15 * scale),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 140 * scale,
+                    height: 16 * scale,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4 * scale),
+                    ),
+                  ),
+                  SizedBox(height: 8 * scale),
+                  Container(
+                    width: 180 * scale,
+                    height: 12 * scale,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4 * scale),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 16 * scale,
+              height: 16 * scale,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(4 * scale),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static Widget buildProfileRowShimmer(Responsive res) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: (16 * res.scale).toDouble(),
+        vertical: (16 * res.scale).toDouble(),
+      ),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey[300]!,
+        highlightColor: Colors.grey[100]!,
+        child: Row(
+          children: [
+            Container(
+              width: (42 * res.scale).toDouble(),
+              height: (42 * res.scale).toDouble(),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular((12 * res.scale).toDouble()),
+              ),
+            ),
+            SizedBox(width: (16 * res.scale).toDouble()),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: (60 * res.scale).toDouble(),
+                    height: (10 * res.scale).toDouble(),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular((2 * res.scale).toDouble()),
+                    ),
+                  ),
+                  SizedBox(height: (8 * res.scale).toDouble()),
+                  Container(
+                    width: (150 * res.scale).toDouble(),
+                    height: (16 * res.scale).toDouble(),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular((4 * res.scale).toDouble()),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: (14 * res.scale).toDouble(),
+              height: (14 * res.scale).toDouble(),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static Widget buildProfileShimmerList(Responsive res, {int count = 3}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular((20 * res.scale).toDouble()),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: (20 * res.scale).toDouble(),
+            offset: Offset(0, (10 * res.scale).toDouble()),
+          ),
+        ],
+      ),
+      child: Column(
+        children: List.generate(count, (index) {
+          return Column(
+            children: [
+              buildProfileRowShimmer(res),
+              if (index < count - 1)
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: (16 * res.scale).toDouble(),
+                  ),
+                  child: Divider(
+                    height: 1,
+                    thickness: (0.8 * res.scale).toDouble(),
+                    color: Colors.grey.withOpacity(0.2),
+                  ),
+                ),
+            ],
+          );
+        }),
+      ),
+    );
+  }
+
+  static Widget buildLabCardShimmer({required double scale}) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 15 * scale),
+      padding: EdgeInsets.all(16 * scale),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14 * scale),
+        border: Border.all(
+          color: const Color(0xFFCDCDCD),
+          width: .5 * scale,
+        ),
+      ),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey[300]!,
+        highlightColor: Colors.grey[100]!,
+        child: Row(
+          children: [
+            Container(
+              width: 46 * scale,
+              height: 46 * scale,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+            ),
+            SizedBox(width: 15 * scale),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 140 * scale,
+                    height: 13 * scale,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4 * scale),
+                    ),
+                  ),
+                  SizedBox(height: 8 * scale),
+                  Container(
+                    width: 100 * scale,
+                    height: 12 * scale,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4 * scale),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(width: 10 * scale),
+            Container(
+              width: 50 * scale,
+              height: 34 * scale,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(6 * scale),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static Widget buildLabListShimmer({required double scale, int count = 4}) {
+    return ListView.builder(
+      padding: EdgeInsets.zero,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: count,
+      itemBuilder: (context, index) => buildLabCardShimmer(scale: scale),
+    );
+  }
+
+  static Widget buildRadiologyCardShimmer({required double scale}) {
+    return Container(
+      padding: EdgeInsets.all(16 * scale),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14 * scale),
+        border: Border.all(
+          color: const Color(0xFFCDCDCD),
+          width: .5 * scale,
+        ),
+      ),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey[300]!,
+        highlightColor: Colors.grey[100]!,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 44 * scale,
+              height: 40 * scale,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8 * scale),
+              ),
+            ),
+            SizedBox(width: 14 * scale),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        width: 50 * scale,
+                        height: 20 * scale,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(6 * scale),
+                        ),
+                      ),
+                      Container(
+                        width: 40 * scale,
+                        height: 11 * scale,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4 * scale),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8 * scale),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        width: 150 * scale,
+                        height: 13 * scale,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4 * scale),
+                        ),
+                      ),
+                      Container(
+                        width: 30 * scale,
+                        height: 12 * scale,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4 * scale),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8 * scale),
+                  Container(
+                    width: 100 * scale,
+                    height: 11 * scale,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4 * scale),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static Widget buildRadiologyListShimmer({required double scale, int count = 4}) {
+    return ListView.builder(
+      padding: EdgeInsets.zero,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: count,
+      itemBuilder: (context, index) => Padding(
+        padding: EdgeInsets.only(bottom: 16 * scale),
+        child: buildRadiologyCardShimmer(scale: scale),
+      ),
+    );
+  }
+
+  static Widget buildHistoryCardShimmer({required double scale}) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 15 * scale),
+      padding: EdgeInsets.all(16 * scale),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14 * scale),
+        border: Border.all(
+          color: const Color(0xFFCDCDCD),
+          width: .5 * scale,
+        ),
+      ),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey[300]!,
+        highlightColor: Colors.grey[100]!,
+        child: Row(
+          children: [
+            Container(
+              width: 50 * scale,
+              height: 37 * scale,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(6 * scale),
+              ),
+            ),
+            SizedBox(width: 15 * scale),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 140 * scale,
+                    height: 13 * scale,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4 * scale),
+                    ),
+                  ),
+                  SizedBox(height: 8 * scale),
+                  Container(
+                    width: 100 * scale,
+                    height: 12 * scale,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4 * scale),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 22 * scale,
+              height: 22 * scale,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static Widget buildHistoryListShimmer({required double scale, int count = 4}) {
+    return ListView.builder(
+      padding: EdgeInsets.zero,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: count,
+      itemBuilder: (context, index) => buildHistoryCardShimmer(scale: scale),
     );
   }
 }

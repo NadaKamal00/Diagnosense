@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:application/utils/responsive_helper.dart';
 import '../../../shared/widgets/custom_search_bar.dart';
+import '../../../core/utils/api_service.dart';
 
 class MedicalHistoryScreen extends StatefulWidget {
   const MedicalHistoryScreen({super.key});
@@ -10,47 +11,42 @@ class MedicalHistoryScreen extends StatefulWidget {
 }
 
 class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
-  final List<Map<String, dynamic>> allHistory = [
-    // {
-    //   'title': 'Hospital Discharge Summary.pdf',
-    //   'date': 'Nov 12, 2023',
-    //   'size': '2.4 MB',
-    //   'type': 'PDF',
-    //   'typeColor': const Color(0xFFFFE9E7),
-    //   'textColor': const Color(0xFFFF3F3F),
-    // },
-    // {
-    //   'title': 'Type 2 Diabetes Diagnosis.pdf',
-    //   'date': 'Jan 10, 2022',
-    //   'size': '1.1 MB',
-    //   'type': 'PDF',
-    //   'typeColor': const Color(0xFFFFEBEE),
-    //   'textColor': const Color(0xFFEF5350),
-    // },
-    {
-      'title': 'Allergy Panel Results.pdf',
-      'date': 'Mar 20, 2018',
-      'size': '3.2 MB',
-      'type': 'PDF',
-      'typeColor': const Color(0xFFFFEBEE),
-      'textColor': const Color(0xFFEF5350),
-    },
-    {
-      'title': 'Knee Surgery Operative Report.doc',
-      'date': 'Aug 15, 2019',
-      'size': '850 KB',
-      'type': 'DOC',
-      'typeColor': const Color(0xFFD9D9D9),
-      'textColor': const Color(0xFF818181),
-    },
-  ];
-
+  List<Map<String, dynamic>> allHistory = [];
   List<Map<String, dynamic>> filteredHistory = [];
+  bool isLoading = true;
+  String? errorMessage;
 
   @override
   void initState() {
     super.initState();
-    filteredHistory = allHistory;
+    _fetchHistory();
+  }
+
+  Future<void> _fetchHistory() async {
+    try {
+      final response = await ApiService().getMedicalHistory();
+      print('API Response: $response'); // Debug print
+      if (response['data'] != null || response['success'] == true) {
+        final List<dynamic> data = response['data'];
+        final List<Map<String, dynamic>> list =
+            data.map((item) => Map<String, dynamic>.from(item)).toList();
+        setState(() {
+          allHistory = list;
+          filteredHistory = list;
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          errorMessage = response['message'] ?? "Failed to load medical history";
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = "An error occurred: $e";
+        isLoading = false;
+      });
+    }
   }
 
   void _runSearch(String enteredKeyword) {
@@ -61,7 +57,7 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
       results =
           allHistory
               .where(
-                (item) => item['title'].toLowerCase().contains(
+                (item) => item['name'].toString().toLowerCase().contains(
                   enteredKeyword.toLowerCase(),
                 ),
               )
@@ -192,7 +188,19 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
 
           Expanded(
             child:
-                filteredHistory.isNotEmpty
+                isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : errorMessage != null
+                    ? Center(
+                      child: Text(
+                        errorMessage!,
+                        style: TextStyle(
+                          fontSize: 14 * res.scale,
+                          color: Colors.red,
+                        ),
+                      ),
+                    )
+                    : filteredHistory.isNotEmpty
                     ? ListView.builder(
                       padding: EdgeInsets.symmetric(
                         horizontal: (res.isTablet ? 24 : 20) * res.scale,
@@ -220,6 +228,25 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
   }
 
   Widget _buildHistoryCard(Map<String, dynamic> item, double scaleFactor) {
+    final String title = item['name'] ?? "";
+    final String date = item['date'] ?? "";
+    final String size = item['size'] ?? "";
+    final String extension = (item['extension'] ?? "").toString().toUpperCase();
+
+    Color typeColor;
+    Color textColor;
+
+    if (extension == 'PDF') {
+      typeColor = const Color(0xFFFFEBEE);
+      textColor = const Color(0xFFEF5350);
+    } else if (extension == 'DOC') {
+      typeColor = const Color(0xFFE0E0E0);
+      textColor = const Color(0xFF818181);
+    } else {
+      typeColor = const Color(0xFFF0F0F0);
+      textColor = const Color(0xFF666666);
+    }
+
     return Container(
       margin: EdgeInsets.only(bottom: 15 * scaleFactor),
       decoration: BoxDecoration(
@@ -245,7 +272,7 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
               (details) => _showOptions(
                 context,
                 details.globalPosition,
-                item['title'],
+                title,
                 scaleFactor,
               ),
           child: Padding(
@@ -257,14 +284,15 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
                   width: 50 * scaleFactor,
                   height: 37 * scaleFactor,
                   decoration: BoxDecoration(
-                    color: item['typeColor'],
+                    color: typeColor,
                     borderRadius: BorderRadius.circular(6 * scaleFactor),
+                    border: Border.all(color: textColor, width: 1.0),
                   ),
                   alignment: Alignment.center,
                   child: Text(
-                    item['type'],
+                    extension,
                     style: TextStyle(
-                      color: item['textColor'],
+                      color: textColor,
                       fontWeight: FontWeight.w600,
                       fontSize: 12 * scaleFactor,
                     ),
@@ -279,7 +307,7 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        item['title'],
+                        title,
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 13 * scaleFactor,
@@ -289,7 +317,7 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
                       ),
                       SizedBox(height: 4 * scaleFactor),
                       Text(
-                        "${item['date']} • ${item['size']}",
+                        "$date • $size",
                         style: TextStyle(
                           color: const Color(0xFF8A94A6),
                           fontSize: 12 * scaleFactor,
