@@ -157,11 +157,12 @@ class _LabResultsScreenState extends State<LabResultsScreen> {
                       onView: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (_) => ViewReportDetailsScreen(
-                              name: report['name'] ?? 'Unknown Report',
-                              date: report['date'] ?? '',
-                              viewUrl: report['view_url'] ?? '',
-                            ),
+                            builder:
+                                (_) => ViewReportDetailsScreen(
+                                  name: report['name'] ?? 'Unknown Report',
+                                  date: report['date'] ?? '',
+                                  viewUrl: report['view_url'] ?? '',
+                                ),
                           ),
                         );
                       },

@@ -37,7 +37,8 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
         });
       } else {
         setState(() {
-          errorMessage = response['message'] ?? "Failed to load medical history";
+          errorMessage =
+              response['message'] ?? "Failed to load medical history";
           isLoading = false;
         });
       }
@@ -286,7 +287,7 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
                   decoration: BoxDecoration(
                     color: typeColor,
                     borderRadius: BorderRadius.circular(6 * scaleFactor),
-                    border: Border.all(color: textColor, width: 1.0),
+                    border: Border.all(color: textColor, width: .5),
                   ),
                   alignment: Alignment.center,
                   child: Text(
@@ -327,13 +328,6 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
                     ],
                   ),
                 ),
-
-                /// More Options Icon
-                Icon(
-                  Icons.more_vert,
-                  color: const Color(0xFF8A94A6),
-                  size: 22 * scaleFactor,
-                ),
               ],
             ),
           ),
@@ -342,5 +336,3 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
     );
   }
 }
-
-// TODO: لون البوردر بتاع كل ايطون ضيفيه
