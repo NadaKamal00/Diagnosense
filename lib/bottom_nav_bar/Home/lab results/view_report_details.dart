@@ -1,13 +1,22 @@
 import 'package:application/utils/responsive_helper.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 
 class ViewReportDetailsScreen extends StatefulWidget {
-  const ViewReportDetailsScreen({super.key});
+  final String name;
+  final String date;
+  final String viewUrl;
+
+  const ViewReportDetailsScreen({
+    super.key,
+    required this.name,
+    required this.date,
+    required this.viewUrl,
+  });
 
   @override
   State<ViewReportDetailsScreen> createState() =>
@@ -15,30 +24,28 @@ class ViewReportDetailsScreen extends StatefulWidget {
 }
 
 class _ViewReportDetailsScreenState extends State<ViewReportDetailsScreen> {
-  final String assetPath = "assets/pdf/1774300807_oyoU3.pdf";
   String localPath = "";
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _prepareFile();
+    _downloadPdf();
   }
 
-  Future<void> _prepareFile() async {
+  Future<void> _downloadPdf() async {
     try {
       final dir = await getTemporaryDirectory();
       final file = File("${dir.path}/temp_report.pdf");
-      final data = await rootBundle.load(assetPath);
-      final bytes = data.buffer.asUint8List();
-      await file.writeAsBytes(bytes, flush: true);
+
+      await Dio().download(widget.viewUrl, file.path);
 
       setState(() {
         localPath = file.path;
         isLoading = false;
       });
     } catch (e) {
-      debugPrint("Error: $e");
+      debugPrint("PDF download error: $e");
       setState(() => isLoading = false);
     }
   }
@@ -136,7 +143,7 @@ class _ViewReportDetailsScreenState extends State<ViewReportDetailsScreen> {
                   children: [
                     Expanded(
                       child: Text(
-                        'Complete Blood Count (CBC)',
+                        widget.name,
                         style: TextStyle(
                           fontSize: 15 * res.scale,
                           fontWeight: FontWeight.w600,
@@ -170,7 +177,7 @@ class _ViewReportDetailsScreenState extends State<ViewReportDetailsScreen> {
                 ),
                 SizedBox(height: 4 * res.scale),
                 Text(
-                  'Nov 15, 2023 • Hematology',
+                  widget.date,
                   style: TextStyle(
                     color: const Color(0xFF939393),
                     fontSize: 12 * res.scale,
