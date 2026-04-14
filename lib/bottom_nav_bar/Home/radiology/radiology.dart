@@ -3,6 +3,7 @@ import 'package:application/utils/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../shared/widgets/custom_search_bar.dart';
+import '../../../core/utils/api_service.dart';
 
 class RadiologyScreen extends StatefulWidget {
   const RadiologyScreen({super.key});
@@ -12,28 +13,45 @@ class RadiologyScreen extends StatefulWidget {
 }
 
 class _RadiologyScreenState extends State<RadiologyScreen> {
-  final List<Map<String, dynamic>> allRadiology = [
-    {
-      'type': 'X-Ray',
-      'title': 'Chest X-Ray Report.pdf',
-      'date': 'Oct 05, 2023',
-      'ref': 'Dr.wilson . City Imaging Center',
-    },
-    {
-      'type': 'MRI',
-      'title': 'MRI Knee Report.pdf',
-      'date': 'Apr 12, 2019',
-      'ref': 'Dr.wilson . Ortho Specialty Clinic',
-    },
-  ];
-
+  List<Map<String, dynamic>> allRadiology = [];
   List<Map<String, dynamic>> filteredRadiology = [];
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    filteredRadiology = allRadiology;
+    _fetchRadiologyData();
   }
+
+  Future<void> _fetchRadiologyData() async {
+    try {
+      final response = await ApiService().getRadiologyReports();
+      debugPrint("DEBUG: [RadiologyScreen] Raw Response: $response");
+
+      if (response['success'] == true && response['data'] != null) {
+        final List<dynamic> dataList = response['data'];
+        debugPrint(
+          "DEBUG: [RadiologyScreen] Data List found, length: ${dataList.length}",
+        );
+
+        setState(() {
+          allRadiology =
+              dataList
+                  .map((item) => Map<String, dynamic>.from(item))
+                  .toList();
+          filteredRadiology = List.from(allRadiology);
+          isLoading = false;
+        });
+      } else {
+        debugPrint("DEBUG: [RadiologyScreen] Success false or data null");
+        setState(() => isLoading = false);
+      }
+    } catch (e) {
+      debugPrint("DEBUG: [RadiologyScreen] Error: $e");
+      setState(() => isLoading = false);
+    }
+  }
+
 
   void _runSearch(String enteredKeyword) {
     List<Map<String, dynamic>> results = [];
@@ -43,7 +61,7 @@ class _RadiologyScreenState extends State<RadiologyScreen> {
       results =
           allRadiology
               .where(
-                (item) => item['title'].toLowerCase().contains(
+                (item) => (item['name'] ?? '').toLowerCase().contains(
                   enteredKeyword.toLowerCase(),
                 ),
               )
@@ -106,7 +124,9 @@ class _RadiologyScreenState extends State<RadiologyScreen> {
           ),
           Expanded(
             child:
-                filteredRadiology.isNotEmpty
+                isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : filteredRadiology.isNotEmpty
                     ? ListView.builder(
                       padding: EdgeInsets.symmetric(
                         horizontal: ((res.isTablet ? 24 : 20) * res.scale)
@@ -122,15 +142,17 @@ class _RadiologyScreenState extends State<RadiologyScreen> {
                             child: _buildRadiologyCard(
                               context,
                               res.scale.toDouble(),
-                              type: filteredRadiology[index]['type'],
-                              title: filteredRadiology[index]['title'],
-                              date: filteredRadiology[index]['date'],
-                              ref: filteredRadiology[index]['ref'],
+                              type: filteredRadiology[index]['type'] ?? '',
+                              title: filteredRadiology[index]['name'] ?? '',
+                              date: filteredRadiology[index]['date'] ?? '',
+                              ref: filteredRadiology[index]['doctor'] ?? '',
                               onTap: () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder:
-                                        (_) => const RadiologyDetailsScreen(),
+                                        (_) => RadiologyDetailsScreen(
+                                          report: filteredRadiology[index],
+                                        ),
                                   ),
                                 );
                               },

@@ -2,6 +2,7 @@ import 'package:application/bottom_nav_bar/Home/lab%20results/view_report_detail
 import 'package:application/core/utils/api_service.dart';
 import 'package:application/utils/responsive_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../shared/widgets/custom_search_bar.dart';
 
 class LabResultsScreen extends StatefulWidget {
@@ -153,7 +154,6 @@ class _LabResultsScreenState extends State<LabResultsScreen> {
                           isEven
                               ? const Color(0xFFDCFCE7)
                               : const Color(0xFFFFEDD5),
-                      icon: Icons.description_outlined,
                       onView: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
@@ -184,7 +184,6 @@ class _LabResultsScreenState extends State<LabResultsScreen> {
     required String doctor,
     required String date,
     required Color iconColor,
-    required IconData icon,
     required VoidCallback onView,
   }) {
     return Container(
@@ -211,13 +210,16 @@ class _LabResultsScreenState extends State<LabResultsScreen> {
           Container(
             padding: EdgeInsets.all(12 * scaleFactor),
             decoration: BoxDecoration(color: iconColor, shape: BoxShape.circle),
-            child: Icon(
-              icon,
-              color:
-                  iconColor == const Color(0xFFDCFCE7)
-                      ? const Color(0xFF34A853)
-                      : const Color(0xFFFF7B00),
-              size: 22 * scaleFactor,
+            child: SvgPicture.asset(
+              'assets/Icons/lap-reports.svg',
+              colorFilter: ColorFilter.mode(
+                iconColor == const Color(0xFFDCFCE7)
+                    ? const Color(0xFF34A853)
+                    : const Color(0xFFFF7B00),
+                BlendMode.srcIn,
+              ),
+              width: 22 * scaleFactor,
+              height: 22 * scaleFactor,
             ),
           ),
 

@@ -5,26 +5,110 @@ import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:dio/dio.dart';
 
 class RadiologyDetailsScreen extends StatefulWidget {
-  const RadiologyDetailsScreen({super.key});
+  final Map<String, dynamic>? report;
+  const RadiologyDetailsScreen({super.key, this.report});
 
   @override
   State<RadiologyDetailsScreen> createState() => _RadiologyDetailsScreenState();
 }
 
 class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
-  final String assetPath = "assets/pdf/report.pdf";
   String localPath = "";
   bool isLoading = true;
+  bool isImage = false;
+  String? openUrl;
 
   @override
   void initState() {
     super.initState();
-    _prepareAssetPdf();
+    openUrl = widget.report?['open_url'];
+    _loadReport();
   }
 
+  Future<void> _loadReport() async {
+    if (openUrl == null || openUrl!.isEmpty) {
+      debugPrint("DEBUG: [RadiologyDetails] No open_url found, using fallback.");
+      await _prepareAssetPdf();
+      return;
+    }
+
+    final String url = openUrl!.toLowerCase();
+    if (url.endsWith('.pdf')) {
+      debugPrint("DEBUG: [RadiologyDetails] Detected PDF. Downloading...");
+      await _downloadRemotePdf(openUrl!);
+    } else if (url.endsWith('.png') ||
+        url.endsWith('.jpg') ||
+        url.endsWith('.jpeg')) {
+      debugPrint(
+        "DEBUG: [RadiologyDetails] Detected Image. Downloading for local use...",
+      );
+      await _downloadRemoteImage(openUrl!);
+    } else {
+      debugPrint(
+        "DEBUG: [RadiologyDetails] Unknown format, attempting PDF download.",
+      );
+      await _downloadRemotePdf(openUrl!);
+    }
+  }
+
+  Future<void> _downloadRemotePdf(String url) async {
+    try {
+      final dir = await getTemporaryDirectory();
+      final String fileName =
+          "radiology_${DateTime.now().millisecondsSinceEpoch}.pdf";
+      final String path = "${dir.path}/$fileName";
+
+      await Dio().download(url, path);
+
+      if (mounted) {
+        setState(() {
+          localPath = path;
+          isImage = false;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      debugPrint("ERROR: [RadiologyDetails] PDF download failed: $e");
+      if (mounted) {
+        await _prepareAssetPdf(); // Fallback to asset
+      }
+    }
+  }
+
+  Future<void> _downloadRemoteImage(String url) async {
+    try {
+      final dir = await getTemporaryDirectory();
+      final String ext = url.toLowerCase().contains('.png') ? '.png' : '.jpg';
+      final String fileName =
+          "radiology_${DateTime.now().millisecondsSinceEpoch}$ext";
+      final String path = "${dir.path}/$fileName";
+
+      await Dio().download(url, path);
+
+      if (mounted) {
+        setState(() {
+          localPath = path;
+          isImage = true;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      debugPrint("ERROR: [RadiologyDetails] Image download failed: $e");
+      if (mounted) {
+        setState(() {
+          isImage = true;
+          isLoading = false;
+        });
+      }
+    }
+  }
+
+
   Future<void> _prepareAssetPdf() async {
+    const String assetPath = "assets/pdf/report.pdf";
     try {
       final dir = await getTemporaryDirectory();
       final file = File("${dir.path}/temp_asset_report.pdf");
@@ -34,15 +118,19 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
 
       setState(() {
         localPath = file.path;
+        isImage = false;
         isLoading = false;
       });
     } catch (e) {
+      debugPrint("ERROR: [RadiologyDetails] Asset fallback failed: $e");
       setState(() => isLoading = false);
     }
   }
 
   Future<void> _downloadAndSaveFile() async {
     try {
+      if (localPath.isEmpty) return;
+
       Directory? directory;
       if (Platform.isAndroid) {
         directory = Directory('/storage/emulated/0/Download');
@@ -53,8 +141,9 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
         directory = await getApplicationDocumentsDirectory();
       }
 
+      final String extension = isImage ? ".jpg" : ".pdf";
       final String savePath =
-          "${directory!.path}/Radiology_Report_${DateTime.now().millisecondsSinceEpoch}.pdf";
+          "${directory!.path}/Radiology_Report_${DateTime.now().millisecondsSinceEpoch}$extension";
       final File saveFile = File(savePath);
 
       final bytes = await File(localPath).readAsBytes();
@@ -75,9 +164,13 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
 
   Future<void> _shareFile() async {
     if (localPath.isNotEmpty) {
+      final String extension = isImage ? ".jpg" : ".pdf";
       await Share.shareXFiles([
-        XFile(localPath, name: 'Radiology_Report.pdf'),
+        XFile(localPath, name: 'Radiology_Report$extension'),
       ], text: 'Sharing my Radiology Report');
+    } else if (isImage && openUrl != null) {
+      // If we don't have localPath for image yet, share URL
+      await Share.share('Radiology Report: $openUrl');
     }
   }
 
@@ -113,7 +206,7 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
           ),
         ),
         title: Text(
-          'Radiology Report',
+          widget.report?['name'] ?? 'Radiology Report',
           style: TextStyle(
             color: const Color(0xFF0E1A34),
             fontWeight: FontWeight.bold,
@@ -124,7 +217,7 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
       ),
       body: Column(
         children: [
-          // PDF Container
+          // Report Content Container
           Expanded(
             child: Container(
               margin: EdgeInsets.symmetric(
@@ -144,7 +237,6 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
                   BoxShadow(
                     color: Colors.black.withOpacity(0.25),
                     blurRadius: 4 * res.scale,
-                    // offset: Offset(0, 5 * res.scale),
                   ),
                 ],
               ),
@@ -153,6 +245,32 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
                 child:
                     isLoading
                         ? const Center(child: CircularProgressIndicator())
+                        : isImage && (localPath.isNotEmpty || openUrl != null)
+                        ? InteractiveViewer(
+                          child:
+                              localPath.isNotEmpty
+                                  ? Image.file(
+                                    File(localPath),
+                                    fit: BoxFit.contain,
+                                  )
+                                  : Image.network(
+                                    openUrl!,
+                                    fit: BoxFit.contain,
+                                    loadingBuilder: (context, child, progress) {
+                                      if (progress == null) return child;
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    },
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const Center(
+                                        child:
+                                            Text("Error loading image content"),
+                                      );
+                                    },
+                                  ),
+                        )
+
                         : localPath.isNotEmpty
                         ? PDFView(
                           filePath: localPath,
@@ -160,12 +278,12 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
                           autoSpacing: true,
                           pageSnap: true,
                         )
-                        : const Center(child: Text("File not found")),
+                        : const Center(child: Text("Report content not found")),
               ),
             ),
           ),
 
-          //  Save & Share Buttons
+          // Save & Share Buttons
           Padding(
             padding: EdgeInsets.fromLTRB(
               (res.isTablet ? 30 : 20) * res.scale,
@@ -177,7 +295,7 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
               children: [
                 Expanded(
                   child: _buildActionButton(
-                    label: 'Save PDF',
+                    label: isImage ? 'Save Image' : 'Save PDF',
                     icon: Icons.file_download_outlined,
                     isPrimary: false,
                     scale: res.scale,
@@ -192,7 +310,10 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
                     icon: Icons.share_outlined,
                     isPrimary: true,
                     scale: res.scale,
-                    onPressed: localPath.isNotEmpty ? _shareFile : null,
+                    onPressed:
+                        (localPath.isNotEmpty || openUrl != null)
+                            ? _shareFile
+                            : null,
                   ),
                 ),
               ],
@@ -241,3 +362,4 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
     );
   }
 }
+

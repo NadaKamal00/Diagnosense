@@ -565,4 +565,61 @@ class ApiService {
       return {'success': false, 'message': e.toString(), 'data': null};
     }
   }
+
+  /// Fetches the patient's radiology reports.
+  /// Endpoint: GET /api/patient/radiology-reports
+  Future<Map<String, dynamic>> getRadiologyReports() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
+
+    print('DEBUG: [RadiologyAPI] GET /api/patient/radiology-reports');
+    print('DEBUG: [RadiologyAPI] Token: ${token?.substring(0, 5)}...');
+
+    try {
+      final response = await get(
+        '/api/patient/radiology-reports',
+        options: Options(
+          headers: {
+            if (token != null) 'Authorization': 'Bearer $token',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      print('DEBUG: [RadiologyAPI] Status: ${response.statusCode}');
+
+      if (response.data is Map<String, dynamic>) {
+        final Map<String, dynamic> responseData =
+            Map<String, dynamic>.from(response.data);
+
+        // Normalize response: if the actual list is inside responseData['data']['data']
+        final nestedData = responseData['data'];
+        if (nestedData is Map &&
+            nestedData.containsKey('data') &&
+            nestedData['data'] is List) {
+          print('DEBUG: [RadiologyAPI] Found nested data list. Normalizing.');
+          return {
+            'success': responseData['success'] ?? (response.statusCode == 200),
+            'data': nestedData['data'],
+            'message': responseData['message'],
+          };
+        }
+
+        if (response.statusCode == 200) {
+          responseData['success'] = true;
+        }
+        return responseData;
+      }
+      return {
+        'success': false,
+        'message': 'Invalid response format',
+        'data': null,
+      };
+    } catch (e) {
+      print('DEBUG: [RadiologyAPI] CATCH: $e');
+      return {'success': false, 'message': e.toString(), 'data': null};
+    }
+  }
+
 }
