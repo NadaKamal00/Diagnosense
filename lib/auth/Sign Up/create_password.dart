@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:application/utils/responsive_helper.dart';
+import 'package:application/core/theme/app_colors.dart';
 import '../login_screen.dart';
 import '../../core/utils/api_service.dart';
 import '../../widgets/app_logo.dart';
@@ -37,7 +38,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
     final res = Responsive(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFF),
+      backgroundColor: AppColors.backgroundColor,
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: Stack(
@@ -50,7 +51,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                 icon: Icon(
                   Icons.arrow_back_ios,
                   size: 20 * res.scale,
-                  color: const Color(0xFF0E1A34),
+                  color: AppColors.primaryTextColor,
                 ),
               ),
             ),
@@ -72,11 +73,11 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                       vertical: 35 * res.scale,
                     ),
                     decoration: BoxDecoration(
-                      color: Color(0xFFF8FAFF),
+                      color: AppColors.backgroundColor,
                       borderRadius: BorderRadius.circular(29 * res.scale),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF3E3E3E).withOpacity(0.25),
+                          color: AppColors.shadowColor.withOpacity(0.25),
                           blurRadius: 53.7 * res.scale,
                           spreadRadius: -3 * res.scale,
                           offset: Offset(0, 10 * res.scale),
@@ -99,7 +100,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                           style: TextStyle(
                             fontSize: 24 * res.scale,
                             fontWeight: FontWeight.w700,
-                            color: const Color(0xFF0E1A34),
+                            color: AppColors.primaryTextColor,
                           ),
                         ),
 
@@ -125,7 +126,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                             style: TextStyle(
                               fontSize: 13 * res.scale,
                               fontWeight: FontWeight.w600,
-                              color: const Color(0xFF374151),
+                              color: AppColors.labelColor,
                             ),
                           ),
                         ),
@@ -159,8 +160,8 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                                 fontSize: 12 * res.scale,
                                 color:
                                     _passwordError != null
-                                        ? Colors.red
-                                        : const Color(0xFF8A94A6),
+                                        ? AppColors.errorColor
+                                        : AppColors.secondaryTextColor,
                               ),
                             ),
                           ),
@@ -176,7 +177,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                             style: TextStyle(
                               fontSize: 13 * res.scale,
                               fontWeight: FontWeight.w600,
-                              color: const Color(0xFF374151),
+                              color: AppColors.labelColor,
                             ),
                           ),
                         ),
@@ -210,8 +211,8 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                                 fontSize: 12 * res.scale,
                                 color:
                                     _confirmError != null
-                                        ? Colors.red
-                                        : const Color(0xFF8A94A6),
+                                        ? AppColors.errorColor
+                                        : AppColors.secondaryTextColor,
                               ),
                             ),
                           ),
@@ -258,7 +259,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
       decoration: InputDecoration(
         hintText: isObscured ? '••••••••' : '',
         hintStyle: TextStyle(
-          color: const Color(0xFF8A94A6),
+          color: AppColors.secondaryTextColor,
           fontSize: 15 * scale,
           fontWeight: FontWeight.w400,
         ),
@@ -268,12 +269,12 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
             isObscured
                 ? Icons.visibility_off_outlined
                 : Icons.visibility_outlined,
-            color: const Color(0xFF939393),
+            color: AppColors.mutedColor,
             size: 20 * scale,
           ),
         ),
         filled: true,
-        fillColor: const Color(0xFFF8FAFF),
+        fillColor: AppColors.backgroundColor,
         contentPadding: EdgeInsets.symmetric(
           horizontal: 20 * scale,
           vertical: 18 * scale,
@@ -281,14 +282,14 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12 * scale),
           borderSide: BorderSide(
-            color: hasError ? Colors.red : const Color(0xFFD1D5DB),
+            color: hasError ? AppColors.errorColor : AppColors.borderColor,
             width: hasError ? 1.5 : 1,
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12 * scale),
           borderSide: BorderSide(
-            color: hasError ? Colors.red : const Color(0xFF3B82F6),
+            color: hasError ? AppColors.errorColor : AppColors.accentColor,
             width: 2,
           ),
         ),
@@ -383,8 +384,8 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
           gradient: LinearGradient(
             colors:
                 _isLoading
-                    ? [const Color(0xFF93C5FD), const Color(0xFF60A5FA)]
-                    : const [Color(0xFF2563EB), Color(0xFF3B82F6)],
+                    ? [AppColors.primaryLight, AppColors.primaryMedium]
+                    : const [AppColors.primaryColor, AppColors.accentColor],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -392,7 +393,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
           boxShadow: [
             if (!_isLoading)
               BoxShadow(
-                color: const Color(0xFF2563EB).withOpacity(0.25),
+                color: AppColors.primaryColor.withOpacity(0.25),
                 blurRadius: 15 * scale,
                 offset: Offset(0, 6 * scale),
               ),
@@ -405,14 +406,14 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                     height: 24 * scale,
                     width: 24 * scale,
                     child: const CircularProgressIndicator(
-                      color: Colors.white,
+                      color: AppColors.white,
                       strokeWidth: 2.5,
                     ),
                   )
                   : Text(
                     'Next',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 16 * scale,
                     ),

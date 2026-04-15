@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:application/utils/responsive_helper.dart';
 import '../../../shared/widgets/custom_search_bar.dart';
 import '../../../core/utils/api_service.dart';
+import '../../../core/theme/app_colors.dart';
+import 'view_history.dart';
 
 class MedicalHistoryScreen extends StatefulWidget {
   const MedicalHistoryScreen({super.key});
@@ -69,80 +71,15 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
     });
   }
 
-  void _showOptions(
-    BuildContext context,
-    Offset tapPosition,
-    String title,
-    double scaleFactor,
-  ) async {
-    final RenderBox overlay =
-        Overlay.of(context).context.findRenderObject() as RenderBox;
-
-    final List<PopupMenuItem<String>> menuItems = [
-      PopupMenuItem(
-        value: 'preview',
-        child: Row(
-          children: [
-            Icon(
-              Icons.visibility_outlined,
-              size: 20 * scaleFactor,
-              color: const Color(0xFF3B82F6),
-            ),
-            SizedBox(width: 10 * scaleFactor),
-            Text(
-              "Preview",
-              style: TextStyle(
-                fontSize: 14 * scaleFactor,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-      PopupMenuItem(
-        value: 'download',
-        child: Row(
-          children: [
-            Icon(
-              Icons.file_download_outlined,
-              size: 20 * scaleFactor,
-              color: const Color(0xFF3B82F6),
-            ),
-            SizedBox(width: 10 * scaleFactor),
-            Text(
-              "Download",
-              style: TextStyle(
-                fontSize: 14 * scaleFactor,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    ];
-
-    await showMenu<String>(
-      context: context,
-      position: RelativeRect.fromRect(
-        tapPosition & const Size(40, 40),
-        Offset.zero & overlay.size,
-      ),
-      items: menuItems,
-      elevation: 8,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12 * scaleFactor),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     final res = Responsive(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FE),
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         elevation: 0,
         toolbarHeight: 56 * res.scale,
         leadingWidth: (res.isTablet ? 90 : 70) * res.scale,
@@ -151,14 +88,14 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
           alignment: Alignment.centerLeft,
           child: ClipOval(
             child: Material(
-              color: Colors.transparent,
+              color: AppColors.transparent,
               child: InkWell(
                 onTap: () => Navigator.pop(context),
                 child: Padding(
                   padding: EdgeInsets.all(8 * res.scale),
                   child: Icon(
                     Icons.arrow_back_ios,
-                    color: const Color(0xFF0E1A34),
+                    color: AppColors.primaryTextColor,
                     size: 20 * res.scale,
                   ),
                 ),
@@ -169,7 +106,7 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
         title: Text(
           'Medical History',
           style: TextStyle(
-            color: const Color(0xFF0E1A34),
+            color: AppColors.primaryTextColor,
             fontWeight: FontWeight.w600,
             fontSize: 18 * res.scale,
           ),
@@ -197,7 +134,7 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
                         errorMessage!,
                         style: TextStyle(
                           fontSize: 14 * res.scale,
-                          color: Colors.red,
+                          color: AppColors.errorColor,
                         ),
                       ),
                     )
@@ -218,7 +155,7 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
                         "No history found",
                         style: TextStyle(
                           fontSize: 14 * res.scale,
-                          color: Colors.grey,
+                          color: AppColors.hintGrey,
                         ),
                       ),
                     ),
@@ -238,44 +175,45 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
     Color textColor;
 
     if (extension == 'PDF') {
-      typeColor = const Color(0xFFFFEBEE);
-      textColor = const Color(0xFFEF5350);
+      typeColor = AppColors.pdfBadgeBackground;
+      textColor = AppColors.pdfBadgeText;
     } else if (extension == 'DOC') {
-      typeColor = const Color(0xFFE0E0E0);
-      textColor = const Color(0xFF818181);
+      typeColor = AppColors.docBadgeBackground;
+      textColor = AppColors.docBadgeText;
     } else {
-      typeColor = const Color(0xFFF0F0F0);
-      textColor = const Color(0xFF666666);
+      typeColor = AppColors.defaultBadgeBackground;
+      textColor = AppColors.defaultBadgeText;
     }
 
     return Container(
       margin: EdgeInsets.only(bottom: 15 * scaleFactor),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(14 * scaleFactor),
         border: Border.all(
-          color: const Color(0xFFCDCDCD),
+          color: AppColors.secondaryBorderColor,
           width: .5 * scaleFactor,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFC9C9C9).withOpacity(0.25),
+            color: AppColors.cardShadowColor.withOpacity(0.25),
             blurRadius: 7.9 * scaleFactor,
             // offset: Offset(0, 4 * scaleFactor),
           ),
         ],
       ),
       child: Material(
-        color: Colors.transparent,
+        color: AppColors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(14 * scaleFactor),
-          onTapDown:
-              (details) => _showOptions(
-                context,
-                details.globalPosition,
-                title,
-                scaleFactor,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ViewHistoryScreen(historyItem: item),
               ),
+            );
+          },
           child: Padding(
             padding: EdgeInsets.all(16 * scaleFactor),
             child: Row(
@@ -312,7 +250,7 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 13 * scaleFactor,
-                          color: const Color(0xFF0E1A34),
+                          color: AppColors.primaryTextColor,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -320,7 +258,7 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
                       Text(
                         "$date • $size",
                         style: TextStyle(
-                          color: const Color(0xFF8A94A6),
+                          color: AppColors.secondaryTextColor,
                           fontSize: 12 * scaleFactor,
                           fontWeight: FontWeight.w600,
                         ),

@@ -299,6 +299,7 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
                     icon: Icons.file_download_outlined,
                     isPrimary: false,
                     scale: res.scale,
+                    isEnabled: localPath.isNotEmpty,
                     onPressed:
                         localPath.isNotEmpty ? _downloadAndSaveFile : null,
                   ),
@@ -310,10 +311,8 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
                     icon: Icons.share_outlined,
                     isPrimary: true,
                     scale: res.scale,
-                    onPressed:
-                        (localPath.isNotEmpty || openUrl != null)
-                            ? _shareFile
-                            : null,
+                    isEnabled: localPath.isNotEmpty,
+                    onPressed: localPath.isNotEmpty ? _shareFile : null,
                   ),
                 ),
               ],
@@ -330,25 +329,33 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
     required IconData icon,
     required bool isPrimary,
     required double scale,
+    required bool isEnabled,
     required VoidCallback? onPressed,
   }) {
+    final Color primaryBg = isEnabled
+        ? const Color(0xFF2563EB)
+        : const Color(0xFF2563EB).withOpacity(0.5);
+    final Color secondaryTextIconColor = isEnabled
+        ? const Color(0xFF0E1A34)
+        : const Color(0xFF0E1A34).withOpacity(0.5);
+
     return ElevatedButton.icon(
       onPressed: onPressed,
       icon: Icon(
         icon,
         size: 20 * scale,
-        color: isPrimary ? Colors.white : const Color(0xFF0E1A34),
+        color: isPrimary ? Colors.white : secondaryTextIconColor,
       ),
       label: Text(
         label,
         style: TextStyle(
           fontSize: 15 * scale,
           fontWeight: FontWeight.w600,
-          color: isPrimary ? Colors.white : const Color(0xFF0E1A34),
+          color: isPrimary ? Colors.white : secondaryTextIconColor,
         ),
       ),
       style: ElevatedButton.styleFrom(
-        backgroundColor: isPrimary ? const Color(0xFF2563EB) : Colors.white,
+        backgroundColor: isPrimary ? primaryBg : Colors.white,
         padding: EdgeInsets.symmetric(vertical: 16 * scale),
         elevation: isPrimary ? 2 : 0,
         side: BorderSide(

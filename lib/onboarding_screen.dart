@@ -16,19 +16,19 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
   final List<Map<String, dynamic>> _onboardingData = [
     {
       "image":
-      "assets/images/Gemini_Generated_Image_wdbpe7wdbpe7wdbp-removebg-preview.png",
-      "title": "Keep Your Medical\nRecords in One Place",
-      "body": "Your whole medical history, always with you.",
+          "assets/images/Gemini_Generated_Image_wdbpe7wdbpe7wdbp-removebg-preview.png",
+      "title": "All Your Medical Records\nIn One Place",
+      "body": "Access all your medical records anytime, securely and easily.",
     },
     {
-      "image": "assets/images/onbb2.png",
-      "title": "Track Your Health\nDaily & Easily",
-      "body": "Monitor your vitals and keep track of your progress.",
+      "image": "assets/images/on2.png",
+      "title": "Stay on Track With\nYour Care",
+      "body": "Follow your tasks, visits, and tests\nwith clear instructions.",
     },
     {
       "image": "assets/images/on3.png",
-      "title": "Connect with\nDoctors Instantly",
-      "body": "Get professional medical advice whenever you need it.",
+      "title": "Get Notified Instantly",
+      "body": "Receive alerts for updates,\nappointments, and new records.",
     },
   ];
 
@@ -111,9 +111,9 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                                   fit: BoxFit.contain,
                                   errorBuilder:
                                       (context, error, stackTrace) => Icon(
-                                    Icons.image_not_supported,
-                                    size: 100 * res.scale,
-                                  ),
+                                        Icons.image_not_supported,
+                                        size: 100 * res.scale,
+                                      ),
                                 ),
                               ),
                             ),
@@ -173,19 +173,19 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: List.generate(
                           _onboardingData.length,
-                              (index) => AnimatedContainer(
+                          (index) => AnimatedContainer(
                             duration: const Duration(milliseconds: 300),
                             margin: EdgeInsets.only(right: 6 * res.scale),
                             height: 7 * res.scale,
                             width:
-                            _currentPage == index
-                                ? 22 * res.scale
-                                : 9 * res.scale,
+                                _currentPage == index
+                                    ? 22 * res.scale
+                                    : 9 * res.scale,
                             decoration: BoxDecoration(
                               color:
-                              _currentPage == index
-                                  ? const Color(0xFF357AF3)
-                                  : const Color(0xFFB4B4B4),
+                                  _currentPage == index
+                                      ? const Color(0xFF357AF3)
+                                      : const Color(0xFFB4B4B4),
                               borderRadius: BorderRadius.circular(
                                 10 * res.scale,
                               ),

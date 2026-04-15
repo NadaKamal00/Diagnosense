@@ -2,10 +2,10 @@ import 'package:application/utils/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_symbols_icons/symbols.dart';
-
+import 'package:application/core/theme/app_colors.dart';
 import 'package:application/bottom_nav_bar/Home/full%20medical%20file/timeline.dart';
 import 'package:application/bottom_nav_bar/Home/history/history.dart';
-import 'package:application/bottom_nav_bar/Home/lab%20results/lap_reports.dart';
+import 'package:application/bottom_nav_bar/Home/lab%20results/lab_reports.dart';
 import 'package:application/bottom_nav_bar/Settings/profile/profile.dart';
 import '../../../shared/widgets/custom_search_bar.dart';
 import '../radiology/radiology.dart';
@@ -24,42 +24,42 @@ class _MedicalFilesScreenState extends State<MedicalFilesScreen> {
       'title': 'Personal Info',
       'subtitle': 'Name, Contact Info',
       'icon': Symbols.person,
-      'iconColor': const Color(0xFF2563EB), // Unified Blue
+      'iconColor': AppColors.primaryColor, // Unified Blue
       'destination': const ProfileScreen(),
     },
     {
       'title': 'Medical History',
       'subtitle': 'Summaries, Referrals, Notes',
       'icon': Symbols.medical_services,
-      'iconColor': const Color(0xFF3A80F5), // Blue
+      'iconColor': AppColors.primaryMediumLight, // Blue
       'destination': const MedicalHistoryScreen(),
     },
     {
       'title': 'Medications',
       'subtitle': 'Active prescriptions',
       'icon': Symbols.pill,
-      'iconColor': const Color(0xFF3A80F5), // Unified Blue
+      'iconColor': AppColors.primaryMediumLight, // Unified Blue
       'destination': const MedicationsScreen(),
     },
     {
       'title': 'Lab Reports',
       'subtitle': 'Blood work PDFs',
       'icon': Symbols.lab_research,
-      'iconColor': const Color(0xFF10B981), // Emerald
+      'iconColor': AppColors.successEmerald, // Emerald
       'destination': const LabResultsScreen(),
     },
     {
       'title': 'Radiology Reports',
       'subtitle': 'X-Ray & MRI',
       'icon': Symbols.featured_play_list,
-      'iconColor': const Color(0xFFF59E0B), // Amber
+      'iconColor': AppColors.warningAmber, // Amber
       'destination': const RadiologyScreen(),
     },
     {
       'title': 'Timeline',
       'subtitle': 'Complete visit history',
       'icon': Symbols.schedule,
-      'iconColor': const Color(0xFF2563EB), // Unified Blue
+      'iconColor': AppColors.primaryColor, // Unified Blue
       'destination': const VisitTimelineScreen(),
     },
   ];
@@ -96,9 +96,9 @@ class _MedicalFilesScreenState extends State<MedicalFilesScreen> {
     final res = Responsive(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FE),
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         elevation: 0,
         toolbarHeight: (56 * res.scale).toDouble(),
         leadingWidth: ((res.isTablet ? 90 : 70) * res.scale).toDouble(),
@@ -109,14 +109,14 @@ class _MedicalFilesScreenState extends State<MedicalFilesScreen> {
           alignment: Alignment.centerLeft,
           child: ClipOval(
             child: Material(
-              color: Colors.transparent,
+              color: AppColors.transparent,
               child: InkWell(
                 onTap: () => Navigator.pop(context),
                 child: Padding(
                   padding: EdgeInsets.all((8 * res.scale).toDouble()),
                   child: Icon(
                     Icons.arrow_back_ios,
-                    color: const Color(0xFF0E1A34),
+                    color: AppColors.primaryTextColor,
                     size: (20 * res.scale).toDouble(),
                   ),
                 ),
@@ -127,7 +127,7 @@ class _MedicalFilesScreenState extends State<MedicalFilesScreen> {
         title: Text(
           'My Medical Files',
           style: TextStyle(
-            color: const Color(0xFF0E1A34),
+            color: AppColors.primaryTextColor,
             fontWeight: FontWeight.bold,
             fontSize: (18 * res.scale).toDouble(),
           ),
@@ -179,7 +179,7 @@ class _MedicalFilesScreenState extends State<MedicalFilesScreen> {
                         "No results found",
                         style: TextStyle(
                           fontSize: (14 * res.scale).toDouble(),
-                          color: Colors.grey,
+                          color: AppColors.secondaryTextColor,
                         ),
                       ),
                     ),
@@ -202,12 +202,12 @@ class _MedicalFilesScreenState extends State<MedicalFilesScreen> {
     return Container(
       margin: EdgeInsets.only(bottom: (14 * scaleFactor).toDouble()),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(14 * scaleFactor),
-        border: Border.all(color: const Color(0xFFE5E7EB), width: 1),
+        border: Border.all(color: AppColors.cardBorderColor, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: AppColors.primaryTextColor.withOpacity(0.03),
             blurRadius: 10 * scaleFactor,
             // offset: Offset(0, 4 * scaleFactor),
           ),
@@ -229,7 +229,7 @@ class _MedicalFilesScreenState extends State<MedicalFilesScreen> {
                   height: (50 * scaleFactor).toDouble(),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF3F4F6),
+                    color: AppColors.surfaceVariant,
                     borderRadius: BorderRadius.circular(
                       (6 * scaleFactor).toDouble(),
                     ),
@@ -254,14 +254,14 @@ class _MedicalFilesScreenState extends State<MedicalFilesScreen> {
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: (13 * scaleFactor).toDouble(),
-                          color: const Color(0xFF1F2937),
+                          color: AppColors.headingColor,
                         ),
                       ),
                       SizedBox(height: (4 * scaleFactor).toDouble()),
                       Text(
                         subtitle,
                         style: TextStyle(
-                          color: const Color(0xFF6B7280),
+                          color: AppColors.bodyTextColor,
                           fontSize: (12 * scaleFactor).toDouble(),
                           fontWeight: FontWeight.w600,
                         ),
@@ -273,7 +273,7 @@ class _MedicalFilesScreenState extends State<MedicalFilesScreen> {
                 /// Forward Arrow
                 Icon(
                   Icons.arrow_forward_ios,
-                  color: const Color(0xFF2563EB),
+                  color: AppColors.primaryColor,
                   size: (12 * scaleFactor).toDouble(),
                 ),
                 SizedBox(width: (8 * scaleFactor).toDouble()),

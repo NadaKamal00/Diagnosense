@@ -1,5 +1,6 @@
 import 'package:application/utils/responsive_helper.dart';
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/api_service.dart';
 import '../home_shimmer.dart';
 
@@ -52,10 +53,10 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
     final res = Responsive(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFF),
+      backgroundColor: AppColors.backgroundColor,
 
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         elevation: 0,
         toolbarHeight: 56 * res.scale,
         leadingWidth: (res.isTablet ? 100 : 70) * res.scale,
@@ -64,14 +65,14 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
           alignment: Alignment.centerLeft,
           child: ClipOval(
             child: Material(
-              color: Colors.transparent,
+              color: AppColors.transparent,
               child: InkWell(
                 onTap: () => Navigator.pop(context),
                 child: Padding(
                   padding: EdgeInsets.all(8 * res.scale),
                   child: Icon(
                     Icons.arrow_back_ios,
-                    color: const Color(0xFF0E1A34),
+                    color: AppColors.primaryTextColor,
                     size: 20 * res.scale,
                   ),
                 ),
@@ -82,7 +83,7 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
         title: Text(
           'Timeline',
           style: TextStyle(
-            color: const Color(0xFF0E1A34),
+            color: AppColors.primaryTextColor,
             fontWeight: FontWeight.bold,
             fontSize: 18 * res.scale,
           ),
@@ -97,7 +98,7 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
           Divider(
             height: 1,
             thickness: .5 * res.scale,
-            color: const Color(0xFFD5D5D5),
+            color: AppColors.dividerColor,
             indent: 40 * res.scale,
             endIndent: 40 * res.scale,
           ),
@@ -106,14 +107,14 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
             child:
                 _isLoading
                     ? HomeShimmer.buildTimelineListShimmer(
-                        scale: res.scale,
-                        isTablet: res.isTablet,
-                      )
+                      scale: res.scale,
+                      isTablet: res.isTablet,
+                    )
                     : _errorMessage != null
                     ? Center(
                       child: Text(
                         _errorMessage!,
-                        style: const TextStyle(color: Colors.red),
+                        style: const TextStyle(color: AppColors.errorColor),
                       ),
                     )
                     : timelineData.isEmpty
@@ -121,7 +122,7 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
                       child: Text(
                         "No medical history available",
                         style: TextStyle(
-                          color: Colors.grey,
+                          color: AppColors.mutedColor,
                           fontSize: 16 * res.scale,
                         ),
                       ),
@@ -185,9 +186,9 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
               vertical: 2 * scale,
             ),
             decoration: BoxDecoration(
-              color: const Color(0xFFF1F5F9),
+              color: AppColors.inputBackgroundColor,
               borderRadius: BorderRadius.circular(6 * scale),
-              border: Border.all(color: const Color(0xFFD8D8D8), width: .5),
+              border: Border.all(color: AppColors.lightGrayBorder, width: .5),
               boxShadow: [
                 // BoxShadow(
                 //   color: Colors.black.withOpacity(0.04),
@@ -202,7 +203,7 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
                 style: TextStyle(
                   fontSize: 12 * scale,
                   fontWeight: FontWeight.w500,
-                  color: const Color.fromARGB(255, 100, 100, 100),
+                  color: AppColors.mediumGreyTextColor,
                 ),
               ),
             ),
@@ -228,7 +229,7 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
     final title = data['title']?.toString() ?? 'No Title';
     final doctor = data['doctor']?.toString() ?? 'Unknown Provider';
     final notes = data['description']?.toString() ?? '';
-    final Color dotColor = const Color(0xFF2563EB);
+    final Color dotColor = AppColors.primaryColor;
 
     return IntrinsicHeight(
       child: Row(
@@ -244,14 +245,14 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
                   style: TextStyle(
                     fontSize: 16 * scale,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF0E1A34),
+                    color: AppColors.primaryTextColor,
                   ),
                 ),
                 Text(
                   month,
                   style: TextStyle(
                     fontSize: 12 * scale,
-                    color: const Color(0xFF8A94A6),
+                    color: AppColors.secondaryTextColor,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -267,8 +268,8 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
               Container(
                 width: 2 * scale,
                 height: 12 * scale,
-                color:
-                    index == 0 ? Colors.transparent : const Color(0xFFE5E7EB),
+                    color:
+                        index == 0 ? AppColors.transparent : AppColors.cardBorderColor,
               ),
               Container(
                 width: 11 * scale,
@@ -281,10 +282,9 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
               Expanded(
                 child: Container(
                   width: 2 * scale,
-                  color:
-                      index == timelineData.length - 1
-                          ? Colors.transparent
-                          : const Color(0xFFE5E7EB),
+                  color: index == timelineData.length - 1
+                      ? AppColors.transparent
+                      : AppColors.cardBorderColor,
                 ),
               ),
             ],
@@ -298,15 +298,15 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
               margin: EdgeInsets.only(bottom: 24 * scale),
               padding: EdgeInsets.all(16 * scale),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.white,
                 borderRadius: BorderRadius.circular(14 * scale),
                 border: Border.all(
-                  color: const Color(0xFFCDCDCD),
+                  color: AppColors.secondaryBorderColor,
                   width: .5 * scale,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: AppColors.black.withOpacity(0.04),
                     blurRadius: 10 * scale,
                     // offset: Offset(0, 4 * scale),
                   ),
@@ -324,7 +324,7 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
                           vertical: 4 * scale,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF1F5F9),
+                          color: AppColors.inputBackgroundColor,
                           borderRadius: BorderRadius.circular(6 * scale),
                         ),
                         child: Text(
@@ -334,15 +334,15 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
                             fontWeight: FontWeight.w500,
                             color:
                                 type == "TASK"
-                                    ? const Color(0xFF2E7D32)
-                                    : const Color(0xFF2563EB),
+                                    ? AppColors.deepSuccessColor
+                                    : AppColors.primaryColor,
                           ),
                         ),
                       ),
                       Text(
                         year,
                         style: TextStyle(
-                          color: const Color(0xFF94A3B8),
+                          color: AppColors.disabledTextColor,
                           fontSize: 12 * scale,
                           fontWeight: FontWeight.w500,
                         ),
@@ -355,7 +355,7 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
                     style: TextStyle(
                       fontSize: 13 * scale,
                       fontWeight: FontWeight.bold,
-                      color: const Color(0xFF0E1A34),
+                      color: AppColors.primaryTextColor,
                     ),
                   ),
                   SizedBox(height: 2 * scale),
@@ -363,7 +363,7 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
                     doctor,
                     style: TextStyle(
                       fontSize: 12 * scale,
-                      color: const Color(0xFF8A94A6),
+                          color: AppColors.secondaryTextColor,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -373,10 +373,10 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
                       width: double.infinity,
                       padding: EdgeInsets.all(10 * scale),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF8FAFC),
+                        color: AppColors.backgroundColor,
                         borderRadius: BorderRadius.circular(6 * scale),
                         border: Border.all(
-                          color: const Color(0xFFCDCDCD),
+                          color: AppColors.secondaryBorderColor,
                           width: .1 * scale,
                         ),
                       ),
@@ -384,7 +384,7 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
                         notes,
                         style: TextStyle(
                           fontSize: (isTablet ? 11 : 12) * scale,
-                          color: const Color(0xFF8A94A6),
+                              color: AppColors.secondaryTextColor,
                           fontWeight: FontWeight.w500,
                           fontStyle: FontStyle.italic,
                           height: 1.4,

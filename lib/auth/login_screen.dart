@@ -1,9 +1,10 @@
 import 'package:application/auth/forgot%20password/forgot%20password_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:application/utils/responsive_helper.dart';
+import 'package:application/core/theme/app_colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../bottom_nav_bar/_navigation_menu.dart';
-import 'Sign Up/signup_screen.dart';
+import 'sign up/signup_screen.dart';
 import '../../core/utils/api_service.dart';
 import '../widgets/app_logo.dart';
 import '../widgets/custom_feedback_box.dart';
@@ -148,7 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final res = Responsive(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFF),
+      backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -172,11 +173,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         vertical: 40 * res.scale,
                       ),
                       decoration: BoxDecoration(
-                        color: Color(0xFFF8FAFF),
+                        color: AppColors.backgroundColor,
                         borderRadius: BorderRadius.circular(28 * res.scale),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF3E3E3E).withOpacity(0.25),
+                            color: AppColors.shadowColor.withOpacity(0.25),
                             blurRadius: 53.7 * res.scale,
                             spreadRadius: -3 * res.scale,
                             offset: Offset(0, 10 * res.scale),
@@ -200,21 +201,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             style: TextStyle(
                               fontSize: 24 * res.scale,
                               fontWeight: FontWeight.w700,
-                              color: const Color(0xFF0E1A34),
+                              color: AppColors.primaryTextColor,
                             ),
                           ),
 
                           SizedBox(height: 6 * res.scale),
 
-                          /// Subtitle
-                          // Text(
-                          //   "Enter your email or phone number to login",
-                          //   style: TextStyle(
-                          //     fontSize: 15 * res.scale,
-                          //     color: const Color(0xFF8A94A6),
-                          //     fontWeight: FontWeight.w400,
-                          //   ),
-                          // ),
                           SizedBox(height: 25 * res.scale),
 
                           /// Email Field
@@ -281,14 +273,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                           (value) => setState(
                                             () => _rememberMe = value!,
                                           ),
-                                      activeColor: const Color(0xFF2563EB),
+                                      activeColor: AppColors.primaryColor,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(
                                           2.5 * res.scale,
                                         ),
                                       ),
                                       side: BorderSide(
-                                        color: const Color(0xFF94A3B8),
+                                        color: AppColors.disabledTextColor,
                                         width: 1 * res.scale,
                                       ),
                                     ),
@@ -300,7 +292,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   Text(
                                     "Remember Me",
                                     style: TextStyle(
-                                      color: const Color(0xFF4B5563),
+                                      color: AppColors.subtleTextColor,
                                       fontSize: 13 * res.scale,
                                       fontWeight: FontWeight.w400,
                                     ),
@@ -326,7 +318,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child: Text(
                                   "Forgot Password?",
                                   style: TextStyle(
-                                    color: const Color(0xFF2563EB),
+                                    color: AppColors.primaryColor,
                                     fontSize: 13 * res.scale,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -349,7 +341,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               Text(
                                 "Don’t have an Account? ",
                                 style: TextStyle(
-                                  color: const Color(0xFF64748B),
+                                  color: AppColors.mutedTextColor,
                                   fontSize: 13 * res.scale,
                                   fontWeight: FontWeight.w400,
                                 ),
@@ -367,7 +359,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child: Text(
                                   "Sign up",
                                   style: TextStyle(
-                                    color: const Color(0xFF2563EB),
+                                    color: AppColors.primaryColor,
                                     fontSize: 13 * res.scale,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -398,8 +390,8 @@ class _LoginScreenState extends State<LoginScreen> {
           gradient: LinearGradient(
             colors:
                 _isLoading
-                    ? [const Color(0xFF93C5FD), const Color(0xFF60A5FA)]
-                    : const [Color(0xFF2563EB), Color(0xFF3B82F6)],
+                    ? [AppColors.primaryLight, AppColors.primaryMedium]
+                    : const [AppColors.primaryColor, AppColors.accentColor],
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
           ),
@@ -407,7 +399,7 @@ class _LoginScreenState extends State<LoginScreen> {
           boxShadow: [
             if (!_isLoading)
               BoxShadow(
-                color: const Color(0xFF2563EB).withOpacity(0.25),
+                color: AppColors.primaryColor.withOpacity(0.25),
                 blurRadius: 15 * scale,
                 offset: Offset(0, 6 * scale),
               ),
@@ -420,14 +412,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 24 * scale,
                     width: 24 * scale,
                     child: const CircularProgressIndicator(
-                      color: Colors.white,
+                      color: AppColors.white,
                       strokeWidth: 2.5,
                     ),
                   )
                   : Text(
                     'Login',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.white,
                       fontWeight: FontWeight.w600,
                       fontSize: 16 * scale,
                       letterSpacing: 1,
@@ -450,17 +442,17 @@ class _LoginScreenState extends State<LoginScreen> {
     bool hasError = false,
     bool isSuccess = false,
   }) {
-    Color borderColor = const Color(0xFFD1D5DB);
-    Color focusedBorderColor = const Color(0xFF3B82F6);
+    Color borderColor = AppColors.borderColor;
+    Color focusedBorderColor = AppColors.accentColor;
     double borderWidth = 1;
 
     if (hasError) {
-      borderColor = Colors.red;
-      focusedBorderColor = Colors.red;
+      borderColor = AppColors.errorColor;
+      focusedBorderColor = AppColors.errorColor;
       borderWidth = 1.5;
     } else if (isSuccess) {
-      borderColor = Colors.green;
-      focusedBorderColor = Colors.green;
+      borderColor = AppColors.successColor;
+      focusedBorderColor = AppColors.successColor;
       borderWidth = 1.5;
     }
 
@@ -473,7 +465,7 @@ class _LoginScreenState extends State<LoginScreen> {
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: TextStyle(
-          color: const Color(0xFF8A94A6),
+          color: AppColors.secondaryTextColor,
           fontSize: 15 * scaleFactor,
           fontWeight: FontWeight.w400,
         ),
@@ -485,13 +477,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     isObscured!
                         ? Icons.visibility_outlined
                         : Icons.visibility_off_outlined,
-                    color: const Color(0xFF94A3B8),
+                    color: AppColors.disabledTextColor,
                     size: 20 * scaleFactor,
                   ),
                 )
                 : null,
         filled: true,
-        fillColor: Colors.transparent,
+        fillColor: AppColors.transparent,
         contentPadding: EdgeInsets.symmetric(
           horizontal: 20 * scaleFactor,
           vertical: 18 * scaleFactor,

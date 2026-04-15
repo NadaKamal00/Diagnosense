@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:application/utils/responsive_helper.dart';
+import 'package:application/core/theme/app_colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../forgot password/verify_account_screen.dart';
 import '../../core/utils/api_service.dart';
@@ -34,7 +35,7 @@ class _FirstLoginScreenState extends State<FirstLoginScreen> {
     final res = Responsive(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFF),
+      backgroundColor: AppColors.backgroundColor,
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: Stack(
@@ -46,7 +47,7 @@ class _FirstLoginScreenState extends State<FirstLoginScreen> {
                 onPressed: () => Navigator.pop(context),
                 icon: Icon(
                   Icons.arrow_back_ios,
-                  color: const Color(0xFF000000),
+                  color: AppColors.primaryTextColor,
                   size: 20 * res.scale,
                 ),
               ),
@@ -69,11 +70,11 @@ class _FirstLoginScreenState extends State<FirstLoginScreen> {
                       vertical: 35 * res.scale,
                     ),
                     decoration: BoxDecoration(
-                      color: Color(0xFFF8FAFF),
+                      color: AppColors.backgroundColor,
                       borderRadius: BorderRadius.circular(28 * res.scale),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF3E3E3E).withOpacity(0.25),
+                          color: AppColors.shadowColor.withOpacity(0.25),
                           blurRadius: 53.7 * res.scale,
                           spreadRadius: -3 * res.scale,
                           offset: Offset(0, 10 * res.scale),
@@ -97,7 +98,7 @@ class _FirstLoginScreenState extends State<FirstLoginScreen> {
                           style: TextStyle(
                             fontSize: 24 * res.scale,
                             fontWeight: FontWeight.w700,
-                            color: const Color(0xFF0E1A34),
+                            color: AppColors.primaryTextColor,
                           ),
                         ),
 
@@ -109,7 +110,7 @@ class _FirstLoginScreenState extends State<FirstLoginScreen> {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 15 * res.scale,
-                            color: const Color(0xFF8A94A6),
+                            color: AppColors.secondaryTextColor,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -137,7 +138,7 @@ class _FirstLoginScreenState extends State<FirstLoginScreen> {
                               _validationError!,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: Colors.red,
+                                color: AppColors.errorColor,
                                 fontSize: 13 * res.scale,
                                 fontWeight: FontWeight.w400,
                               ),
@@ -176,23 +177,23 @@ class _FirstLoginScreenState extends State<FirstLoginScreen> {
       decoration: InputDecoration(
         hintText: "Email or Phone number",
         hintStyle: TextStyle(
-          color: const Color(0xFF8A94A6),
+          color: AppColors.secondaryTextColor,
           fontSize: 15 * scale,
           fontWeight: FontWeight.w400,
         ),
         filled: true,
-        fillColor: Colors.transparent,
+        fillColor: AppColors.transparent,
         contentPadding: EdgeInsets.symmetric(
           horizontal: 20 * scale,
           vertical: 18 * scale,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12 * scale),
-          borderSide: const BorderSide(color: Color(0xFFD1D5DB), width: 1),
+          borderSide: const BorderSide(color: AppColors.borderColor, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12 * scale),
-          borderSide: const BorderSide(color: Color(0xFF3B82F6), width: 2),
+          borderSide: const BorderSide(color: AppColors.accentColor, width: 2),
         ),
       ),
     );
@@ -297,8 +298,8 @@ class _FirstLoginScreenState extends State<FirstLoginScreen> {
           gradient: LinearGradient(
             colors:
                 _isLoading
-                    ? [const Color(0xFF93C5FD), const Color(0xFF60A5FA)]
-                    : const [Color(0xFF2563EB), Color(0xFF3B82F6)],
+                    ? [AppColors.primaryLight, AppColors.primaryMedium]
+                    : const [AppColors.primaryColor, AppColors.accentColor],
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
           ),
@@ -306,7 +307,7 @@ class _FirstLoginScreenState extends State<FirstLoginScreen> {
           boxShadow: [
             if (!_isLoading)
               BoxShadow(
-                color: const Color(0xFF2563EB).withOpacity(0.25),
+                color: AppColors.primaryColor.withOpacity(0.25),
                 blurRadius: 15 * scale,
                 offset: Offset(0, 6 * scale),
               ),
@@ -319,14 +320,14 @@ class _FirstLoginScreenState extends State<FirstLoginScreen> {
                     height: 24 * scale,
                     width: 24 * scale,
                     child: const CircularProgressIndicator(
-                      color: Colors.white,
+                      color: AppColors.white,
                       strokeWidth: 2.5,
                     ),
                   )
                   : Text(
                     'Send Code',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.white,
                       fontWeight: FontWeight.w600,
                       fontSize: 16 * scale,
                       letterSpacing: 1,

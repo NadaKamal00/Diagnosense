@@ -1,6 +1,7 @@
 import 'package:application/utils/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:application/core/theme/app_colors.dart';
 import '../../../core/utils/api_service.dart';
 import '../../../shared/widgets/custom_search_bar.dart';
 import '../home_shimmer.dart';
@@ -109,7 +110,7 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.errorColor,
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -139,9 +140,9 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
     final res = Responsive(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FE),
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         elevation: 0,
         toolbarHeight: 56 * res.scale,
         leadingWidth: (res.isTablet ? 90 : 70) * res.scale,
@@ -150,14 +151,14 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
           alignment: Alignment.centerLeft,
           child: ClipOval(
             child: Material(
-              color: Colors.transparent,
+              color: AppColors.transparent,
               child: InkWell(
                 onTap: () => Navigator.pop(context),
                 child: Padding(
                   padding: EdgeInsets.all(8 * res.scale),
                   child: Icon(
                     Icons.arrow_back_ios,
-                    color: const Color(0xFF0E1A34),
+                    color: AppColors.primaryTextColor,
                     size: 20 * res.scale,
                   ),
                 ),
@@ -168,7 +169,7 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
         title: Text(
           'Medications',
           style: TextStyle(
-            color: const Color(0xFF0E1A34),
+            color: AppColors.primaryTextColor,
             fontWeight: FontWeight.bold,
             fontSize: 18 * res.scale,
           ),
@@ -200,7 +201,7 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                         children: [
                           Icon(
                             Icons.error_outline,
-                            color: Colors.red[300],
+                            color: AppColors.errorColor.withOpacity(0.7),
                             size: 48 * res.scale,
                           ),
                           SizedBox(height: 16 * res.scale),
@@ -209,7 +210,7 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                             style: TextStyle(
                               fontSize: 16 * res.scale,
                               fontWeight: FontWeight.bold,
-                              color: const Color(0xFF0E1A34),
+                              color: AppColors.primaryTextColor,
                             ),
                           ),
                           SizedBox(height: 8 * res.scale),
@@ -218,7 +219,7 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 14 * res.scale,
-                              color: const Color(0xFF8A94A6),
+                              color: AppColors.secondaryTextColor,
                             ),
                           ),
                           SizedBox(height: 12 * res.scale),
@@ -228,15 +229,15 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                               "UNAUTHORIZED: Token might be expired.",
                               style: TextStyle(
                                 fontSize: 12 * res.scale,
-                                color: Colors.orange,
+                                color: AppColors.warningAmber,
                               ),
                             ),
                           SizedBox(height: 24 * res.scale),
                           ElevatedButton(
                             onPressed: _fetchMedications,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF2563EB),
-                              foregroundColor: Colors.white,
+                              backgroundColor: AppColors.primaryColor,
+                              foregroundColor: AppColors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius:
                                     BorderRadius.circular(12 * res.scale),
@@ -279,7 +280,7 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                             "No medications found",
                             style: TextStyle(
                               fontSize: 14 * res.scale,
-                              color: Colors.grey,
+                              color: AppColors.mutedColor,
                             ),
                           ),
                         ],
@@ -302,11 +303,11 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
     final bool isCompleted = status.toLowerCase() == "completed";
 
     // Conditional Styling Colors
-    final Color mainIconColor = isCompleted ? Colors.grey : const Color(0xFF2563EB);
-    final Color titleColor = isCompleted ? Colors.grey : const Color(0xFF0E1A34);
+    final Color mainIconColor = isCompleted ? AppColors.mutedColor : AppColors.primaryColor;
+    final Color titleColor = isCompleted ? AppColors.mutedColor : AppColors.primaryTextColor;
     final Color textColor =
-        isCompleted ? const Color(0xFF9CA3AF) : const Color(0xFF8A94A6);
-    final Color statusColor = isCompleted ? Colors.grey : const Color(0xFF22C55E);
+        isCompleted ? AppColors.completedGrey : AppColors.secondaryTextColor;
+    final Color statusColor = isCompleted ? AppColors.mutedColor : AppColors.activeGreen;
 
     return Container(
       margin: EdgeInsets.only(bottom: (isTablet ? 10 : 12) * scale),
@@ -315,15 +316,15 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
         vertical: (isTablet ? 12 : 16) * scale,
       ),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(14 * scale),
         border: Border.all(
-          color: const Color(0xFFCDCDCD).withOpacity(0.5),
+          color: AppColors.secondaryBorderColor.withOpacity(0.5),
           width: 0.5 * scale,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: AppColors.primaryTextColor.withOpacity(0.02),
             blurRadius: 8 * scale,
             offset: Offset(0, 3 * scale),
           ),
@@ -339,7 +340,7 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                 height: 37 * scale,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF3F4F6).withOpacity(0.5),
+                  color: AppColors.surfaceVariant.withOpacity(0.5),
                   borderRadius: BorderRadius.circular(6 * scale),
                 ),
                 child: Icon(
@@ -382,12 +383,12 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                 width: (isTablet ? 30 : 36) * scale,
                 height: (isTablet ? 24 : 28) * scale,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF3F4F6).withOpacity(0.5),
+                  color: AppColors.surfaceVariant.withOpacity(0.5),
                   borderRadius: BorderRadius.circular(6 * scale),
                 ),
                 child: Icon(
                   Icons.access_time,
-                  color: isCompleted ? Colors.grey.withOpacity(0.5) : const Color(0xFF939393),
+                  color: isCompleted ? AppColors.mutedColor.withOpacity(0.5) : AppColors.mutedColor,
                   size: (isTablet ? 15 : 18) * scale,
                 ),
               ),
@@ -403,10 +404,10 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
               vertical: (isTablet ? 8 : 10) * scale,
             ),
             decoration: BoxDecoration(
-              color: const Color(0xFFF3F4F6).withOpacity(0.5),
+              color: AppColors.surfaceVariant.withOpacity(0.5),
               borderRadius: BorderRadius.circular(6 * scale),
               border: Border.all(
-                color: const Color(0xFFE5E7EB),
+                color: AppColors.cardBorderColor,
                 width: 0.5 * scale,
               ),
             ),

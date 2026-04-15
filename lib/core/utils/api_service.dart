@@ -15,7 +15,8 @@ class ApiService {
   ApiService._internal() {
     _dio = Dio(
       BaseOptions(
-        baseUrl: 'https://toothlike-intermetatarsal-avah.ngrok-free.dev',
+        // baseUrl: 'https://toothlike-intermetatarsal-avah.ngrok-free.dev',
+        baseUrl: 'https://nontelepathically-pamphletary-cyndi.ngrok-free.dev',
         connectTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10),
         headers: {
@@ -522,8 +523,9 @@ class ApiService {
       );
 
       if (response.data is Map<String, dynamic>) {
-        final Map<String, dynamic> responseData =
-            Map<String, dynamic>.from(response.data);
+        final Map<String, dynamic> responseData = Map<String, dynamic>.from(
+          response.data,
+        );
         if (response.statusCode == 200) {
           responseData['success'] = true;
         }
@@ -590,8 +592,9 @@ class ApiService {
       print('DEBUG: [RadiologyAPI] Status: ${response.statusCode}');
 
       if (response.data is Map<String, dynamic>) {
-        final Map<String, dynamic> responseData =
-            Map<String, dynamic>.from(response.data);
+        final Map<String, dynamic> responseData = Map<String, dynamic>.from(
+          response.data,
+        );
 
         // Normalize response: if the actual list is inside responseData['data']['data']
         final nestedData = responseData['data'];
@@ -622,4 +625,40 @@ class ApiService {
     }
   }
 
+  /// Fetches the patient's notifications.
+  /// Endpoint: GET /api/patient/notifications
+  Future<Map<String, dynamic>> getNotifications() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
+
+    try {
+      final response = await get(
+        '/api/patient/notifications',
+        options: Options(
+          headers: {
+            if (token != null) 'Authorization': 'Bearer $token',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (response.data is Map<String, dynamic>) {
+        final Map<String, dynamic> responseData = Map<String, dynamic>.from(
+          response.data,
+        );
+        if (response.statusCode == 200) {
+          responseData['success'] = true;
+        }
+        return responseData;
+      }
+      return {
+        'success': false,
+        'message': 'Invalid response format',
+        'data': null,
+      };
+    } catch (e) {
+      return {'success': false, 'message': e.toString(), 'data': null};
+    }
+  }
 }

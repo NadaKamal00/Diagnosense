@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:application/utils/responsive_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:application/auth/forgot%20password/verify_account_screen.dart';
+import 'package:application/core/theme/app_colors.dart';
 import '../../core/utils/api_service.dart';
 import '../../widgets/app_logo.dart';
 import '../../widgets/custom_feedback_box.dart';
@@ -34,7 +35,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     final res = Responsive(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFF),
+      backgroundColor: AppColors.backgroundColor,
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: Stack(
@@ -47,7 +48,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 icon: Icon(
                   Icons.arrow_back_ios,
                   size: 20 * res.scale,
-                  color: const Color(0xFF0E1A34),
+                  color: AppColors.primaryTextColor,
                 ),
               ),
             ),
@@ -69,11 +70,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       vertical: 35 * res.scale,
                     ),
                     decoration: BoxDecoration(
-                      color: Color(0xFFF8FAFF),
+                      color: AppColors.backgroundColor,
                       borderRadius: BorderRadius.circular(29 * res.scale),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF3E3E3E).withOpacity(0.25),
+                          color: AppColors.shadowColor.withOpacity(0.25),
                           blurRadius: 53.7 * res.scale,
                           spreadRadius: -3 * res.scale,
                           offset: Offset(0, 10 * res.scale),
@@ -100,7 +101,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           style: TextStyle(
                             fontSize: 24 * res.scale,
                             fontWeight: FontWeight.w700,
-                            color: const Color(0xFF0E1A34),
+                            color: AppColors.primaryTextColor,
                           ),
                         ),
 
@@ -112,7 +113,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 15 * res.scale,
-                            color: const Color(0xFF8A94A6),
+                            color: AppColors.secondaryTextColor,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -140,7 +141,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               _validationError!,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: Colors.red,
+                                color: AppColors.errorColor,
                                 fontSize: 13 * res.scale,
                                 fontWeight: FontWeight.w400,
                               ),
@@ -264,23 +265,23 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       decoration: InputDecoration(
         hintText: "Email or Phone number",
         hintStyle: TextStyle(
-          color: const Color(0xFF8A94A6),
+          color: AppColors.secondaryTextColor,
           fontSize: 15 * scaleFactor,
           fontWeight: FontWeight.w400,
         ),
         filled: true,
-        fillColor: Colors.transparent,
+        fillColor: AppColors.transparent,
         contentPadding: EdgeInsets.symmetric(
           horizontal: 20 * scaleFactor,
           vertical: 18 * scaleFactor,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12 * scaleFactor),
-          borderSide: const BorderSide(color: Color(0xFFD1D5DB), width: 1),
+          borderSide: const BorderSide(color: AppColors.borderColor, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12 * scaleFactor),
-          borderSide: const BorderSide(color: Color(0xFF3B82F6), width: 2),
+          borderSide: const BorderSide(color: AppColors.accentColor, width: 2),
         ),
       ),
     );
@@ -296,8 +297,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           gradient: LinearGradient(
             colors:
                 _isLoading
-                    ? [const Color(0xFF93C5FD), const Color(0xFF60A5FA)]
-                    : const [Color(0xFF2563EB), Color(0xFF3B82F6)],
+                    ? [AppColors.primaryLight, AppColors.primaryMedium]
+                    : const [AppColors.primaryColor, AppColors.accentColor],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -305,7 +306,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           boxShadow: [
             if (!_isLoading)
               BoxShadow(
-                color: const Color(0xFF2563EB).withOpacity(0.25),
+                color: AppColors.primaryColor.withOpacity(0.25),
                 blurRadius: 15 * scaleFactor,
                 offset: Offset(0, 6 * scaleFactor),
               ),
@@ -318,14 +319,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     height: 24 * scaleFactor,
                     width: 24 * scaleFactor,
                     child: const CircularProgressIndicator(
-                      color: Colors.white,
+                      color: AppColors.white,
                       strokeWidth: 2.5,
                     ),
                   )
                   : Text(
                     'Send Code',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.white,
                       fontWeight: FontWeight.w600,
                       fontSize: 16 * scaleFactor,
                     ),
@@ -351,13 +352,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             Icon(
               Icons.arrow_back_ios_new_rounded,
               size: 13 * scaleFactor,
-              color: const Color(0xFF3B82F6),
+              color: AppColors.accentColor,
             ),
             SizedBox(width: 8 * scaleFactor),
             Text(
               'Back to login',
               style: TextStyle(
-                color: const Color(0xFF2563EB),
+                color: AppColors.primaryColor,
                 fontWeight: FontWeight.w700,
                 fontSize: 13 * scaleFactor,
               ),

@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/api_service.dart';
 
 class NotificationsScreen extends StatelessWidget {
   const NotificationsScreen({super.key});
@@ -58,38 +62,98 @@ class NotificationsScreen extends StatelessWidget {
             endIndent: 40 * scaleFactor,
           ),
           Expanded(
-            child: ListView(
-              padding: EdgeInsets.symmetric(
-                horizontal: (isTablet ? 24 : 20) * scaleFactor,
-                vertical: 25 * scaleFactor,
-              ),
-              children: [
-                _buildNotificationCard(
-                  scaleFactor,
-                  title: "HbA1c Test Overdue",
-                  subtitle:
-                      "Dr. Smith has requested a repeat test. Please schedule soon.",
-                  time: "2h ago",
-                  icon: Icons.calendar_today_outlined,
-                  iconColor: const Color(0xFF2563EB),
-                ),
-                _buildNotificationCard(
-                  scaleFactor,
-                  title: "Nephrology Appointment",
-                  subtitle: "Upcoming appointment tomorrow at 10:00 AM.",
-                  time: "Yesterday",
-                  icon: Icons.access_time,
-                  iconColor: const Color(0xFF2563EB),
-                ),
-                _buildNotificationCard(
-                  scaleFactor,
-                  title: "Lipid Panel Results",
-                  subtitle: "Your recent lab results are ready for view.",
-                  time: "2d ago",
-                  icon: Icons.description_outlined,
-                  iconColor: const Color(0xFF34A853),
-                ),
-              ],
+            child: FutureBuilder<Map<String, dynamic>>(
+              future: ApiService().getNotifications(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      "Error: ${snapshot.error}",
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  );
+                }
+
+                final response = snapshot.data;
+                final List<dynamic> notifications = response?['data'] ?? [];
+
+                if (notifications.isEmpty) {
+                  return Center(
+                    child: Text(
+                      "No notifications available",
+                      style: TextStyle(
+                        color: AppColors.secondaryTextColor,
+                        fontSize: 14 * scaleFactor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: (isTablet ? 24 : 20) * scaleFactor,
+                    vertical: 25 * scaleFactor,
+                  ),
+                  itemCount: notifications.length,
+                  itemBuilder: (context, index) {
+                    final notification = notifications[index];
+                    final String title = notification['title'] ?? 'No Title';
+                    final String subtitle =
+                        notification['description'] ?? 'No Description';
+                    final String time = notification['time'] ?? '';
+
+                    Widget iconWidget;
+                    Color defaultIconColor = const Color(0xFF2563EB);
+
+                    if (title == "Task") {
+                      iconWidget = SvgPicture.asset(
+                        'assets/Icons/tasks.svg',
+                        width: 20 * scaleFactor,
+                        height: 20 * scaleFactor,
+                        colorFilter: const ColorFilter.mode(
+                          Color(0xFF34A853),
+                          BlendMode.srcIn,
+                        ),
+                      );
+                    } else if (title == "Medication") {
+                      iconWidget = Icon(
+                        Symbols.pill,
+                        color: AppColors.primaryMediumLight,
+                        size: 20 * scaleFactor,
+                      );
+                    } else if (title == "Next Visit" || title == "New Visit") {
+                      iconWidget = SvgPicture.asset(
+                        'assets/Icons/clock.svg',
+                        width: 17 * scaleFactor, // Visually adjusted size
+                        height: 17 * scaleFactor,
+                        colorFilter: const ColorFilter.mode(
+                          AppColors.primaryColor,
+                          BlendMode.srcIn,
+                        ),
+                      );
+                    } else {
+                      iconWidget = Icon(
+                        Icons.info_outline,
+                        color: defaultIconColor,
+                        size: 20 * scaleFactor,
+                      );
+                    }
+
+                    return _buildNotificationCard(
+                      scaleFactor,
+                      title: title,
+                      subtitle: subtitle,
+                      time: time,
+                      iconWidget: iconWidget,
+                    );
+                  },
+                );
+              },
             ),
           ),
         ],
@@ -102,8 +166,7 @@ class NotificationsScreen extends StatelessWidget {
     required String title,
     required String subtitle,
     required String time,
-    required IconData icon,
-    required Color iconColor,
+    required Widget iconWidget,
   }) {
     return Container(
       margin: EdgeInsets.only(bottom: 16 * scaleFactor),
@@ -136,7 +199,7 @@ class NotificationsScreen extends StatelessWidget {
               color: const Color(0xFFF5F5F5),
               borderRadius: BorderRadius.circular(6 * scaleFactor),
             ),
-            child: Icon(icon, color: iconColor, size: 20 * scaleFactor),
+            child: iconWidget,
           ),
 
           SizedBox(width: 15 * scaleFactor),

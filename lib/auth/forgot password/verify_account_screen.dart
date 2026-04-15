@@ -2,7 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:application/utils/responsive_helper.dart';
-import '../Sign Up/create_password.dart';
+import 'package:application/core/theme/app_colors.dart';
+import '../sign up/create_password.dart';
 import '../../core/utils/api_service.dart';
 import '../../widgets/app_logo.dart';
 import 'package:application/auth/forgot%20password/reset_password.dart';
@@ -121,7 +122,7 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
             content: Text(
               data['message']?.toString() ?? 'OTP resent successfully',
             ),
-            backgroundColor: const Color(0xFF00C187),
+            backgroundColor: AppColors.successColor,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -141,7 +142,7 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('An error occurred. Please try again.'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.errorColor,
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -248,7 +249,7 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
             : 'Please enter the 6 digit code sent to';
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAff),
+      backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
         child: Stack(
           children: [
@@ -266,7 +267,7 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
                       child: Icon(
                         Icons.arrow_back_ios,
                         size: 20 * res.scale,
-                        color: const Color(0xFF0E1A34),
+                        color: AppColors.primaryTextColor,
                       ),
                     ),
                   ),
@@ -293,11 +294,11 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
                         vertical: 40 * res.scale,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF8FAFF),
+                        color: AppColors.backgroundColor,
                         borderRadius: BorderRadius.circular(28 * res.scale),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF3E3E3E).withOpacity(0.25),
+                            color: AppColors.shadowColor.withOpacity(0.25),
                             blurRadius: 53.7 * res.scale,
                             spreadRadius: -3 * res.scale,
                             offset: Offset(0, 10 * res.scale),
@@ -322,7 +323,7 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
                             style: TextStyle(
                               fontSize: 22 * res.scale,
                               fontWeight: FontWeight.w800,
-                              color: const Color(0xFF0E1A34),
+                              color: AppColors.primaryTextColor,
                             ),
                           ),
 
@@ -333,7 +334,7 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 13 * res.scale,
-                              color: const Color(0xFF64748B),
+                              color: AppColors.mutedTextColor,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -342,7 +343,7 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
                             style: TextStyle(
                               fontSize: 14 * res.scale,
                               fontWeight: FontWeight.w700,
-                              color: const Color(0xFF0E1A34),
+                              color: AppColors.primaryTextColor,
                             ),
                           ),
 
@@ -366,14 +367,14 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
                                 children: [
                                   const Icon(
                                     Icons.check_circle_rounded,
-                                    color: Color(0xFF00C187),
+                                    color: AppColors.successColor,
                                     size: 16,
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
                                     'Accepted',
                                     style: TextStyle(
-                                      color: const Color(0xFF00C187),
+                                      color: AppColors.successColor,
                                       fontSize: 13 * res.scale,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -388,7 +389,7 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
                                 _errorMessage!,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: Colors.red,
+                                  color: AppColors.errorColor,
                                   fontSize: 13 * res.scale,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -422,13 +423,13 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
     // Determine border colour based on state + focus.
     final Color borderColor;
     if (_isOtpCorrect == true) {
-      borderColor = const Color(0xFF00C187); // green
+      borderColor = AppColors.successColor; // green
     } else if (_isOtpCorrect == false) {
-      borderColor = Colors.red;
+      borderColor = AppColors.errorColor;
     } else if (_focusNodes[index].hasFocus) {
-      borderColor = const Color(0xFF2563EB); // blue when focused
+      borderColor = AppColors.primaryColor; // blue when focused
     } else {
-      borderColor = const Color(0xFFE2E8F0); // default grey
+      borderColor = AppColors.lightBorderColor; // default grey
     }
 
     return SizedBox(
@@ -451,7 +452,7 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
         },
         child: Container(
           decoration: BoxDecoration(
-            color: const Color(0xFFF1F5F9).withOpacity(0.5),
+            color: AppColors.inputBackgroundColor.withOpacity(0.5),
             borderRadius: BorderRadius.circular(12 * scale),
             border: Border.all(color: borderColor, width: 1.5 * scale),
           ),
@@ -463,7 +464,7 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
               style: TextStyle(
                 fontSize: 20 * scale,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF0E1A34),
+                color: AppColors.primaryTextColor,
               ),
               keyboardType: TextInputType.number,
               inputFormatters: [
@@ -516,14 +517,14 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
           gradient: LinearGradient(
             colors:
                 _isLoading
-                    ? [const Color(0xFF93C5FD), const Color(0xFF60A5FA)]
-                    : const [Color(0xFF2563EB), Color(0xFF3B82F6)],
+                    ? [AppColors.primaryLight, AppColors.primaryMedium]
+                    : const [AppColors.primaryColor, AppColors.accentColor],
           ),
           borderRadius: BorderRadius.circular(14 * scale),
           boxShadow: [
             if (!_isLoading)
               BoxShadow(
-                color: const Color(0xFF2563EB).withOpacity(0.25),
+                color: AppColors.primaryColor.withOpacity(0.25),
                 blurRadius: 15 * scale,
                 offset: Offset(0, 6 * scale),
               ),
@@ -536,14 +537,14 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
                     height: 24 * scale,
                     width: 24 * scale,
                     child: const CircularProgressIndicator(
-                      color: Colors.white,
+                      color: AppColors.white,
                       strokeWidth: 2.5,
                     ),
                   )
                   : Text(
                     'Verify Code',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 16 * scale,
                     ),
@@ -560,7 +561,7 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
       return Text(
         'Request new code in ${_secondsLeft.toString().padLeft(2, '0')}',
         style: TextStyle(
-          color: const Color(0xFF94A3B8),
+          color: AppColors.disabledTextColor,
           fontSize: 13 * scale,
           fontWeight: FontWeight.w500,
         ),
@@ -574,7 +575,7 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
         Text(
           "Didn't receive code? ",
           style: TextStyle(
-            color: const Color(0xFF64748B),
+            color: AppColors.mutedTextColor,
             fontSize: 13 * scale,
           ),
         ),
@@ -585,8 +586,8 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
             style: TextStyle(
               color:
                   _isResending
-                      ? const Color(0xFF94A3B8)
-                      : const Color(0xFF2563EB),
+                      ? AppColors.disabledTextColor
+                      : AppColors.primaryColor,
               fontWeight: FontWeight.w700,
               fontSize: 13 * scale,
             ),

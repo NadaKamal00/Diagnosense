@@ -2,7 +2,7 @@ import 'package:application/utils/responsive_helper.dart';
 import 'package:application/bottom_nav_bar/Home/full%20medical%20file/medical_file.dart';
 import 'package:application/bottom_nav_bar/Tasks/task_details.dart';
 import 'package:application/bottom_nav_bar/Home/history/history.dart';
-import 'package:application/bottom_nav_bar/Home/lab%20results/lap_reports.dart';
+import 'package:application/bottom_nav_bar/Home/lab%20results/lab_reports.dart';
 import 'package:application/bottom_nav_bar/Home/notifications/notifications.dart';
 import 'package:application/bottom_nav_bar/Home/radiology/radiology.dart';
 import 'package:application/bottom_nav_bar/Tasks/task_screen.dart';

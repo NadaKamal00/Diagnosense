@@ -113,7 +113,7 @@ class _ViewReportDetailsScreenState extends State<ViewReportDetailsScreen> {
           ),
         ),
         title: Text(
-          'View Report',
+          widget.name,
           style: TextStyle(
             color: const Color(0xFF0E1A34),
             fontWeight: FontWeight.w600,
@@ -124,69 +124,7 @@ class _ViewReportDetailsScreenState extends State<ViewReportDetailsScreen> {
       ),
       body: Column(
         children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 40 * res.scale),
-            child: Divider(
-              color: const Color(0xFFD5D5D5),
-              thickness: 1 * res.scale,
-            ),
-          ),
-
-          // Header
-          Padding(
-            padding: EdgeInsets.all(20 * res.scale),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        widget.name,
-                        style: TextStyle(
-                          fontSize: 15 * res.scale,
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xFF0E1A34),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10 * res.scale,
-                        vertical: 4 * res.scale,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF3F4F6),
-                        borderRadius: BorderRadius.circular(2 * res.scale),
-                        border: Border.all(
-                          color: const Color(0xFFCDCDCD),
-                          width: .5 * res.scale,
-                        ),
-                      ),
-                      child: Text(
-                        'PDF',
-                        style: TextStyle(
-                          fontSize: 11 * res.scale,
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xFF2563EB),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 4 * res.scale),
-                Text(
-                  widget.date,
-                  style: TextStyle(
-                    color: const Color(0xFF939393),
-                    fontSize: 12 * res.scale,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          SizedBox(height: 10 * res.scale),
 
           // PDF Container
           Expanded(
