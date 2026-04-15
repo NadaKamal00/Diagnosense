@@ -21,6 +21,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _isLoggingOut = false;
   String? _userName;
   String? _userEmail;
+  String? _userPhone;
   bool _notificationsEnabled = true;
   bool _isDarkMode = false;
   bool _isProfileLoading = true;
@@ -38,6 +39,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         setState(() {
           _userName = prefs.getString('user_name');
           _userEmail = prefs.getString('user_email');
+          _userPhone = prefs.getString('saved_user_phone');
+          print("Loaded Phone from Prefs: $_userPhone");
         });
       }
     } catch (e) {
@@ -305,12 +308,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       color: const Color(0xFF0E1A34),
                     ),
                   ),
-                  Text(
-                    _userEmail ?? 'No email provided',
-                    style: TextStyle(
-                      fontSize: 13 * scale,
-                      color: const Color(0xFF8A94A6),
-                    ),
+                  Builder(
+                    builder: (context) {
+                      String subTitle = "No contact info";
+                      if (_userEmail != null && _userEmail!.isNotEmpty) {
+                        subTitle = _userEmail!;
+                      } else if (_userPhone != null && _userPhone!.isNotEmpty) {
+                        subTitle = _userPhone!;
+                      }
+                      return Text(
+                        subTitle,
+                        style: TextStyle(
+                          fontSize: 13 * scale,
+                          color: const Color(0xFF8A94A6),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

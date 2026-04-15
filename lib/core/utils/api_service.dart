@@ -118,6 +118,7 @@ class ApiService {
 
       // --- Save User Info (Parsing 'data' -> 'user' structure) ---
       final userData = response.data['data']?['user'];
+      print("API User Data: $userData");
       if (userData != null) {
         final name = userData['name']?.toString() ?? "";
         final email = userData['email']?.toString() ?? "";
@@ -129,6 +130,10 @@ class ApiService {
         await prefs.setString('user_name', name);
         await prefs.setString('user_email', email);
         await prefs.setString('user_phone', phone);
+        await prefs.setString(
+          'saved_user_phone',
+          userData['phone']?.toString() ?? "",
+        );
 
         final savedName = prefs.getString('user_name');
         print(
