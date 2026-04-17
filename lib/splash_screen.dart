@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:application/auth/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:application/core/theme/app_colors.dart';
 import 'onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -68,11 +69,11 @@ class _SplashScreenState extends State<SplashScreen>
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFFFFFFFF), Color(0xFFF8FAFF)],
+            colors: [AppColors.white, AppColors.backgroundColor],
           ),
         ),
         child: Center(
@@ -93,7 +94,7 @@ class _SplashScreenState extends State<SplashScreen>
                           (context, error, stackTrace) => Icon(
                             Icons.medical_services,
                             size: 100 * scaleFactor,
-                            color: const Color(0xFF3B82F6),
+                            color: AppColors.accentColor,
                           ),
                     ),
                   ),

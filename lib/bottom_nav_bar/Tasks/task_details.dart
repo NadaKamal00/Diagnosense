@@ -4,6 +4,7 @@ import 'package:application/utils/task_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../Home/home_shimmer.dart';
+import '../../core/theme/app_colors.dart';
 
 class TaskDetailsScreen extends StatefulWidget {
   final int taskId;
@@ -75,7 +76,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(response['message'] ?? 'Failed to update status'),
-              backgroundColor: Colors.red,
+              backgroundColor: AppColors.errorColor,
             ),
           );
         }
@@ -83,7 +84,10 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: AppColors.errorColor,
+          ),
         );
       }
     } finally {
@@ -134,32 +138,32 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
     final bool showInstrAccent = !isCompleted;
 
     if (isCompleted) {
-      deadlineColor = const Color(0xFF939393); // Grey
-      deadlineBg = const Color(0xFFF3F4F6);
-      badgeBg = const Color(0xFFF3F4F6);
-      badgeText = const Color(0xFF6B7280);
-      instrBg = const Color(0xFFF9FAFB);
-      instrBorder = Colors.black.withOpacity(0.05);
+      deadlineColor = AppColors.mutedColor; // Grey
+      deadlineBg = AppColors.surfaceVariant;
+      badgeBg = AppColors.surfaceVariant;
+      badgeText = AppColors.bodyTextColor;
+      instrBg = AppColors.shimmerHighlight;
+      instrBorder = AppColors.black.withOpacity(0.05);
     } else if (isOverdue) {
-      deadlineColor = const Color(0xFFEF4444);
-      deadlineBg = const Color(0xFFFEF2F2);
-      badgeBg = const Color(0xFFEFF6FF);
-      badgeText = const Color(0xFF2563EB);
-      instrBg = const Color.fromARGB(255, 255, 249, 232);
-      instrBorder = Colors.amber.withOpacity(0.3);
+      deadlineColor = AppColors.errorColor;
+      deadlineBg = AppColors.errorLightBackground;
+      badgeBg = AppColors.lightBlueSurface;
+      badgeText = AppColors.primaryColor;
+      instrBg = AppColors.instructionBackground;
+      instrBorder = AppColors.warningAmber.withOpacity(0.3);
     } else {
-      deadlineColor = const Color(0xFF10B981);
-      deadlineBg = const Color(0xFFECFDF5);
-      badgeBg = const Color(0xFFEFF6FF);
-      badgeText = const Color(0xFF2563EB);
-      instrBg = const Color.fromARGB(255, 255, 249, 232);
-      instrBorder = Colors.amber.withOpacity(0.3);
+      deadlineColor = AppColors.successEmerald;
+      deadlineBg = AppColors.successLight;
+      badgeBg = AppColors.lightBlueSurface;
+      badgeText = AppColors.primaryColor;
+      instrBg = AppColors.instructionBackground;
+      instrBorder = AppColors.warningAmber.withOpacity(0.3);
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAff),
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         elevation: 0,
         toolbarHeight: 56 * scaleFactor,
         leadingWidth: (isTablet ? 100 : 70) * scaleFactor,
@@ -169,7 +173,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
           child: IconButton(
             icon: Icon(
               Icons.arrow_back_ios,
-              color: const Color(0xFF0E1A34),
+              color: AppColors.primaryTextColor,
               size: 20 * scaleFactor,
             ),
             onPressed: () => Navigator.pop(context, _hasStatusChanged),
@@ -178,7 +182,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
         title: Text(
           'Task Details',
           style: TextStyle(
-            color: const Color(0xFF0E1A34),
+            color: AppColors.primaryTextColor,
             fontWeight: FontWeight.w600,
             fontSize: 18 * scaleFactor,
           ),
@@ -203,7 +207,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                   child: Text(
                     _errorMessage!,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.red),
+                    style: TextStyle(color: AppColors.errorColor),
                   ),
                 ),
               )
@@ -218,7 +222,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                     Divider(
                       height: 1,
                       thickness: .5,
-                      color: const Color(0xFFD5D5D5),
+                      color: AppColors.dividerColor,
                       indent: (isTablet ? 20 : 40) * scaleFactor,
                       endIndent: (isTablet ? 20 : 40) * scaleFactor,
                     ),
@@ -229,15 +233,15 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                       width: double.infinity,
                       padding: EdgeInsets.all(20 * scaleFactor),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppColors.white,
                         borderRadius: BorderRadius.circular(14 * scaleFactor),
                         border: Border.all(
-                          color: const Color(0xFFCDCDCD),
+                          color: AppColors.secondaryBorderColor,
                           width: .5 * scaleFactor,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.04),
+                            color: AppColors.black.withOpacity(0.04),
                             blurRadius: 4 * scaleFactor,
                             offset: Offset(0, 4 * scaleFactor),
                           ),
@@ -285,7 +289,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                             style: TextStyle(
                               fontSize: 17 * scaleFactor,
                               fontWeight: FontWeight.bold,
-                              color: const Color(0xFF0E1A34),
+                              color: AppColors.primaryTextColor,
                             ),
                           ),
                           SizedBox(height: 16 * scaleFactor),
@@ -296,7 +300,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                             child: Text(
                               "Due Date",
                               style: TextStyle(
-                                color: const Color(0xFF64748B),
+                                color: AppColors.mutedTextColor,
                                 fontSize: 13 * scaleFactor,
                                 fontWeight: FontWeight.w400,
                               ),
@@ -317,7 +321,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                               vertical: 16 * scaleFactor,
                             ),
                             child: Divider(
-                              color: const Color(0xFFD5D5D5),
+                              color: AppColors.dividerColor,
                               thickness: .5 * scaleFactor,
                             ),
                           ),
@@ -328,7 +332,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                             child: Text(
                               "Description",
                               style: TextStyle(
-                                color: const Color(0xFF64748B),
+                                color: AppColors.mutedTextColor,
                                 fontSize: 13 * scaleFactor,
                                 fontWeight: FontWeight.w400,
                               ),
@@ -338,7 +342,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                             description,
                             style: TextStyle(
                               fontSize: 13 * scaleFactor,
-                              color: const Color(0xFF939393),
+                              color: AppColors.mutedColor,
                               height: 1.6,
                               fontWeight: FontWeight.w600,
                             ),
@@ -354,23 +358,23 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                       width: double.infinity,
                       padding: EdgeInsets.all(22 * scaleFactor),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppColors.white,
                         borderRadius: BorderRadius.circular(14 * scaleFactor),
                         border:
                             showInstrAccent
                                 ? Border(
                                   left: BorderSide(
-                                    color: const Color(0xFFFBBC05),
+                                    color: AppColors.warningAmber,
                                     width: 3 * scaleFactor,
                                   ),
                                 )
                                 : Border.all(
-                                  color: Colors.black.withOpacity(0.05),
+                                  color: AppColors.black.withOpacity(0.05),
                                   width: 1 * scaleFactor,
                                 ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.04),
+                            color: AppColors.black.withOpacity(0.04),
                             blurRadius: 10 * scaleFactor,
                             offset: Offset(0, 4 * scaleFactor),
                           ),
@@ -384,7 +388,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                             style: TextStyle(
                               fontSize: 15 * scaleFactor,
                               fontWeight: FontWeight.w600,
-                              color: const Color(0xFF0E1A34),
+                              color: AppColors.primaryTextColor,
                             ),
                           ),
                           SizedBox(height: 16 * scaleFactor),
@@ -410,12 +414,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                                     style: TextStyle(
                                       fontSize: 13 * scaleFactor,
                                       fontWeight: FontWeight.w500,
-                                      color: const Color.fromARGB(
-                                        255,
-                                        125,
-                                        125,
-                                        125,
-                                      ),
+                                      color: AppColors.completedGrey,
                                       fontStyle: FontStyle.italic,
                                     ),
                                   ),
@@ -423,7 +422,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                                 SizedBox(width: 8 * scaleFactor),
                                 Icon(
                                   Icons.tips_and_updates,
-                                  color: Colors.amber,
+                                  color: AppColors.warningAmber,
                                   size: 18 * scaleFactor,
                                 ),
                               ],
@@ -439,7 +438,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
               ),
 
       bottomNavigationBar: Container(
-        color: const Color(0xFFF8FAff),
+        color: AppColors.backgroundColor,
         padding: EdgeInsets.fromLTRB(
           24 * scaleFactor,
           10 * scaleFactor,
@@ -455,15 +454,15 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                   _isLoading
                       ? HomeShimmer.buildButtonShimmer(scale: scaleFactor)
                       : _buildButton(
-                          isCompleted ? "Completed" : "Mark as Done",
-                          !isCompleted,
-                          isCompleted
-                              ? const Color(0xFF34A853)
-                              : const Color(0xFF2563EB),
-                          scaleFactor,
-                          onTap: _onToggleStatus,
-                          isLoading: _isCompleting,
-                        ),
+                        isCompleted ? "Completed" : "Mark as Done",
+                        !isCompleted,
+                        isCompleted
+                            ? AppColors.successText
+                            : AppColors.primaryColor,
+                        scaleFactor,
+                        onTap: _onToggleStatus,
+                        isLoading: _isCompleting,
+                      ),
                   SizedBox(height: 20 * scaleFactor),
                   InkWell(
                     onTap: () => Navigator.pop(context, _hasStatusChanged),
@@ -474,7 +473,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                         Icon(
                           Icons.arrow_back_ios_new,
                           size: 14 * scaleFactor,
-                          color: Colors.grey.shade600,
+                          color: AppColors.mutedTextColor,
                         ),
                         SizedBox(width: 8 * scaleFactor),
                         Text(
@@ -482,7 +481,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                           style: TextStyle(
                             fontSize: 13 * scaleFactor,
                             fontWeight: FontWeight.w600,
-                            color: Colors.grey.shade600,
+                            color: AppColors.mutedTextColor,
                           ),
                         ),
                       ],
@@ -553,10 +552,10 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
         decoration: BoxDecoration(
           gradient:
               isPrimary
-                  ? const LinearGradient(
+                  ? LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [Color(0xFF2563EB), Color(0xFF3B82F6)],
+                    colors: [AppColors.primaryColor, AppColors.accentColor],
                   )
                   : null,
           color: isPrimary ? null : color,
@@ -575,8 +574,8 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                 ? SizedBox(
                   width: 20 * scale,
                   height: 20 * scale,
-                  child: const CircularProgressIndicator(
-                    color: Colors.white,
+                  child: CircularProgressIndicator(
+                    color: AppColors.white,
                     strokeWidth: 2,
                   ),
                 )
@@ -586,9 +585,9 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                     fontSize: 16 * scale,
                     fontWeight: FontWeight.bold,
                     color:
-                        (isPrimary || color != Colors.white)
-                            ? Colors.white
-                            : const Color(0xFF0E1A34),
+                        (isPrimary || color != AppColors.white)
+                            ? AppColors.white
+                            : AppColors.primaryTextColor,
                   ),
                 ),
       ),

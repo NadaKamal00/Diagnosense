@@ -391,7 +391,7 @@ class _LoginScreenState extends State<LoginScreen> {
             colors:
                 _isLoading
                     ? [AppColors.primaryLight, AppColors.primaryMedium]
-                    : const [AppColors.primaryColor, AppColors.accentColor],
+                    : [AppColors.primaryColor, AppColors.accentColor],
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
           ),
@@ -411,7 +411,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ? SizedBox(
                     height: 24 * scale,
                     width: 24 * scale,
-                    child: const CircularProgressIndicator(
+                    child: CircularProgressIndicator(
                       color: AppColors.white,
                       strokeWidth: 2.5,
                     ),

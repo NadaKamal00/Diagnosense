@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/utils/api_service.dart';
+import '../../core/theme/app_colors.dart';
 import 'home_shimmer.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -96,20 +97,31 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<void> _onRefresh() async {
+    await Future.wait([
+      _fetchTasks(),
+      _fetchNextVisit(),
+    ]);
+  }
+
   @override
   Widget build(BuildContext context) {
     final res = Responsive(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
             constraints: BoxConstraints(
               maxWidth: res.isTablet ? 450 * res.scale : res.width,
             ),
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
+            child: RefreshIndicator(
+              onRefresh: _onRefresh,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics(),
+                ),
               padding: EdgeInsets.symmetric(
                 horizontal: res.isTablet ? 5 * res.scale : 20 * res.scale,
               ),
@@ -122,32 +134,32 @@ class _HomeScreenState extends State<HomeScreen> {
                   _isLoadingUser
                       ? HomeShimmer.buildHeaderShimmer(context, res.scale)
                       : Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Hello, ${_patientName ?? 'User'}!',
-                                  style: TextStyle(
-                                    fontSize: 18 * res.scale,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF0E1A34),
-                                  ),
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Hello, ${_patientName ?? 'User'}!',
+                                style: TextStyle(
+                                  fontSize: 18 * res.scale,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.primaryTextColor,
                                 ),
-                                Text(
-                                  'Welcome back.',
-                                  style: TextStyle(
-                                    fontSize: 15 * res.scale,
-                                    fontWeight: FontWeight.w400,
-                                    color: const Color(0xFF8A94A6),
-                                  ),
+                              ),
+                              Text(
+                                'Welcome back.',
+                                style: TextStyle(
+                                  fontSize: 15 * res.scale,
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColors.secondaryTextColor,
                                 ),
-                              ],
-                            ),
-                            _buildNotificationIcon(context, res.scale),
-                          ],
-                        ),
+                              ),
+                            ],
+                          ),
+                          _buildNotificationIcon(context, res.scale),
+                        ],
+                      ),
 
                   SizedBox(height: 22 * res.scale),
 
@@ -164,79 +176,91 @@ class _HomeScreenState extends State<HomeScreen> {
                   _isLoadingUser
                       ? HomeShimmer.buildMedicalFilesShimmer(res.scale)
                       : Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            /// --- Medical File Title ---
-                            Text(
-                              'Medical Files',
-                              style: TextStyle(
-                                fontSize: 18 * res.scale,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xFF0E1A34),
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          /// --- Medical File Title ---
+                          Text(
+                            'Medical Files',
+                            style: TextStyle(
+                              fontSize: 18 * res.scale,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primaryTextColor,
+                            ),
+                          ),
+                          SizedBox(height: 15 * res.scale),
+
+                          /// Medical Items Row (History, Lab, Radiology)
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildMedicalItem(
+                                  context,
+                                  'History',
+                                  'assets/Icons/history.svg',
+                                  AppColors.historyItemBg,
+                                  AppColors.accentColor,
+                                  res.scale,
+                                  () => Navigator.of(
+                                    context,
+                                    rootNavigator: true,
+                                  ).push(
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) =>
+                                              const MedicalHistoryScreen(),
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 15 * res.scale),
-
-                            /// Medical Items Row (History, Lab, Radiology)
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: _buildMedicalItem(
+                              SizedBox(width: 12 * res.scale),
+                              Expanded(
+                                child: _buildMedicalItem(
+                                  context,
+                                  'Lab Results',
+                                  'assets/Icons/lap-reports.svg',
+                                  AppColors.labItemBg,
+                                  AppColors.successText,
+                                  res.scale,
+                                  () => Navigator.of(
                                     context,
-                                    'History',
-                                    'assets/Icons/history.svg',
-                                    const Color(0xFFE4ECFF),
-                                    const Color(0xFF3B82F6),
-                                    res.scale,
-                                    () => Navigator.of(context, rootNavigator: true).push(
-                                      MaterialPageRoute(
-                                        builder:
-                                            (context) => const MedicalHistoryScreen(),
-                                      ),
+                                    rootNavigator: true,
+                                  ).push(
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => const LabResultsScreen(),
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 12 * res.scale),
-                                Expanded(
-                                  child: _buildMedicalItem(
+                              ),
+                              SizedBox(width: 12 * res.scale),
+                              Expanded(
+                                child: _buildMedicalItem(
+                                  context,
+                                  'Radiology',
+                                  'assets/Icons/radiology.svg',
+                                  AppColors.radiologyItemBg,
+                                  AppColors.radiologyIconColor,
+                                  res.scale,
+                                  () => Navigator.of(
                                     context,
-                                    'Lab Results',
-                                    'assets/Icons/lap-reports.svg',
-                                    const Color(0xFFCCFFD6),
-                                    const Color(0xFF34A853),
-                                    res.scale,
-                                    () => Navigator.of(context, rootNavigator: true).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => const LabResultsScreen(),
-                                      ),
+                                    rootNavigator: true,
+                                  ).push(
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => const RadiologyScreen(),
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 12 * res.scale),
-                                Expanded(
-                                  child: _buildMedicalItem(
-                                    context,
-                                    'Radiology',
-                                    'assets/Icons/radiology.svg',
-                                    const Color.fromARGB(255, 255, 236, 228),
-                                    const Color(0xFFB93815),
-                                    res.scale,
-                                    () => Navigator.of(context, rootNavigator: true).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => const RadiologyScreen(),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
+                          ),
 
-                            SizedBox(height: 15 * res.scale),
+                          SizedBox(height: 15 * res.scale),
 
-                            /// View Full Medical File Button
-                            _buildFullFileButton(context, res.scale),
-                          ],
-                        ),
+                          /// View Full Medical File Button
+                          _buildFullFileButton(context, res.scale),
+                        ],
+                      ),
 
                   SizedBox(height: 30 * res.scale),
                 ],
@@ -245,8 +269,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildNotificationIcon(BuildContext context, double scale) {
     return IconButton(
@@ -265,10 +290,7 @@ class _HomeScreenState extends State<HomeScreen> {
             'assets/Icons/notification.svg',
             width: 22 * scale,
             height: 22 * scale,
-            colorFilter: const ColorFilter.mode(
-              Color(0xFF667085),
-              BlendMode.srcIn,
-            ),
+            colorFilter: ColorFilter.mode(AppColors.iconGrey, BlendMode.srcIn),
           ),
           Positioned(
             right: -2 * scale,
@@ -277,9 +299,9 @@ class _HomeScreenState extends State<HomeScreen> {
               width: 8 * scale,
               height: 8 * scale,
               decoration: BoxDecoration(
-                color: const Color(0xFFFF7B00),
+                color: AppColors.warningText,
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 1.2 * scale),
+                border: Border.all(color: AppColors.white, width: 1.2 * scale),
               ),
             ),
           ),
@@ -311,12 +333,12 @@ class _HomeScreenState extends State<HomeScreen> {
         horizontal: 15 * scale,
       ),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(16 * scale),
-        border: Border.all(color: const Color(0xFFD9D9D9), width: 0.5 * scale),
+        border: Border.all(color: AppColors.borderColor, width: 0.5 * scale),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFC9C9C9).withOpacity(0.25),
+            color: AppColors.cardShadowColor.withOpacity(0.25),
             blurRadius: 7.9 * scale,
             offset: Offset(0, 4 * scale),
           ),
@@ -334,7 +356,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(
                   fontSize: 18 * scale,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF0E1A34),
+                  color: AppColors.primaryTextColor,
                 ),
               ),
               TextButton(
@@ -347,7 +369,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Text(
                   'View All',
                   style: TextStyle(
-                    color: const Color(0xFF2563EB),
+                    color: AppColors.primaryColor,
                     fontSize: 15 * scale,
                     fontWeight: FontWeight.w400,
                   ),
@@ -395,10 +417,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           vertical: 12 * scale,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFEBF1FF),
+                          color: AppColors.lightBlueSurface.withOpacity(0.7),
                           borderRadius: BorderRadius.circular(16 * scale),
                           border: Border.all(
-                            color: const Color(0xFF2563EB).withOpacity(0.1),
+                            color: AppColors.primaryColor.withOpacity(0.1),
                             width: 1 * scale,
                           ),
                         ),
@@ -407,8 +429,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             Container(
                               width: 48 * scale,
                               height: 48 * scale,
-                              decoration: const BoxDecoration(
-                                color: Color(0xFFCDDCFF),
+                              decoration: BoxDecoration(
+                                color: AppColors.lightBlueSurface,
                                 shape: BoxShape.circle,
                               ),
                               child: Center(
@@ -416,8 +438,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   'assets/Icons/document.svg',
                                   width: 22 * scale,
                                   height: 22 * scale,
-                                  colorFilter: const ColorFilter.mode(
-                                    Color(0xFF2563EB),
+                                  colorFilter: ColorFilter.mode(
+                                    AppColors.primaryColor,
                                     BlendMode.srcIn,
                                   ),
                                 ),
@@ -436,7 +458,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     style: TextStyle(
                                       fontSize: 16 * scale,
                                       fontWeight: FontWeight.w700,
-                                      color: const Color(0xFF0E1A34),
+                                      color: AppColors.primaryTextColor,
                                       letterSpacing: -0.3,
                                     ),
                                   ),
@@ -448,7 +470,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     style: TextStyle(
                                       fontSize: 13 * scale,
                                       fontWeight: FontWeight.w500,
-                                      color: const Color(0xFF64748B),
+                                      color: AppColors.mutedTextColor,
                                     ),
                                   ),
                                 ],
@@ -476,15 +498,15 @@ class _HomeScreenState extends State<HomeScreen> {
         width: double.infinity,
         padding: EdgeInsets.all(20 * scale),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF3A80F5), Color(0xFF2B65D9)],
+          gradient: LinearGradient(
+            colors: [AppColors.primaryMediumLight, AppColors.primaryDeep],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(16 * scale),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF74A9FF),
+              color: AppColors.primaryGradientShadow,
               blurRadius: 22 * scale,
               offset: Offset(0, 8 * scale),
             ),
@@ -496,7 +518,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Text(
               'Next Visit',
               style: TextStyle(
-                color: Colors.white70,
+                color: AppColors.white.withOpacity(0.7),
                 fontSize: 18 * scale,
                 fontWeight: FontWeight.w600,
               ),
@@ -506,7 +528,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Text(
                 'No Upcoming Visits',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: AppColors.white,
                   fontSize: 16 * scale,
                   fontWeight: FontWeight.w500,
                 ),
@@ -527,8 +549,8 @@ class _HomeScreenState extends State<HomeScreen> {
       width: double.infinity,
       padding: EdgeInsets.all(20 * scale),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF3A80F5), Color(0xFF2B65D9)],
+        gradient: LinearGradient(
+          colors: [AppColors.primaryMediumLight, AppColors.primaryDeep],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -536,7 +558,7 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: BorderRadius.circular(16 * scale),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF74A9FF),
+            color: AppColors.primaryGradientShadow,
             blurRadius: 22 * scale,
             offset: Offset(0, 8 * scale),
           ),
@@ -548,7 +570,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Text(
             'Next Visit',
             style: TextStyle(
-              color: Colors.white70,
+              color: AppColors.white.withOpacity(0.7),
               fontSize: 18 * scale,
               fontWeight: FontWeight.w600,
             ),
@@ -557,7 +579,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Text(
             'Dr. $doctorName',
             style: TextStyle(
-              color: Colors.white,
+              color: AppColors.white,
               fontSize: 20 * scale,
               fontWeight: FontWeight.bold,
             ),
@@ -565,7 +587,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Text(
             specialization,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.8),
+              color: AppColors.white.withOpacity(0.8),
               fontSize: 12 * scale,
               fontWeight: FontWeight.w400,
             ),
@@ -574,7 +596,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Container(
             padding: EdgeInsets.all(15 * scale),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
+              color: AppColors.white.withOpacity(0.15),
               borderRadius: BorderRadius.circular(6 * scale),
             ),
             child: Row(
@@ -597,7 +619,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Text(
           label,
           style: TextStyle(
-            color: Colors.white70,
+            color: AppColors.white.withOpacity(0.7),
             fontSize: 12 * scale,
             fontWeight: FontWeight.w400,
           ),
@@ -605,7 +627,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Text(
           value,
           style: TextStyle(
-            color: Colors.white,
+            color: AppColors.white,
             fontSize: 14 * scale,
             fontWeight: FontWeight.w600,
           ),
@@ -631,15 +653,15 @@ class _HomeScreenState extends State<HomeScreen> {
           vertical: 15 * scale,
         ),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           borderRadius: BorderRadius.circular(12 * scale),
           border: Border.all(
-            color: const Color(0xFFCDCDCD),
+            color: AppColors.secondaryBorderColor,
             width: 0.5 * scale,
           ),
           boxShadow: [
             BoxShadow(
-              color: Color(0xFFC9C9C9).withOpacity(0.25),
+              color: AppColors.cardShadowColor.withOpacity(0.25),
               blurRadius: 7.9 * scale,
               offset: Offset(0, 4 * scale),
             ),
@@ -667,7 +689,7 @@ class _HomeScreenState extends State<HomeScreen> {
               style: TextStyle(
                 fontSize: 12 * scale,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF2D2D2D),
+                color: AppColors.darkGreyText,
               ),
             ),
           ],
@@ -686,15 +708,15 @@ class _HomeScreenState extends State<HomeScreen> {
         width: double.infinity,
         height: 50 * scale,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           borderRadius: BorderRadius.circular(10 * scale),
           border: Border.all(
-            color: const Color(0xFFCDCDCD),
+            color: AppColors.secondaryBorderColor,
             width: 0.5 * scale,
           ),
           boxShadow: [
             BoxShadow(
-              color: Color(0xFFC9C9C9).withOpacity(0.25),
+              color: AppColors.cardShadowColor.withOpacity(0.25),
               blurRadius: 7.9 * scale,
               // offset: Offset(0, 4 * scale),
             ),
@@ -704,7 +726,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Text(
             'View Full Medical File',
             style: TextStyle(
-              color: const Color(0xFF3B82F6),
+              color: AppColors.accentColor,
               fontWeight: FontWeight.w600,
               fontSize: 14 * scale,
             ),

@@ -2,6 +2,7 @@ import 'package:application/utils/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/utils/api_service.dart';
+import '../../../core/theme/app_colors.dart';
 
 class EditIdentityScreen extends StatefulWidget {
   final String type;
@@ -124,14 +125,14 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FE),
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         elevation: 0,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            color: Colors.black,
+            color: AppColors.black,
             size: (24 * res.scale).toDouble(),
           ),
           onPressed: () => Navigator.pop(context),
@@ -139,7 +140,7 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
         title: Text(
           'Edit ${isEmail ? "Email" : "Phone"}',
           style: TextStyle(
-            color: Colors.black,
+            color: AppColors.black,
             fontWeight: FontWeight.bold,
             fontSize: (18 * res.scale).toDouble(),
           ),
@@ -157,7 +158,7 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
                   isEmail ? 'EMAIL ADDRESS' : 'PHONE NUMBER',
                   style: TextStyle(
                     fontSize: (12 * res.scale).toDouble(),
-                    color: const Color(0xFF8A94A6),
+                    color: AppColors.secondaryTextColor,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.8,
                   ),
@@ -167,7 +168,7 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
                   decoration: BoxDecoration(
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: AppColors.black.withOpacity(0.05),
                         blurRadius: (10 * res.scale).toDouble(),
                         offset: const Offset(0, 4),
                       ),
@@ -182,12 +183,12 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
                             : TextInputType.number,
                     style: TextStyle(
                       fontSize: (16 * res.scale).toDouble(),
-                      color: const Color(0xFF1F2937),
+                      color: AppColors.headingColor,
                       fontWeight: FontWeight.w500,
                     ),
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: AppColors.white,
                       prefixIcon: Padding(
                         padding: EdgeInsets.only(
                           left: (16 * res.scale).toDouble(),
@@ -197,7 +198,7 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
                           isEmail
                               ? Icons.email_outlined
                               : Icons.phone_android_outlined,
-                          color: const Color(0xFF3B82F6),
+                          color: AppColors.accentColor,
                           size: (22 * res.scale).toDouble(),
                         ),
                       ),
@@ -214,7 +215,10 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
                           (12 * res.scale).toDouble(),
                         ),
                         borderSide: BorderSide(
-                          color: isErrorState ? Colors.red : Colors.transparent,
+                          color:
+                              isErrorState
+                                  ? AppColors.errorColor
+                                  : AppColors.transparent,
                           width: isErrorState ? 1.5 : 0,
                         ),
                       ),
@@ -223,7 +227,10 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
                           (12 * res.scale).toDouble(),
                         ),
                         borderSide: BorderSide(
-                          color: isErrorState ? Colors.red : Colors.transparent,
+                          color:
+                              isErrorState
+                                  ? AppColors.errorColor
+                                  : AppColors.transparent,
                           width: isErrorState ? 1.5 : 0,
                         ),
                       ),
@@ -233,7 +240,9 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
                         ),
                         borderSide: BorderSide(
                           color:
-                              isErrorState ? Colors.red : const Color(0xFF2563EB),
+                              isErrorState
+                                  ? AppColors.errorColor
+                                  : AppColors.primaryColor,
                           width: 1.5,
                         ),
                       ),
@@ -250,7 +259,10 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
                 Text(
                   instructionText,
                   style: TextStyle(
-                    color: isErrorState ? Colors.red : const Color(0xFF94A3B8),
+                    color:
+                        isErrorState
+                            ? AppColors.errorColor
+                            : AppColors.disabledTextColor,
                     fontSize: (12 * res.scale).toDouble(),
                   ),
                 ),
@@ -261,7 +273,7 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _handleSave,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2563EB),
+                      backgroundColor: AppColors.primaryColor,
                       elevation: 2,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(
@@ -274,15 +286,15 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
                             ? SizedBox(
                               height: (20 * res.scale).toDouble(),
                               width: (20 * res.scale).toDouble(),
-                              child: const CircularProgressIndicator(
-                                color: Colors.white,
+                              child: CircularProgressIndicator(
+                                color: AppColors.white,
                                 strokeWidth: 2,
                               ),
                             )
                             : Text(
                               'Save Changes',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: AppColors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize: (16 * res.scale).toDouble(),
                               ),

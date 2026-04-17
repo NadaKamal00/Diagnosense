@@ -87,7 +87,10 @@ class TaskHelper {
   }
 
   /// Returns the standardized status color for tasks.
-  static Color getStatusColor({required bool isCompleted, required bool isOverdue}) {
+  static Color getStatusColor({
+    required bool isCompleted,
+    required bool isOverdue,
+  }) {
     if (isCompleted) return const Color(0xFF939393); // Grey
     if (isOverdue) return Colors.red; // Overdue
     return Colors.green; // On time
@@ -115,10 +118,7 @@ class TaskHelper {
     required double scale,
   }) {
     if (!isCompleted && isOverdue) {
-      return EdgeInsets.symmetric(
-        horizontal: 8 * scale,
-        vertical: 4 * scale,
-      );
+      return EdgeInsets.symmetric(horizontal: 8 * scale, vertical: 4 * scale);
     }
     return EdgeInsets.zero;
   }

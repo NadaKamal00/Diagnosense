@@ -1,3 +1,4 @@
+import 'package:application/core/theme/app_colors.dart';
 import 'package:application/core/utils/api_service.dart';
 import 'package:application/utils/responsive_helper.dart';
 import 'package:flutter/material.dart';
@@ -67,7 +68,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           content: Text(
             result['message']?.toString() ?? 'Profile updated successfully!',
           ),
-          backgroundColor: const Color(0xFF10B981),
+          backgroundColor: AppColors.successEmerald,
         ),
       );
       Navigator.pop(context, true); // Signal success to callers
@@ -77,7 +78,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           content: Text(
             result['message']?.toString() ?? 'Update failed. Please try again.',
           ),
-          backgroundColor: const Color(0xFFEF4444),
+          backgroundColor: AppColors.errorColor,
         ),
       );
     }
@@ -92,7 +93,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final bool hasPhone = widget.initialPhone.isNotEmpty;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FE),
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -106,7 +107,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           child: IconButton(
             icon: Icon(
               Icons.arrow_back_ios,
-              color: const Color(0xFF0E1A34),
+              color: AppColors.primaryTextColor,
               size: (20 * res.scale).toDouble(),
             ),
             onPressed: () => Navigator.pop(context),
@@ -115,7 +116,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         title: Text(
           'Contact Details',
           style: TextStyle(
-            color: const Color(0xFF0E1A34),
+            color: AppColors.primaryTextColor,
             fontWeight: FontWeight.w600,
             fontSize: (18 * res.scale).toDouble(),
           ),
@@ -194,7 +195,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           Text(
             label,
             style: TextStyle(
-              color: const Color(0xFF8A94A6),
+              color: AppColors.secondaryTextColor,
               fontWeight: FontWeight.w500,
               fontSize: (14 * scale).toDouble(),
             ),
@@ -203,9 +204,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: (15 * scale).toDouble()),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.white,
               borderRadius: BorderRadius.circular((16 * scale).toDouble()),
-              border: Border.all(color: const Color(0xFFF3F4F6), width: 1.2),
+              border: Border.all(color: AppColors.surfaceVariant, width: 1.2),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.03),
@@ -219,13 +220,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               keyboardType: keyboardType,
               style: TextStyle(
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF0E1A34),
+                color: AppColors.primaryTextColor,
                 fontSize: (15 * scale).toDouble(),
               ),
               decoration: InputDecoration(
                 icon: Icon(
                   icon,
-                  color: const Color(0xFF3B82F6),
+                  color: AppColors.accentColor,
                   size: (22 * scale).toDouble(),
                 ),
                 border: InputBorder.none,
@@ -249,7 +250,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           Text(
             "Name",
             style: TextStyle(
-              color: const Color(0xFF8A94A6),
+              color: AppColors.secondaryTextColor,
               fontWeight: FontWeight.w500,
               fontSize: (14 * scale).toDouble(),
             ),
@@ -261,15 +262,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               vertical: (16 * scale).toDouble(),
             ),
             decoration: BoxDecoration(
-              color: const Color(0xFFF8FAFC),
+              color: AppColors.backgroundColor,
               borderRadius: BorderRadius.circular((16 * scale).toDouble()),
-              border: Border.all(color: const Color(0xFFF3F4F6), width: 1.2),
+              border: Border.all(color: AppColors.surfaceVariant, width: 1.2),
             ),
             child: Row(
               children: [
                 CircleAvatar(
                   radius: (14 * scale).toDouble(),
-                  backgroundColor: const Color(0xFF3B82F6).withOpacity(0.1),
+                  backgroundColor: AppColors.accentColor.withOpacity(0.1),
                   child: Text(
                     widget.initialName.isNotEmpty
                         ? widget.initialName[0].toUpperCase()
@@ -277,7 +278,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     style: TextStyle(
                       fontSize: (14 * scale).toDouble(),
                       fontWeight: FontWeight.w700,
-                      color: const Color(0xFF2563EB),
+                      color: AppColors.primaryColor,
                     ),
                   ),
                 ),
@@ -287,7 +288,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     widget.initialName,
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      color: const Color(0xFF0E1A34),
+                      color: AppColors.primaryTextColor,
                       fontSize: (15 * scale).toDouble(),
                     ),
                   ),
@@ -310,15 +311,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             child: Container(
               height: (52 * scale).toDouble(),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.white,
                 borderRadius: BorderRadius.circular((15 * scale).toDouble()),
-                border: Border.all(color: const Color(0xFFCDCDCD)),
+                border: Border.all(color: AppColors.secondaryBorderColor),
               ),
               child: Center(
                 child: Text(
                   'Cancel',
                   style: TextStyle(
-                    color: const Color(0xFF0E1A34),
+                    color: AppColors.primaryTextColor,
                     fontWeight: FontWeight.w500,
                     fontSize: (16 * scale).toDouble(),
                   ),
@@ -337,13 +338,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             child: Container(
               height: (52 * scale).toDouble(),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF2563EB), Color(0xFF3B82F6)],
+                gradient: LinearGradient(
+                  colors: [AppColors.primaryColor, AppColors.accentColor],
                 ),
                 borderRadius: BorderRadius.circular((18 * scale).toDouble()),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF3B82F6).withOpacity(0.35),
+                    color: AppColors.accentColor.withOpacity(0.35),
                     blurRadius: (20 * scale).toDouble(),
                     offset: Offset(0, (10 * scale).toDouble()),
                   ),
@@ -355,15 +356,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ? SizedBox(
                           width: (22 * scale).toDouble(),
                           height: (22 * scale).toDouble(),
-                          child: const CircularProgressIndicator(
-                            color: Colors.white,
+                          child: CircularProgressIndicator(
+                            color: AppColors.white,
                             strokeWidth: 2.5,
                           ),
                         )
                         : Text(
                           'Save Changes',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: AppColors.white,
                             fontWeight: FontWeight.w700,
                             fontSize: (16 * scale).toDouble(),
                           ),

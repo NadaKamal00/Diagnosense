@@ -1,14 +1,17 @@
-import 'package:application/utils/responsive_helper.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../auth/login_screen.dart';
-import '../../core/utils/api_service.dart';
-import 'profile/profile.dart';
-import 'language.dart';
-import 'privacy.dart';
-import 'support.dart';
+import 'package:provider/provider.dart';
+import '../../core/theme/theme_provider.dart';
+import '../../core/theme/app_colors.dart';
 import '../Home/home_shimmer.dart';
+import 'support.dart';
+import 'privacy.dart';
+import 'language.dart';
+import 'profile/profile.dart';
+import '../../core/utils/api_service.dart';
+import '../../auth/login_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:application/utils/responsive_helper.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -23,7 +26,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String? _userEmail;
   String? _userPhone;
   bool _notificationsEnabled = true;
-  bool _isDarkMode = false;
   bool _isProfileLoading = true;
 
   @override
@@ -86,7 +88,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(message),
-          backgroundColor: success ? Colors.green : Colors.red,
+          backgroundColor:
+              success ? AppColors.successGreen : AppColors.errorColor,
         ),
       );
 
@@ -101,9 +104,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('An error occurred during logout.'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.errorColor,
         ),
       );
     } finally {
@@ -118,17 +121,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final res = Responsive(context);
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDark;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFF),
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         elevation: 0,
         toolbarHeight: 56 * res.scale,
         title: Text(
           'Settings',
           style: TextStyle(
-            color: const Color(0xFF0E1A34),
+            color: AppColors.primaryTextColor,
             fontWeight: FontWeight.bold,
             fontSize: 20 * res.scale,
           ),
@@ -160,13 +165,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   _buildSettingsItem(
                     icon: Icons.notifications_none_outlined,
                     iconColor:
-                        _notificationsEnabled ? Colors.cyan : Colors.grey,
+                        _notificationsEnabled
+                            ? AppColors.notificationColor
+                            : AppColors.mutedColor,
                     title: 'Allow Notifications',
                     scale: res.scale,
                     isTablet: res.isTablet,
                     trailingOverride: CupertinoSwitch(
                       value: _notificationsEnabled,
-                      activeColor: Colors.green,
+                      activeColor: AppColors.successGreen,
                       onChanged: (value) {
                         setState(() {
                           _notificationsEnabled = value;
@@ -181,28 +188,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   _buildSettingsItem(
                     icon: Icons.dark_mode_outlined,
-                    iconColor: _isDarkMode ? Colors.purple : Colors.grey,
+                    iconColor:
+                        isDark
+                            ? AppColors.darkModeIconColor
+                            : AppColors.mutedColor,
                     title: 'Dark Mode',
                     scale: res.scale,
                     isTablet: res.isTablet,
                     trailingOverride: CupertinoSwitch(
-                      value: _isDarkMode,
-                      activeColor: Colors.purple,
+                      value: isDark,
+                      activeColor: AppColors.darkModeIconColor,
                       onChanged: (value) {
-                        setState(() {
-                          _isDarkMode = value;
-                        });
+                        themeProvider.toggleTheme(value);
                       },
                     ),
                     onTap: () {
-                      setState(() {
-                        _isDarkMode = !_isDarkMode;
-                      });
+                      themeProvider.toggleTheme(!isDark);
                     },
                   ),
                   _buildSettingsItem(
                     icon: Icons.language_outlined,
-                    iconColor: Colors.orange,
+                    iconColor: AppColors.languageIconColor,
                     title: 'Language',
                     trailingText: 'English',
                     scale: res.scale,
@@ -217,7 +223,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   _buildSettingsItem(
                     icon: Icons.lock_outline,
-                    iconColor: Colors.green,
+                    iconColor: AppColors.successGreen,
                     title: 'Privacy Policy',
                     scale: res.scale,
                     isTablet: res.isTablet,
@@ -231,7 +237,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   _buildSettingsItem(
                     icon: Icons.help_outline,
-                    iconColor: Colors.teal,
+                    iconColor: AppColors.supportIconColor,
                     title: 'Support & FAQ',
                     scale: res.scale,
                     isTablet: res.isTablet,
@@ -282,12 +288,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
           vertical: isTablet ? 24 * scale : 18 * scale,
         ),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           borderRadius: BorderRadius.circular(20 * scale),
-          border: Border.all(color: const Color(0xFFE5E7EB), width: 0.5),
+          border: Border.all(color: AppColors.cardBorderColor, width: 0.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.03),
+              color: AppColors.black.withOpacity(0.03),
               blurRadius: 10 * scale,
               offset: Offset(0, 4 * scale),
             ),
@@ -305,7 +311,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     style: TextStyle(
                       fontSize: 17 * scale,
                       fontWeight: FontWeight.bold,
-                      color: const Color(0xFF0E1A34),
+                      color: AppColors.primaryTextColor,
                     ),
                   ),
                   Builder(
@@ -320,7 +326,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         subTitle,
                         style: TextStyle(
                           fontSize: 13 * scale,
-                          color: const Color(0xFF8A94A6),
+                          color: AppColors.secondaryTextColor,
                         ),
                       );
                     },
@@ -331,7 +337,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Icon(
               Icons.arrow_forward_ios,
               size: 16 * scale,
-              color: Colors.grey.withOpacity(0.5),
+              color: AppColors.mutedColor.withOpacity(0.5),
             ),
           ],
         ),
@@ -347,7 +353,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         style: TextStyle(
           fontSize: 14 * scale,
           fontWeight: FontWeight.w600,
-          color: const Color(0xFF8A94A6),
+          color: AppColors.secondaryTextColor,
         ),
       ),
     );
@@ -357,9 +363,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Container(
       padding: EdgeInsets.symmetric(vertical: isTablet ? 12 * scale : 0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(20 * scale),
-        border: Border.all(color: const Color(0xFFE5E7EB), width: 1),
+        border: Border.all(color: AppColors.cardBorderColor, width: 1),
       ),
       child: Column(
         children:
@@ -374,7 +380,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       indent: 60 * scale,
                       height: 1,
                       thickness: 1,
-                      color: Colors.grey.withOpacity(0.1),
+                      color: AppColors.hintGrey.withOpacity(0.1),
                     ),
                 ],
               );
@@ -410,18 +416,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
           color: iconColor.withOpacity(0.1),
           borderRadius: BorderRadius.circular(10 * scale),
         ),
-        child: Icon(
-          icon,
-          color: iconColor,
-          size: 22 * scale,
-        ),
+        child: Icon(icon, color: iconColor, size: 22 * scale),
       ),
       title: Text(
         title,
         style: TextStyle(
           fontSize: 15 * scale,
           fontWeight: FontWeight.w500,
-          color: const Color(0xFF0E1A34),
+          color: AppColors.primaryTextColor,
         ),
       ),
       trailing:
@@ -433,7 +435,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Text(
                   trailingText,
                   style: TextStyle(
-                    color: const Color(0xFF8A94A6),
+                    color: AppColors.secondaryTextColor,
                     fontSize: 13 * scale,
                   ),
                 ),
@@ -441,7 +443,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Icon(
                 Icons.arrow_forward_ios,
                 size: 12 * scale,
-                color: const Color(0xFFD1D5DB),
+                color: AppColors.borderColor,
               ),
             ],
           ),
@@ -452,17 +454,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return InkWell(
       onTap: _isLoggingOut ? null : _handleLogout,
       borderRadius: BorderRadius.circular(20 * scale),
-      splashColor: Colors.red.withOpacity(0.1),
-      highlightColor: Colors.red.withOpacity(0.05),
+      splashColor: AppColors.errorColor.withOpacity(0.1),
+      highlightColor: AppColors.errorColor.withOpacity(0.05),
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(
           vertical: isTablet ? 20 * scale : 16 * scale,
         ),
         decoration: BoxDecoration(
-          color: const Color(0xFFFFF1F1),
+          color: AppColors.errorLightBackground,
           borderRadius: BorderRadius.circular(20 * scale),
-          border: Border.all(color: Colors.red.withOpacity(0.15), width: 1.0),
+          border: Border.all(
+            color: AppColors.errorColor.withOpacity(0.15),
+            width: 1.0,
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -471,18 +476,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
               SizedBox(
                 height: 20 * scale,
                 width: 20 * scale,
-                child: const CircularProgressIndicator(
-                  color: Colors.red,
+                child: CircularProgressIndicator(
+                  color: AppColors.errorColor,
                   strokeWidth: 2,
                 ),
               )
             else
-              Icon(Icons.logout, color: Colors.red, size: 20 * scale),
+              Icon(Icons.logout, color: AppColors.errorColor, size: 20 * scale),
             SizedBox(width: 10 * scale),
             Text(
               _isLoggingOut ? 'Logging out...' : 'Logout',
               style: TextStyle(
-                color: Colors.red,
+                color: AppColors.errorColor,
                 fontWeight: FontWeight.bold,
                 fontSize: 16 * scale,
               ),

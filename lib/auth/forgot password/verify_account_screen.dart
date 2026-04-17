@@ -132,7 +132,7 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
             content: Text(
               data['message']?.toString() ?? 'Failed to resend. Try again.',
             ),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.errorColor,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -140,8 +140,8 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('An error occurred. Please try again.'),
+        SnackBar(
+          content: const Text('An error occurred. Please try again.'),
           backgroundColor: AppColors.errorColor,
           behavior: SnackBarBehavior.floating,
         ),
@@ -365,7 +365,7 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Icon(
+                                  Icon(
                                     Icons.check_circle_rounded,
                                     color: AppColors.successColor,
                                     size: 16,
@@ -518,7 +518,7 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
             colors:
                 _isLoading
                     ? [AppColors.primaryLight, AppColors.primaryMedium]
-                    : const [AppColors.primaryColor, AppColors.accentColor],
+                    : [AppColors.primaryColor, AppColors.accentColor],
           ),
           borderRadius: BorderRadius.circular(14 * scale),
           boxShadow: [
@@ -536,7 +536,7 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
                   ? SizedBox(
                     height: 24 * scale,
                     width: 24 * scale,
-                    child: const CircularProgressIndicator(
+                    child: CircularProgressIndicator(
                       color: AppColors.white,
                       strokeWidth: 2.5,
                     ),

@@ -188,104 +188,124 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
           SizedBox(height: 10 * res.scale),
 
           Expanded(
-            child:
-                _isLoading
-                    ? HomeShimmer.buildMedicationListShimmer(
+            child: RefreshIndicator(
+              onRefresh: _fetchMedications,
+              child:
+                  _isLoading
+                      ? HomeShimmer.buildMedicationListShimmer(
                         scale: res.scale,
                         isTablet: res.isTablet,
                       )
-                    : _errorMessage != null
-                    ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      : _errorMessage != null
+                      ? ListView(
                         children: [
-                          Icon(
-                            Icons.error_outline,
-                            color: AppColors.errorColor.withOpacity(0.7),
-                            size: 48 * res.scale,
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.2,
                           ),
-                          SizedBox(height: 16 * res.scale),
-                          Text(
-                            "Failed to load medications",
-                            style: TextStyle(
-                              fontSize: 16 * res.scale,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primaryTextColor,
-                            ),
-                          ),
-                          SizedBox(height: 8 * res.scale),
-                          Text(
-                            _errorMessage!,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 14 * res.scale,
-                              color: AppColors.secondaryTextColor,
-                            ),
-                          ),
-                          SizedBox(height: 12 * res.scale),
-                          // Added detailed error info visible only in UI
-                          if (_errorMessage!.contains('401'))
-                            Text(
-                              "UNAUTHORIZED: Token might be expired.",
-                              style: TextStyle(
-                                fontSize: 12 * res.scale,
-                                color: AppColors.warningAmber,
-                              ),
-                            ),
-                          SizedBox(height: 24 * res.scale),
-                          ElevatedButton(
-                            onPressed: _fetchMedications,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryColor,
-                              foregroundColor: AppColors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(12 * res.scale),
-                              ),
-                            ),
-                            child: const Text("Try Again"),
-                          ),
-                        ],
-                      ),
-                    )
-                    : filteredMedications.isNotEmpty
-                    ? ListView.builder(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: (res.isTablet ? 24 : 20) * res.scale,
-                      ),
-                      itemCount: filteredMedications.length,
-                      itemBuilder:
-                          (context, index) => _buildMedicationCard(
-                            name: filteredMedications[index]['name'],
-                            dosage: filteredMedications[index]['dosage'],
-                            sig: filteredMedications[index]['frequency'] ??
-                                'As prescribed', // Mapping "frequency" to "sig"
-                            status: filteredMedications[index]['status'] ??
-                                'UNKNOWN',
-                            scale: res.scale,
-                            isTablet: res.isTablet,
-                          ),
-                    )
-                    : Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Symbols.pill,
-                            color: Colors.grey[300],
-                            size: 64 * res.scale,
-                          ),
-                          SizedBox(height: 16 * res.scale),
-                          Text(
-                            "No medications found",
-                            style: TextStyle(
-                              fontSize: 14 * res.scale,
-                              color: AppColors.mutedColor,
+                          Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.error_outline,
+                                  color: AppColors.errorColor.withOpacity(0.7),
+                                  size: 48 * res.scale,
+                                ),
+                                SizedBox(height: 16 * res.scale),
+                                Text(
+                                  "Failed to load medications",
+                                  style: TextStyle(
+                                    fontSize: 16 * res.scale,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.primaryTextColor,
+                                  ),
+                                ),
+                                SizedBox(height: 8 * res.scale),
+                                Text(
+                                  _errorMessage!,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 14 * res.scale,
+                                    color: AppColors.secondaryTextColor,
+                                  ),
+                                ),
+                                SizedBox(height: 12 * res.scale),
+                                if (_errorMessage!.contains('401'))
+                                  Text(
+                                    "UNAUTHORIZED: Token might be expired.",
+                                    style: TextStyle(
+                                      fontSize: 12 * res.scale,
+                                      color: AppColors.warningAmber,
+                                    ),
+                                  ),
+                                SizedBox(height: 24 * res.scale),
+                                ElevatedButton(
+                                  onPressed: _fetchMedications,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primaryColor,
+                                    foregroundColor: AppColors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                        12 * res.scale,
+                                      ),
+                                    ),
+                                  ),
+                                  child: const Text("Try Again"),
+                                ),
+                              ],
                             ),
                           ),
                         ],
+                      )
+                      : filteredMedications.isNotEmpty
+                      ? ListView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: (res.isTablet ? 24 : 20) * res.scale,
+                        ),
+                        itemCount: filteredMedications.length,
+                        itemBuilder:
+                            (context, index) => _buildMedicationCard(
+                              name: filteredMedications[index]['name'],
+                              dosage: filteredMedications[index]['dosage'],
+                              sig:
+                                  filteredMedications[index]['frequency'] ??
+                                  'As prescribed',
+                              status:
+                                  filteredMedications[index]['status'] ??
+                                  'UNKNOWN',
+                              scale: res.scale,
+                              isTablet: res.isTablet,
+                            ),
+                      )
+                      : ListView(
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.3,
+                          ),
+                          Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Symbols.pill,
+                                  color: AppColors.shimmerBase,
+                                  size: 64 * res.scale,
+                                ),
+                                SizedBox(height: 16 * res.scale),
+                                Text(
+                                  "No medications found",
+                                  style: TextStyle(
+                                    fontSize: 14 * res.scale,
+                                    color: AppColors.mutedColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
+            ),
           ),
         ],
       ),

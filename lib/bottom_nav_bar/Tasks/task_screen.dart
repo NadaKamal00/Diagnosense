@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import '../_navigation_menu.dart';
 import '../../core/utils/api_service.dart';
 import '../Home/home_shimmer.dart';
+import '../../core/theme/app_colors.dart';
 
 class TaskScreen extends StatefulWidget {
   const TaskScreen({super.key});
@@ -67,9 +68,9 @@ class _TaskScreenState extends State<TaskScreen> {
     final res = Responsive(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAff),
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         elevation: 0,
         toolbarHeight: 56 * res.scale,
         leadingWidth: (res.isTablet ? 100 : 70) * res.scale,
@@ -79,7 +80,7 @@ class _TaskScreenState extends State<TaskScreen> {
           child: IconButton(
             icon: Icon(
               Icons.arrow_back_ios,
-              color: const Color(0xFF0E1A34),
+              color: AppColors.primaryTextColor,
               size: 20 * res.scale,
             ),
             onPressed: () {
@@ -93,7 +94,7 @@ class _TaskScreenState extends State<TaskScreen> {
         title: Text(
           'Tasks',
           style: TextStyle(
-            color: const Color(0xFF0E1A34),
+            color: AppColors.primaryTextColor,
             fontWeight: FontWeight.w600,
             fontSize: 18 * res.scale,
           ),
@@ -107,61 +108,76 @@ class _TaskScreenState extends State<TaskScreen> {
           Divider(
             height: 1,
             thickness: .5,
-            color: const Color(0xFFD5D5D5),
+            color: AppColors.dividerColor,
             indent: 40 * res.scale,
             endIndent: 40 * res.scale,
           ),
           Expanded(
-            child:
-                _isLoading
-                    ? HomeShimmer.buildTaskShimmerList(res.scale)
-                    : _tasks.isEmpty
-                    ? Center(
-                      child: Text(
-                        "No tasks available",
-                        style: TextStyle(
-                          fontSize: 16 * res.scale,
-                          color: const Color(0xFF939393),
+            child: RefreshIndicator(
+              onRefresh: _fetchTasks,
+              child:
+                  _isLoading
+                      ? HomeShimmer.buildTaskShimmerList(res.scale)
+                      : _tasks.isEmpty
+                      ? ListView(
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.4,
+                          ), // Push text to center
+                          Center(
+                            child: Text(
+                              "No tasks available",
+                              style: TextStyle(
+                                fontSize: 16 * res.scale,
+                                color: AppColors.mutedColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                      : ListView.separated(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: (res.isTablet ? 24 : 20) * res.scale,
+                          vertical: 25 * res.scale,
                         ),
-                      ),
-                    )
-                    : ListView.separated(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: (res.isTablet ? 24 : 20) * res.scale,
-                        vertical: 25 * res.scale,
-                      ),
-                      itemCount: _tasks.length,
-                      separatorBuilder:
-                          (context, index) => SizedBox(height: 16 * res.scale),
-                      itemBuilder: (context, index) {
-                        final task = _tasks[index];
-                        final title = task['title']?.toString() ?? '';
-                        final subtitle = task['description']?.toString() ?? '';
-                        final dueDate = task['Due_date']?.toString() ?? '';
-                        final isCompleted =
-                            task['is_completed'] == 1 ||
-                            task['is_completed'] == true ||
-                            task['is_completed'] == "1";
-                        final doctorName =
-                            task['visit']?['doctor_name']?.toString() ?? '';
-                        final taskId =
-                            task['id'] is int
-                                ? task['id'] as int
-                                : int.tryParse(task['id']?.toString() ?? '') ??
-                                    0;
+                        itemCount: _tasks.length,
+                        separatorBuilder:
+                            (context, index) =>
+                                SizedBox(height: 16 * res.scale),
+                        itemBuilder: (context, index) {
+                          final task = _tasks[index];
+                          final title = task['title']?.toString() ?? '';
+                          final subtitle =
+                              task['description']?.toString() ?? '';
+                          final dueDate = task['Due_date']?.toString() ?? '';
+                          final isCompleted =
+                              task['is_completed'] == 1 ||
+                              task['is_completed'] == true ||
+                              task['is_completed'] == "1";
+                          final doctorName =
+                              task['visit']?['doctor_name']?.toString() ?? '';
+                          final taskId =
+                              task['id'] is int
+                                  ? task['id'] as int
+                                  : int.tryParse(
+                                        task['id']?.toString() ?? '',
+                                      ) ??
+                                      0;
 
-                        return _buildTaskCard(
-                          context,
-                          res.scale,
-                          title: title,
-                          subtitle: subtitle,
-                          dueDate: dueDate,
-                          isCompleted: isCompleted,
-                          doctorName: doctorName,
-                          destination: TaskDetailsScreen(taskId: taskId),
-                        );
-                      },
-                    ),
+                          return _buildTaskCard(
+                            context,
+                            res.scale,
+                            title: title,
+                            subtitle: subtitle,
+                            dueDate: dueDate,
+                            isCompleted: isCompleted,
+                            doctorName: doctorName,
+                            destination: TaskDetailsScreen(taskId: taskId),
+                          );
+                        },
+                      ),
+            ),
           ),
         ],
       ),
@@ -198,13 +214,13 @@ class _TaskScreenState extends State<TaskScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(
-          color: const Color(0xFFE5E7EB),
+          color: AppColors.cardBorderColor,
           width: 1.0 * scale,
         ),
         borderRadius: BorderRadius.circular(14 * scale),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: AppColors.black.withOpacity(0.02),
             blurRadius: 10 * scale,
             offset: Offset(0, 2 * scale),
           ),
@@ -218,9 +234,7 @@ class _TaskScreenState extends State<TaskScreen> {
             final result = await Navigator.of(
               context,
               rootNavigator: true,
-            ).push(
-              MaterialPageRoute(builder: (context) => destination),
-            );
+            ).push(MaterialPageRoute(builder: (context) => destination));
             if (result == true && mounted) {
               _fetchTasks();
             }
@@ -238,8 +252,8 @@ class _TaskScreenState extends State<TaskScreen> {
                           : Icons.radio_button_unchecked_rounded,
                       color:
                           isCompleted
-                              ? Colors.green
-                              : const Color(0xFFCBD5E1),
+                              ? AppColors.successGreen
+                              : AppColors.borderColor,
                       size: 20 * scale,
                     ),
                     SizedBox(width: 10 * scale),
@@ -254,8 +268,8 @@ class _TaskScreenState extends State<TaskScreen> {
                               fontWeight: FontWeight.bold,
                               color:
                                   isCompleted
-                                      ? Colors.grey.withOpacity(0.7)
-                                      : const Color(0xFF0E1A34),
+                                      ? AppColors.mutedColor.withOpacity(0.7)
+                                      : AppColors.primaryTextColor,
                               decoration:
                                   isCompleted
                                       ? TextDecoration.lineThrough
@@ -267,7 +281,7 @@ class _TaskScreenState extends State<TaskScreen> {
                             Text(
                               subtitle,
                               style: TextStyle(
-                                color: const Color(0xFF939393),
+                                color: AppColors.mutedColor,
                                 fontSize: 11 * scale,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -289,7 +303,10 @@ class _TaskScreenState extends State<TaskScreen> {
                         vertical: 4 * scale,
                       ),
                       decoration: BoxDecoration(
-                        color: isCompleted ? Colors.grey.shade100 : const Color(0xFFEFF6FF),
+                        color:
+                            isCompleted
+                                ? AppColors.surfaceVariant
+                                : AppColors.lightBlueSurface,
                         borderRadius: BorderRadius.circular(8 * scale),
                       ),
                       child: Row(
@@ -297,7 +314,10 @@ class _TaskScreenState extends State<TaskScreen> {
                           Text(
                             "Dr. ",
                             style: TextStyle(
-                              color: isCompleted ? const Color(0xFF939393) : const Color(0xFF2563EB),
+                              color:
+                                  isCompleted
+                                      ? AppColors.mutedColor
+                                      : AppColors.primaryColor,
                               fontSize: 12 * scale,
                               fontWeight: FontWeight.bold,
                             ),
@@ -305,7 +325,10 @@ class _TaskScreenState extends State<TaskScreen> {
                           Text(
                             doctorName,
                             style: TextStyle(
-                              color: isCompleted ? const Color(0xFF939393) : const Color(0xFF2563EB),
+                              color:
+                                  isCompleted
+                                      ? AppColors.mutedColor
+                                      : AppColors.primaryColor,
                               fontSize: 11 * scale,
                               fontWeight: FontWeight.w600,
                             ),

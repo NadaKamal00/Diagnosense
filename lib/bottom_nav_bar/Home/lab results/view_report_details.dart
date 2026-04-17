@@ -1,6 +1,7 @@
 import 'package:application/utils/responsive_helper.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_colors.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
@@ -63,9 +64,9 @@ class _ViewReportDetailsScreenState extends State<ViewReportDetailsScreen> {
       await File(localPath).copy(savePath);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Saved to Downloads"),
-          backgroundColor: Colors.green,
+        SnackBar(
+          content: const Text("Saved to Downloads"),
+          backgroundColor: AppColors.successGreen,
         ),
       );
     } catch (e) {
@@ -86,9 +87,9 @@ class _ViewReportDetailsScreenState extends State<ViewReportDetailsScreen> {
     final res = Responsive(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFF),
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         elevation: 0,
         toolbarHeight: 56 * res.scale,
         leadingWidth: (res.isTablet ? 90 : 70) * res.scale,
@@ -97,14 +98,14 @@ class _ViewReportDetailsScreenState extends State<ViewReportDetailsScreen> {
           alignment: Alignment.centerLeft,
           child: ClipOval(
             child: Material(
-              color: Colors.transparent,
+              color: AppColors.transparent,
               child: InkWell(
                 onTap: () => Navigator.pop(context),
                 child: Padding(
                   padding: EdgeInsets.all(8 * res.scale),
                   child: Icon(
                     Icons.arrow_back_ios,
-                    color: const Color(0xFF0E1A34),
+                    color: AppColors.primaryTextColor,
                     size: 20 * res.scale,
                   ),
                 ),
@@ -115,7 +116,7 @@ class _ViewReportDetailsScreenState extends State<ViewReportDetailsScreen> {
         title: Text(
           widget.name,
           style: TextStyle(
-            color: const Color(0xFF0E1A34),
+            color: AppColors.primaryTextColor,
             fontWeight: FontWeight.w600,
             fontSize: 18 * res.scale,
           ),
@@ -133,17 +134,17 @@ class _ViewReportDetailsScreenState extends State<ViewReportDetailsScreen> {
                 horizontal: (res.isTablet ? 30 : 20) * res.scale,
               ),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.white,
                 borderRadius: BorderRadius.circular(12 * res.scale),
                 border: Border(
                   top: BorderSide(
-                    color: const Color(0xFF2563EB),
+                    color: AppColors.primaryColor,
                     width: 5 * res.scale,
                   ),
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.25),
+                    color: AppColors.black.withOpacity(0.25),
                     blurRadius: 4 * res.scale,
                   ),
                 ],
@@ -216,22 +217,25 @@ class _ViewReportDetailsScreenState extends State<ViewReportDetailsScreen> {
       icon: Icon(
         icon,
         size: 20 * scale,
-        color: isPrimary ? Colors.white : const Color(0xFF0E1A34),
+        color: isPrimary ? AppColors.white : AppColors.primaryTextColor,
       ),
       label: Text(
         label,
         style: TextStyle(
           fontSize: 15 * scale,
           fontWeight: FontWeight.w600,
-          color: isPrimary ? Colors.white : const Color(0xFF0E1A34),
+          color: isPrimary ? AppColors.white : AppColors.primaryTextColor,
         ),
       ),
       style: ElevatedButton.styleFrom(
-        backgroundColor: isPrimary ? const Color(0xFF2563EB) : Colors.white,
+        backgroundColor: isPrimary ? AppColors.primaryColor : AppColors.white,
         padding: EdgeInsets.symmetric(vertical: 16 * scale),
         elevation: isPrimary ? 2 : 0,
         side: BorderSide(
-          color: isPrimary ? Colors.transparent : const Color(0xFFCDCDCD),
+          color:
+              isPrimary
+                  ? AppColors.transparent
+                  : AppColors.secondaryBorderColor,
           width: .5 * scale,
         ),
         shape: RoundedRectangleBorder(

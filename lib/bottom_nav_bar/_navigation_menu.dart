@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/theme/app_colors.dart';
 import '../Widgets/custom_bottom_bar.dart';
 import 'Home/home_screen.dart';
 import 'Settings/settings_screen.dart';
@@ -34,7 +35,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFF),
+      backgroundColor: AppColors.backgroundColor,
       resizeToAvoidBottomInset: false,
       body: IndexedStack(
         index: currentIndex,

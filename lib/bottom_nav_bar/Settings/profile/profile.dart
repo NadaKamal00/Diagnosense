@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Home/home_shimmer.dart';
 import 'edit_identity_screen.dart';
+import '../../../core/theme/app_colors.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -98,9 +99,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FE),
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         elevation: 0,
         toolbarHeight: (56 * res.scale).toDouble(),
         leadingWidth: ((res.isTablet ? 90 : 70) * res.scale).toDouble(),
@@ -112,7 +113,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: IconButton(
             icon: Icon(
               Icons.arrow_back,
-              color: Colors.black,
+              color: AppColors.black,
               size: (24 * res.scale).toDouble(),
             ),
             onPressed: () => Navigator.pop(context),
@@ -121,7 +122,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: Text(
           'My Profile',
           style: TextStyle(
-            color: Colors.black,
+            color: AppColors.black,
             fontWeight: FontWeight.bold,
             fontSize: (18 * res.scale).toDouble(),
           ),
@@ -146,13 +147,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppColors.white,
                         borderRadius: BorderRadius.circular(
                           (20 * res.scale).toDouble(),
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: AppColors.black.withOpacity(0.05),
                             blurRadius: (20 * res.scale).toDouble(),
                             offset: Offset(0, (10 * res.scale).toDouble()),
                           ),
@@ -287,7 +288,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required bool showArrow,
   }) {
     return Material(
-      color: Colors.transparent,
+      color: AppColors.transparent,
       child: InkWell(
         onTap: onTap,
         onLongPress: onLongPress,
@@ -301,14 +302,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Container(
                 padding: EdgeInsets.all((10 * res.scale).toDouble()),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF0F7FF),
+                  color: AppColors.iconBackground,
                   borderRadius: BorderRadius.circular(
                     (12 * res.scale).toDouble(),
                   ),
                 ),
                 child: Icon(
                   icon,
-                  color: const Color(0xFF3B82F6),
+                  color: AppColors.accentColor,
                   size: (22 * res.scale).toDouble(),
                 ),
               ),
@@ -324,7 +325,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       label.toUpperCase(),
                       style: TextStyle(
                         fontSize: (11 * res.scale).toDouble(),
-                        color: const Color(0xFF94A3B8),
+                        color: AppColors.disabledTextColor,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.8,
                       ),
@@ -337,7 +338,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       style: TextStyle(
                         fontSize: 17 * res.scale,
                         fontWeight: FontWeight.w500,
-                        color: const Color(0xFF0E1A34),
+                        color: AppColors.primaryTextColor,
                       ),
                     ),
                   ],
@@ -348,7 +349,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: (14 * res.scale).toDouble(),
-                  color: const Color(0xFFD1D5DB),
+                  color: AppColors.borderColor,
                 ),
             ],
           ),
@@ -366,7 +367,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Divider(
         height: 1,
         thickness: (0.8 * res.scale).toDouble(),
-        color: Colors.grey.withOpacity(0.4),
+        color: AppColors.hintGrey.withOpacity(0.4),
       ),
     );
   }

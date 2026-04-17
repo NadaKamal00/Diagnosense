@@ -393,7 +393,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             colors:
                 _isLoading
                     ? [AppColors.primaryLight, AppColors.primaryMedium]
-                    : const [AppColors.primaryColor, AppColors.accentColor],
+                    : [AppColors.primaryColor, AppColors.accentColor],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -413,7 +413,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   ? SizedBox(
                     height: 24 * scale,
                     width: 24 * scale,
-                    child: const CircularProgressIndicator(
+                    child: CircularProgressIndicator(
                       color: AppColors.white,
                       strokeWidth: 2.5,
                     ),
@@ -437,7 +437,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       onPressed: () => Navigator.pop(context),
       style: OutlinedButton.styleFrom(
         minimumSize: Size(double.infinity, 50 * scale),
-        side: const BorderSide(color: AppColors.mutedColor, width: .5),
+        side: BorderSide(color: AppColors.mutedColor, width: .5),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12 * scale),
         ),

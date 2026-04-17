@@ -104,68 +104,87 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
           ),
 
           Expanded(
-            child:
-                _isLoading
-                    ? HomeShimmer.buildTimelineListShimmer(
-                      scale: res.scale,
-                      isTablet: res.isTablet,
-                    )
-                    : _errorMessage != null
-                    ? Center(
-                      child: Text(
-                        _errorMessage!,
-                        style: const TextStyle(color: AppColors.errorColor),
-                      ),
-                    )
-                    : timelineData.isEmpty
-                    ? Center(
-                      child: Text(
-                        "No medical history available",
-                        style: TextStyle(
-                          color: AppColors.mutedColor,
-                          fontSize: 16 * res.scale,
+            child: RefreshIndicator(
+              onRefresh: _fetchTimeline,
+              child:
+                  _isLoading
+                      ? HomeShimmer.buildTimelineListShimmer(
+                        scale: res.scale,
+                        isTablet: res.isTablet,
+                      )
+                      : _errorMessage != null
+                      ? ListView(
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.3,
+                          ),
+                          Center(
+                            child: Text(
+                              _errorMessage!,
+                              style: TextStyle(color: AppColors.errorColor),
+                            ),
+                          ),
+                        ],
+                      )
+                      : timelineData.isEmpty
+                      ? ListView(
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.3,
+                          ),
+                          Center(
+                            child: Text(
+                              "No medical history available",
+                              style: TextStyle(
+                                color: AppColors.mutedColor,
+                                fontSize: 16 * res.scale,
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                      : ListView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20 * res.scale,
+                          vertical: (res.isTablet ? 15 : 20) * res.scale,
                         ),
-                      ),
-                    )
-                    : ListView.builder(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20 * res.scale,
-                        vertical: (res.isTablet ? 15 : 20) * res.scale,
-                      ),
-                      itemCount: timelineData.length,
-                      itemBuilder: (context, index) {
-                        final data = timelineData[index];
+                        itemCount: timelineData.length,
+                        itemBuilder: (context, index) {
+                          final data = timelineData[index];
 
-                        final currentYear = data['year']?.toString() ?? '';
-                        bool showYear = false;
-                        if (index == 0) {
-                          showYear = true;
-                        } else {
-                          final previousYear =
-                              timelineData[index - 1]['year']?.toString() ?? '';
-                          if (currentYear != previousYear) {
+                          final currentYear = data['year']?.toString() ?? '';
+                          bool showYear = false;
+                          if (index == 0) {
                             showYear = true;
+                          } else {
+                            final previousYear =
+                                timelineData[index - 1]['year']?.toString() ??
+                                '';
+                            if (currentYear != previousYear) {
+                              showYear = true;
+                            }
                           }
-                        }
 
-                        return Column(
-                          children: [
-                            if (showYear && currentYear.isNotEmpty)
-                              _buildYearHeader(
-                                currentYear,
+                          return Column(
+                            children: [
+                              if (showYear && currentYear.isNotEmpty)
+                                _buildYearHeader(
+                                  currentYear,
+                                  res.scale,
+                                  res.isTablet,
+                                ),
+                              _buildTimelineItem(
+                                index,
+                                data,
                                 res.scale,
                                 res.isTablet,
                               ),
-                            _buildTimelineItem(
-                              index,
-                              data,
-                              res.scale,
-                              res.isTablet,
-                            ),
-                          ],
-                        );
-                      },
-                    ),
+                            ],
+                          );
+                        },
+                      ),
+            ),
           ),
         ],
       ),

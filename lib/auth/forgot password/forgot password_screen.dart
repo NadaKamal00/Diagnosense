@@ -277,11 +277,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12 * scaleFactor),
-          borderSide: const BorderSide(color: AppColors.borderColor, width: 1),
+          borderSide: BorderSide(color: AppColors.borderColor, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12 * scaleFactor),
-          borderSide: const BorderSide(color: AppColors.accentColor, width: 2),
+          borderSide: BorderSide(color: AppColors.accentColor, width: 2),
         ),
       ),
     );
@@ -298,7 +298,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             colors:
                 _isLoading
                     ? [AppColors.primaryLight, AppColors.primaryMedium]
-                    : const [AppColors.primaryColor, AppColors.accentColor],
+                    : [AppColors.primaryColor, AppColors.accentColor],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -318,7 +318,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ? SizedBox(
                     height: 24 * scaleFactor,
                     width: 24 * scaleFactor,
-                    child: const CircularProgressIndicator(
+                    child: CircularProgressIndicator(
                       color: AppColors.white,
                       strokeWidth: 2.5,
                     ),

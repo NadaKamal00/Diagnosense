@@ -189,11 +189,11 @@ class _FirstLoginScreenState extends State<FirstLoginScreen> {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12 * scale),
-          borderSide: const BorderSide(color: AppColors.borderColor, width: 1),
+          borderSide: BorderSide(color: AppColors.borderColor, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12 * scale),
-          borderSide: const BorderSide(color: AppColors.accentColor, width: 2),
+          borderSide: BorderSide(color: AppColors.accentColor, width: 2),
         ),
       ),
     );
@@ -299,7 +299,7 @@ class _FirstLoginScreenState extends State<FirstLoginScreen> {
             colors:
                 _isLoading
                     ? [AppColors.primaryLight, AppColors.primaryMedium]
-                    : const [AppColors.primaryColor, AppColors.accentColor],
+                    : [AppColors.primaryColor, AppColors.accentColor],
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
           ),
@@ -319,7 +319,7 @@ class _FirstLoginScreenState extends State<FirstLoginScreen> {
                   ? SizedBox(
                     height: 24 * scale,
                     width: 24 * scale,
-                    child: const CircularProgressIndicator(
+                    child: CircularProgressIndicator(
                       color: AppColors.white,
                       strokeWidth: 2.5,
                     ),

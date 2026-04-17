@@ -215,7 +215,7 @@ class _MedicalFilesScreenState extends State<MedicalFilesScreen> {
       ),
 
       child: Material(
-        color: Colors.transparent,
+        color: AppColors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular((14 * scaleFactor).toDouble()),
           onTap: onTap,

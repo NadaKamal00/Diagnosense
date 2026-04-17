@@ -125,40 +125,58 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
           SizedBox(height: 5 * res.scale),
 
           Expanded(
-            child:
-                isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : errorMessage != null
-                    ? Center(
-                      child: Text(
-                        errorMessage!,
-                        style: TextStyle(
-                          fontSize: 14 * res.scale,
-                          color: AppColors.errorColor,
-                        ),
-                      ),
-                    )
-                    : filteredHistory.isNotEmpty
-                    ? ListView.builder(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: (res.isTablet ? 24 : 20) * res.scale,
-                      ),
-                      itemCount: filteredHistory.length,
-                      itemBuilder:
-                          (context, index) => _buildHistoryCard(
-                            filteredHistory[index],
-                            res.scale,
+            child: RefreshIndicator(
+              onRefresh: _fetchHistory,
+              child:
+                  isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : errorMessage != null
+                      ? ListView(
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.3,
                           ),
-                    )
-                    : Center(
-                      child: Text(
-                        "No history found",
-                        style: TextStyle(
-                          fontSize: 14 * res.scale,
-                          color: AppColors.hintGrey,
+                          Center(
+                            child: Text(
+                              errorMessage!,
+                              style: TextStyle(
+                                fontSize: 14 * res.scale,
+                                color: AppColors.errorColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                      : filteredHistory.isNotEmpty
+                      ? ListView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: (res.isTablet ? 24 : 20) * res.scale,
                         ),
+                        itemCount: filteredHistory.length,
+                        itemBuilder:
+                            (context, index) => _buildHistoryCard(
+                              filteredHistory[index],
+                              res.scale,
+                            ),
+                      )
+                      : ListView(
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.3,
+                          ),
+                          Center(
+                            child: Text(
+                              "No history found",
+                              style: TextStyle(
+                                fontSize: 14 * res.scale,
+                                color: AppColors.hintGrey,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
+            ),
           ),
         ],
       ),

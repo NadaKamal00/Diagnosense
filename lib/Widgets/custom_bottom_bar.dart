@@ -1,6 +1,7 @@
 import 'package:application/utils/responsive_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../core/theme/app_colors.dart';
 
 class CustomBottomBar extends StatelessWidget {
   final int currentIndex;
@@ -15,22 +16,22 @@ class CustomBottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final res = Responsive(context);
-    const Color unselectedColor = Color(0xFF939393);
-    const Color selectedColor = Color(0xFF387EF5);
+    final Color unselectedColor = AppColors.mutedColor;
+    final Color selectedColor = AppColors.navSelectedColor;
 
     final double barHeight = res.isTablet ? (95 * res.scale) : 80.0;
 
     return Container(
       height: barHeight,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(25 * res.scale),
           topRight: Radius.circular(25 * res.scale),
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF8B8B8B).withOpacity(0.12),
+            color: AppColors.navShadowLight.withOpacity(0.12),
             blurRadius: 30 * res.scale,
             offset: Offset(0, -5 * res.scale),
           ),
@@ -38,14 +39,14 @@ class CustomBottomBar extends StatelessWidget {
       ),
       child: Theme(
         data: Theme.of(context).copyWith(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          canvasColor: Colors.transparent,
+          splashColor: AppColors.transparent,
+          highlightColor: AppColors.transparent,
+          canvasColor: AppColors.transparent,
         ),
         child: BottomNavigationBar(
           currentIndex: currentIndex,
           onTap: onTap,
-          backgroundColor: Colors.transparent,
+          backgroundColor: AppColors.transparent,
           elevation: 0,
           type: BottomNavigationBarType.fixed,
           selectedItemColor: selectedColor,
@@ -75,8 +76,8 @@ class CustomBottomBar extends StatelessWidget {
       int index,
       Responsive res,
       ) {
-    const Color unselectedColor = Color(0xFF939393);
-    const Color selectedColor = Color(0xFF387EF5);
+    final Color unselectedColor = AppColors.mutedColor;
+    final Color selectedColor = AppColors.navSelectedColor;
 
     final bool isSelected = currentIndex == index;
     final double iconSize =

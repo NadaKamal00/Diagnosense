@@ -1,5 +1,6 @@
 import 'package:application/utils/responsive_helper.dart';
 import 'package:flutter/material.dart';
+import '../../core/theme/app_colors.dart';
 
 class SupportScreen extends StatelessWidget {
   const SupportScreen({super.key});
@@ -9,9 +10,9 @@ class SupportScreen extends StatelessWidget {
     final res = Responsive(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAff),
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         elevation: 0,
         toolbarHeight: 56 * res.scale,
         leadingWidth: (res.isTablet ? 100 : 70) * res.scale,
@@ -21,16 +22,16 @@ class SupportScreen extends StatelessWidget {
           child: IconButton(
             icon: Icon(
               Icons.arrow_back_ios,
-              color: const Color(0xFF0E1A34),
+              color: AppColors.primaryTextColor,
               size: 20 * res.scale,
             ),
             onPressed: () => Navigator.pop(context),
           ),
         ),
         title: Text(
-          'ٍSupport',
+          'Support',
           style: TextStyle(
-            color: const Color(0xFF0E1A34),
+            color: AppColors.primaryTextColor,
             fontWeight: FontWeight.w600,
             fontSize: 18 * res.scale,
           ),
@@ -45,7 +46,7 @@ class SupportScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
           child: Column(
             children: [
-              const Divider(height: 1, thickness: 1, color: Color(0xFFD5D5D5)),
+              Divider(height: 1, thickness: 1, color: AppColors.dividerColor),
 
               const SizedBox(height: 30),
 
@@ -56,10 +57,10 @@ class SupportScreen extends StatelessWidget {
                   horizontal: 20,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.white,
                   borderRadius: BorderRadius.circular(22 * res.scale),
                   border: Border.all(
-                    color: const Color(0xFFEAEAEA),
+                    color: AppColors.cardBorderColor,
                     width: 2 * res.scale,
                   ),
                 ),
@@ -70,7 +71,7 @@ class SupportScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 18 * res.scale,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFF0E1A34),
+                        color: AppColors.primaryTextColor,
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -80,7 +81,7 @@ class SupportScreen extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16 * res.scale,
-                        color: const Color(0xFF0E1A34),
+                        color: AppColors.primaryTextColor,
                         fontWeight: FontWeight.w400,
                       ),
                     ),
@@ -93,7 +94,7 @@ class SupportScreen extends StatelessWidget {
                       style: OutlinedButton.styleFrom(
                         fixedSize: Size(double.maxFinite, 55 * res.scale),
                         side: BorderSide(
-                          color: const Color(0xFF2563EB),
+                          color: AppColors.primaryColor,
                           width: 2 * res.scale,
                         ),
                         shape: RoundedRectangleBorder(
@@ -103,7 +104,7 @@ class SupportScreen extends StatelessWidget {
                       child: Text(
                         'Call Support',
                         style: TextStyle(
-                          color: const Color(0xFF2563EB),
+                          color: AppColors.primaryColor,
                           fontSize: 15 * res.scale,
                           fontWeight: FontWeight.w600,
                         ),
@@ -116,7 +117,7 @@ class SupportScreen extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2563EB),
+                        backgroundColor: AppColors.primaryColor,
                         fixedSize: Size(double.maxFinite, 55 * res.scale),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
@@ -126,7 +127,7 @@ class SupportScreen extends StatelessWidget {
                       child: Text(
                         'Send Email',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: AppColors.white,
                           fontSize: 15 * res.scale,
                           fontWeight: FontWeight.w600,
                         ),

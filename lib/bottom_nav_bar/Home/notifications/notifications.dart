@@ -4,8 +4,28 @@ import 'package:material_symbols_icons/symbols.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/api_service.dart';
 
-class NotificationsScreen extends StatelessWidget {
+class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
+
+  @override
+  State<NotificationsScreen> createState() => _NotificationsScreenState();
+}
+
+class _NotificationsScreenState extends State<NotificationsScreen> {
+  Future<Map<String, dynamic>>? _notificationsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _notificationsFuture = ApiService().getNotifications();
+  }
+
+  Future<void> _onRefresh() async {
+    setState(() {
+      _notificationsFuture = ApiService().getNotifications();
+    });
+    await _notificationsFuture;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,9 +35,9 @@ class NotificationsScreen extends StatelessWidget {
         isTablet ? (screenWidth / 500) : (screenWidth / 375);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAff),
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         elevation: 0,
         toolbarHeight: 56 * scaleFactor,
         leadingWidth: (isTablet ? 90 : 70) * scaleFactor,
@@ -26,14 +46,14 @@ class NotificationsScreen extends StatelessWidget {
           alignment: Alignment.centerLeft,
           child: ClipOval(
             child: Material(
-              color: Colors.transparent,
+              color: AppColors.transparent,
               child: InkWell(
                 onTap: () => Navigator.pop(context),
                 child: Padding(
                   padding: EdgeInsets.all(8 * scaleFactor),
                   child: Icon(
                     Icons.arrow_back_ios,
-                    color: const Color(0xFF0E1A34),
+                    color: AppColors.primaryTextColor,
                     size: 20 * scaleFactor,
                   ),
                 ),
@@ -44,7 +64,7 @@ class NotificationsScreen extends StatelessWidget {
         title: Text(
           'Notifications',
           style: TextStyle(
-            color: const Color(0xFF0E1A34),
+            color: AppColors.primaryTextColor,
             fontWeight: FontWeight.bold,
             fontSize: 18 * scaleFactor,
           ),
@@ -57,103 +77,117 @@ class NotificationsScreen extends StatelessWidget {
           Divider(
             height: 1,
             thickness: .5,
-            color: const Color(0xFFD5D5D5),
+            color: AppColors.dividerColor,
             indent: 40 * scaleFactor,
             endIndent: 40 * scaleFactor,
           ),
           Expanded(
-            child: FutureBuilder<Map<String, dynamic>>(
-              future: ApiService().getNotifications(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+            child: RefreshIndicator(
+              onRefresh: _onRefresh,
+              child: FutureBuilder<Map<String, dynamic>>(
+                future: _notificationsFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                      "Error: ${snapshot.error}",
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                  );
-                }
-
-                final response = snapshot.data;
-                final List<dynamic> notifications = response?['data'] ?? [];
-
-                if (notifications.isEmpty) {
-                  return Center(
-                    child: Text(
-                      "No notifications available",
-                      style: TextStyle(
-                        color: AppColors.secondaryTextColor,
-                        fontSize: 14 * scaleFactor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  );
-                }
-
-                return ListView.builder(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: (isTablet ? 24 : 20) * scaleFactor,
-                    vertical: 25 * scaleFactor,
-                  ),
-                  itemCount: notifications.length,
-                  itemBuilder: (context, index) {
-                    final notification = notifications[index];
-                    final String title = notification['title'] ?? 'No Title';
-                    final String subtitle =
-                        notification['description'] ?? 'No Description';
-                    final String time = notification['time'] ?? '';
-
-                    Widget iconWidget;
-                    Color defaultIconColor = const Color(0xFF2563EB);
-
-                    if (title == "Task") {
-                      iconWidget = SvgPicture.asset(
-                        'assets/Icons/tasks.svg',
-                        width: 20 * scaleFactor,
-                        height: 20 * scaleFactor,
-                        colorFilter: const ColorFilter.mode(
-                          Color(0xFF34A853),
-                          BlendMode.srcIn,
+                  if (snapshot.hasError) {
+                    return ListView(
+                      children: [
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.3),
+                        Center(
+                          child: Text(
+                            "Error: ${snapshot.error}",
+                            style: TextStyle(color: AppColors.errorColor),
+                          ),
                         ),
-                      );
-                    } else if (title == "Medication") {
-                      iconWidget = Icon(
-                        Symbols.pill,
-                        color: AppColors.primaryMediumLight,
-                        size: 20 * scaleFactor,
-                      );
-                    } else if (title == "Next Visit" || title == "New Visit") {
-                      iconWidget = SvgPicture.asset(
-                        'assets/Icons/clock.svg',
-                        width: 17 * scaleFactor, // Visually adjusted size
-                        height: 17 * scaleFactor,
-                        colorFilter: const ColorFilter.mode(
-                          AppColors.primaryColor,
-                          BlendMode.srcIn,
-                        ),
-                      );
-                    } else {
-                      iconWidget = Icon(
-                        Icons.info_outline,
-                        color: defaultIconColor,
-                        size: 20 * scaleFactor,
-                      );
-                    }
-
-                    return _buildNotificationCard(
-                      scaleFactor,
-                      title: title,
-                      subtitle: subtitle,
-                      time: time,
-                      iconWidget: iconWidget,
+                      ],
                     );
-                  },
-                );
-              },
+                  }
+
+                  final response = snapshot.data;
+                  final List<dynamic> notifications = response?['data'] ?? [];
+
+                  if (notifications.isEmpty) {
+                    return ListView(
+                      children: [
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.3),
+                        Center(
+                          child: Text(
+                            "No notifications available",
+                            style: TextStyle(
+                              color: AppColors.secondaryTextColor,
+                              fontSize: 14 * scaleFactor,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+
+                  return ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: (isTablet ? 24 : 20) * scaleFactor,
+                      vertical: 25 * scaleFactor,
+                    ),
+                    itemCount: notifications.length,
+                    itemBuilder: (context, index) {
+                      final notification = notifications[index];
+                      final String title = notification['title'] ?? 'No Title';
+                      final String subtitle =
+                          notification['description'] ?? 'No Description';
+                      final String time = notification['time'] ?? '';
+
+                      Widget iconWidget;
+                      Color defaultIconColor = AppColors.primaryColor;
+
+                      if (title == "Task") {
+                        iconWidget = SvgPicture.asset(
+                          'assets/Icons/tasks.svg',
+                          width: 20 * scaleFactor,
+                          height: 20 * scaleFactor,
+                          colorFilter: ColorFilter.mode(
+                            AppColors.successText,
+                            BlendMode.srcIn,
+                          ),
+                        );
+                      } else if (title == "Medication") {
+                        iconWidget = Icon(
+                          Symbols.pill,
+                          color: AppColors.primaryMediumLight,
+                          size: 20 * scaleFactor,
+                        );
+                      } else if (title == "Next Visit" || title == "New Visit") {
+                        iconWidget = SvgPicture.asset(
+                          'assets/Icons/clock.svg',
+                          width: 17 * scaleFactor, // Visually adjusted size
+                          height: 17 * scaleFactor,
+                          colorFilter: ColorFilter.mode(
+                            AppColors.primaryColor,
+                            BlendMode.srcIn,
+                          ),
+                        );
+                      } else {
+                        iconWidget = Icon(
+                          Icons.info_outline,
+                          color: defaultIconColor,
+                          size: 20 * scaleFactor,
+                        );
+                      }
+
+                      return _buildNotificationCard(
+                        scaleFactor,
+                        title: title,
+                        subtitle: subtitle,
+                        time: time,
+                        iconWidget: iconWidget,
+                      );
+                    },
+                  );
+                },
+              ),
             ),
           ),
         ],
@@ -172,15 +206,15 @@ class NotificationsScreen extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 16 * scaleFactor),
       padding: EdgeInsets.all(20 * scaleFactor),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(14 * scaleFactor),
         border: Border.all(
-          color: const Color(0xFFCDCDCD),
+          color: AppColors.secondaryBorderColor,
           width: .5 * scaleFactor,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.black.withOpacity(0.04),
             blurRadius: 10 * scaleFactor,
             offset: Offset(0, 4 * scaleFactor),
           ),
@@ -196,7 +230,7 @@ class NotificationsScreen extends StatelessWidget {
               vertical: 12 * scaleFactor,
             ),
             decoration: BoxDecoration(
-              color: const Color(0xFFF5F5F5),
+              color: AppColors.surfaceVariant,
               borderRadius: BorderRadius.circular(6 * scaleFactor),
             ),
             child: iconWidget,
@@ -221,7 +255,7 @@ class NotificationsScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 13 * scaleFactor,
                           fontWeight: FontWeight.w600,
-                          color: const Color(0xFF0E1A34),
+                          color: AppColors.primaryTextColor,
                         ),
                       ),
                     ),
@@ -229,7 +263,7 @@ class NotificationsScreen extends StatelessWidget {
                     Text(
                       time,
                       style: TextStyle(
-                        color: const Color(0xFF2A66FF),
+                        color: AppColors.primaryColor,
                         fontSize: 11 * scaleFactor,
                         fontWeight: FontWeight.w600,
                       ),
@@ -240,7 +274,7 @@ class NotificationsScreen extends StatelessWidget {
                 Text(
                   subtitle,
                   style: TextStyle(
-                    color: const Color(0xFF8A94A6),
+                    color: AppColors.secondaryTextColor,
                     fontSize: 11 * scaleFactor,
                     height: 1.4,
                     fontWeight: FontWeight.w500,

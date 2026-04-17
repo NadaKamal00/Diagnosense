@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import '../../core/theme/app_colors.dart';
 
 class CustomSearchBar extends StatelessWidget {
   final String hintText;
@@ -23,15 +24,15 @@ class CustomSearchBar extends StatelessWidget {
       child: Container(
         height: (51 * res.scale).toDouble(),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           borderRadius: BorderRadius.circular((12 * res.scale).toDouble()),
           border: Border.all(
-            color: const Color(0xFFCDCDCD),
+            color: AppColors.secondaryBorderColor,
             width: (0.8 * res.scale).toDouble(),
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFFC9C9C9).withOpacity(0.15),
+              color: AppColors.cardShadowColor.withOpacity(0.15),
               blurRadius: (10 * res.scale).toDouble(),
               offset: Offset(0, (4 * res.scale).toDouble()),
             ),
@@ -43,7 +44,7 @@ class CustomSearchBar extends StatelessWidget {
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: TextStyle(
-              color: const Color(0xFF8A94A6),
+              color: AppColors.secondaryTextColor,
               fontSize: (13 * res.scale).toDouble(),
             ),
             prefixIcon: Padding(
@@ -51,8 +52,8 @@ class CustomSearchBar extends StatelessWidget {
               child: SvgPicture.asset(
                 'assets/Icons/search.svg',
                 width: (12 * res.scale).toDouble(),
-                colorFilter: const ColorFilter.mode(
-                  Color(0xFF939393),
+                colorFilter: ColorFilter.mode(
+                  AppColors.mutedColor,
                   BlendMode.srcIn,
                 ),
               ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/theme/app_colors.dart';
 
 class CustomFeedbackBox extends StatelessWidget {
   final String message;
@@ -21,7 +22,7 @@ class CustomFeedbackBox extends StatelessWidget {
         vertical: 12 * scale,
       ),
       decoration: BoxDecoration(
-        color: isSuccess ? const Color(0xFF98FFC9) : Colors.red.withOpacity(0.1),
+        color: isSuccess ? AppColors.feedbackSuccessBg : AppColors.errorColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(7 * scale),
       ),
       child: Center(
@@ -29,7 +30,7 @@ class CustomFeedbackBox extends StatelessWidget {
           message,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: isSuccess ? const Color(0xFF00C187) : Colors.red,
+            color: isSuccess ? AppColors.successColor : AppColors.errorColor,
             fontSize: 13 * scale,
             fontWeight: FontWeight.w500,
           ),
