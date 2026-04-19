@@ -16,7 +16,8 @@ class ApiService {
     _dio = Dio(
       BaseOptions(
         // baseUrl: 'https://toothlike-intermetatarsal-avah.ngrok-free.dev',
-        baseUrl: 'https://nontelepathically-pamphletary-cyndi.ngrok-free.dev',
+        // baseUrl: 'https://nontelepathically-pamphletary-cyndi.ngrok-free.dev',
+        baseUrl: 'https://unallegedly-wrinkly-claribel.ngrok-free.dev',
         connectTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10),
         headers: {
