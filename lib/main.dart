@@ -27,36 +27,40 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        final themeProvider = Provider.of<ThemeProvider>(context);
-        
-        return MaterialApp(
-          title: 'DiagnoSense',
-          debugShowCheckedModeBanner: false,
-          themeMode: themeProvider.themeMode,
-          theme: ThemeData(
-            scaffoldBackgroundColor: AppColors.backgroundColor,
-            textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: AppColors.accentColor,
-              brightness: Brightness.light,
-            ),
-            useMaterial3: true,
-          ),
-          darkTheme: ThemeData(
-            scaffoldBackgroundColor: AppColors.backgroundColor,
-            textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme).apply(
-              bodyColor: AppColors.primaryTextColor,
-              displayColor: AppColors.primaryTextColor,
-            ),
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: AppColors.accentColor,
-              brightness: Brightness.dark,
-            ),
-            useMaterial3: true,
-          ),
-          locale: DevicePreview.locale(context),
-          builder: DevicePreview.appBuilder,
-          home: SplashScreen(),
+        return Consumer<ThemeProvider>(
+          builder: (context, themeProvider, child) {
+            return MaterialApp(
+              title: 'DiagnoSense',
+              debugShowCheckedModeBanner: false,
+              themeMode: themeProvider.themeMode,
+              theme: ThemeData(
+                scaffoldBackgroundColor: AppColors.backgroundColor,
+                textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
+                colorScheme: ColorScheme.fromSeed(
+                  seedColor: AppColors.accentColor,
+                  brightness: Brightness.light,
+                ),
+                useMaterial3: true,
+              ),
+              darkTheme: ThemeData(
+                scaffoldBackgroundColor: AppColors.backgroundColor,
+                textTheme: GoogleFonts.interTextTheme(
+                  Theme.of(context).textTheme,
+                ).apply(
+                  bodyColor: AppColors.primaryTextColor,
+                  displayColor: AppColors.primaryTextColor,
+                ),
+                colorScheme: ColorScheme.fromSeed(
+                  seedColor: AppColors.accentColor,
+                  brightness: Brightness.dark,
+                ),
+                useMaterial3: true,
+              ),
+              locale: DevicePreview.locale(context),
+              builder: DevicePreview.appBuilder,
+              home: const SplashScreen(),
+            );
+          },
         );
       },
     );

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../core/theme/theme_provider.dart';
 import '../core/theme/app_colors.dart';
 import '../Widgets/custom_bottom_bar.dart';
 import 'Home/home_screen.dart';
@@ -34,6 +36,9 @@ class _NavigationMenuState extends State<NavigationMenu> {
 
   @override
   Widget build(BuildContext context) {
+    // Explicitly watch ThemeProvider to respond to dark mode toggles instantly
+    context.watch<ThemeProvider>();
+
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       resizeToAvoidBottomInset: false,

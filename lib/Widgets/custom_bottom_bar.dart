@@ -1,7 +1,9 @@
 import 'package:application/utils/responsive_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../core/theme/app_colors.dart';
+import '../core/theme/theme_provider.dart';
 
 class CustomBottomBar extends StatelessWidget {
   final int currentIndex;
@@ -15,6 +17,9 @@ class CustomBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Explicitly watch ThemeProvider to respond to dark mode toggles instantly
+    context.watch<ThemeProvider>();
+    
     final res = Responsive(context);
     final Color unselectedColor = AppColors.mutedColor;
     final Color selectedColor = AppColors.navSelectedColor;

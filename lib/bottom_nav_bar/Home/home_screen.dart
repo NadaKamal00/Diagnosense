@@ -7,10 +7,12 @@ import 'package:application/bottom_nav_bar/Home/notifications/notifications.dart
 import 'package:application/bottom_nav_bar/Home/radiology/radiology.dart';
 import 'package:application/bottom_nav_bar/Tasks/task_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/utils/api_service.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/theme_provider.dart';
 import 'home_shimmer.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -106,6 +108,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Explicitly watch ThemeProvider to respond to dark mode toggles instantly
+    context.watch<ThemeProvider>();
+    
     final res = Responsive(context);
 
     return Scaffold(
@@ -323,10 +328,6 @@ class _HomeScreenState extends State<HomeScreen> {
               isCompletedValue == "0";
         }).toList();
 
-    if (incompleteTasks.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
     return Container(
       padding: EdgeInsets.symmetric(
         vertical: 10 * scale,
@@ -378,111 +379,125 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           SizedBox(height: 12 * scale),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            physics: const BouncingScrollPhysics(),
-            child: Row(
-              children:
-                  incompleteTasks.map((task) {
-                    final String title = task['title']?.toString() ?? 'Task';
-                    final String dueDate =
-                        task['visit']?['next_visit_date']?.toString() ??
-                        'No Date';
-                    final int taskId =
-                        int.tryParse(task['id']?.toString() ?? '0') ?? 0;
+          incompleteTasks.isEmpty
+              ? Padding(
+                padding: EdgeInsets.symmetric(vertical: 20 * scale),
+                child: Center(
+                  child: Text(
+                    "No upcoming medical tasks",
+                    style: TextStyle(
+                      color: AppColors.mutedTextColor,
+                      fontSize: 14 * scale,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+              )
+              : SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                child: Row(
+                  children:
+                      incompleteTasks.map((task) {
+                        final String title = task['title']?.toString() ?? 'Task';
+                        final String dueDate =
+                            task['visit']?['next_visit_date']?.toString() ??
+                            'No Date';
+                        final int taskId =
+                            int.tryParse(task['id']?.toString() ?? '0') ?? 0;
 
-                    return GestureDetector(
-                      onTap: () async {
-                        final result = await Navigator.of(
-                          context,
-                          rootNavigator: true,
-                        ).push(
-                          MaterialPageRoute(
-                            builder:
-                                (context) => TaskDetailsScreen(taskId: taskId),
-                          ),
-                        );
-                        if (result == true) {
-                          _fetchTasks();
-                        }
-                      },
-                      child: Container(
-                        width: 215 * scale,
-                        margin: EdgeInsets.only(
-                          right: 12 * scale,
-                          bottom: 8 * scale,
-                        ),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12 * scale,
-                          vertical: 12 * scale,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.lightBlueSurface.withOpacity(0.7),
-                          borderRadius: BorderRadius.circular(16 * scale),
-                          border: Border.all(
-                            color: AppColors.primaryColor.withOpacity(0.1),
-                            width: 1 * scale,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 48 * scale,
-                              height: 48 * scale,
-                              decoration: BoxDecoration(
-                                color: AppColors.lightBlueSurface,
-                                shape: BoxShape.circle,
+                        return GestureDetector(
+                          onTap: () async {
+                            final result = await Navigator.of(
+                              context,
+                              rootNavigator: true,
+                            ).push(
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => TaskDetailsScreen(taskId: taskId),
                               ),
-                              child: Center(
-                                child: SvgPicture.asset(
-                                  'assets/Icons/document.svg',
-                                  width: 22 * scale,
-                                  height: 22 * scale,
-                                  colorFilter: ColorFilter.mode(
-                                    AppColors.primaryColor,
-                                    BlendMode.srcIn,
+                            );
+                            if (result == true) {
+                              _fetchTasks();
+                            }
+                          },
+                          child: Container(
+                            width: 215 * scale,
+                            margin: EdgeInsets.only(
+                              right: 12 * scale,
+                              bottom: 8 * scale,
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12 * scale,
+                              vertical: 12 * scale,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.lightBlueSurface.withOpacity(0.7),
+                              borderRadius: BorderRadius.circular(16 * scale),
+                              border: Border.all(
+                                color: AppColors.primaryColor.withOpacity(0.1),
+                                width: 1 * scale,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 48 * scale,
+                                  height: 48 * scale,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.lightBlueSurface,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Center(
+                                    child: SvgPicture.asset(
+                                      'assets/Icons/document.svg',
+                                      width: 22 * scale,
+                                      height: 22 * scale,
+                                      colorFilter: ColorFilter.mode(
+                                        AppColors.primaryColor,
+                                        BlendMode.srcIn,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                            SizedBox(width: 16 * scale),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    title,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontSize: 16 * scale,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.primaryTextColor,
-                                      letterSpacing: -0.3,
-                                    ),
+                                SizedBox(width: 16 * scale),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        title,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 16 * scale,
+                                          fontWeight: FontWeight.w700,
+                                          color: AppColors.primaryTextColor,
+                                          letterSpacing: -0.3,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4 * scale),
+                                      Text(
+                                        'Due: $dueDate',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 13 * scale,
+                                          fontWeight: FontWeight.w500,
+                                          color: AppColors.mutedTextColor,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(height: 4 * scale),
-                                  Text(
-                                    'Due: $dueDate',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontSize: 13 * scale,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColors.mutedTextColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }).toList(),
-            ),
-          ),
+                          ),
+                        );
+                      }).toList(),
+                ),
+              ),
         ],
       ),
     );

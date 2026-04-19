@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/theme/app_colors.dart';
 
 class TaskHelper {
   /// Robust date parser for various formats (ISO, DD-MM-YYYY, DD Month).
@@ -91,9 +92,9 @@ class TaskHelper {
     required bool isCompleted,
     required bool isOverdue,
   }) {
-    if (isCompleted) return const Color(0xFF939393); // Grey
-    if (isOverdue) return Colors.red; // Overdue
-    return Colors.green; // On time
+    if (isCompleted) return AppColors.mutedColor;
+    if (isOverdue) return AppColors.errorColor;
+    return AppColors.successGreen;
   }
 
   /// Returns the decoration for the deadline section when overdue.
@@ -104,7 +105,7 @@ class TaskHelper {
   }) {
     if (!isCompleted && isOverdue) {
       return BoxDecoration(
-        color: const Color(0xFFFEF2F2),
+        color: AppColors.errorLightBackground,
         borderRadius: BorderRadius.circular(6 * scale),
       );
     }

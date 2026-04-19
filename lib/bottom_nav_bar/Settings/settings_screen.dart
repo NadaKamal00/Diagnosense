@@ -121,7 +121,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final res = Responsive(context);
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = context.watch<ThemeProvider>();
     final isDark = themeProvider.isDark;
 
     return Scaffold(

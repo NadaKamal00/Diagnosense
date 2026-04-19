@@ -435,18 +435,15 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
     return SizedBox(
       width: (isTablet ? 42 : 45) * scale,
       height: (isTablet ? 50 : 54) * scale,
-      child: RawKeyboardListener(
+      child: KeyboardListener(
         focusNode: FocusNode(skipTraversal: true),
-        onKey: (RawKeyEvent event) {
-          if (event is RawKeyDownEvent) {
-            if (event.logicalKey == LogicalKeyboardKey.backspace) {
-              if (_controllers[index].text.isEmpty && index > 0) {
-                // Field is already empty → move to previous and clear it.
-                _controllers[index - 1].clear();
-                _focusNodes[index - 1].requestFocus();
-              }
-              // If field has a character, the TextField handles deletion
-              // and onChanged fires with '' which we also handle below.
+        onKeyEvent: (KeyEvent event) {
+          if (event is KeyDownEvent &&
+              event.logicalKey == LogicalKeyboardKey.backspace) {
+            if (_controllers[index].text.isEmpty && index > 0) {
+              // Field is already empty → move to previous and clear it.
+              _controllers[index - 1].clear();
+              _focusNodes[index - 1].requestFocus();
             }
           }
         },
@@ -486,12 +483,8 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
                     // Last field filled → close keyboard.
                     _focusNodes[index].unfocus();
                   }
-                } else {
-                  // Character was deleted via the keyboard key.
-                  if (index > 0) {
-                    _focusNodes[index - 1].requestFocus();
-                  }
                 }
+                // Note: Backward navigation is handled by KeyboardListener
               },
               decoration: const InputDecoration(
                 border: InputBorder.none,

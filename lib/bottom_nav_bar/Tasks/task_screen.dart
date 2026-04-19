@@ -2,11 +2,13 @@ import 'package:application/bottom_nav_bar/Tasks/task_details.dart';
 import 'package:application/utils/responsive_helper.dart';
 import 'package:application/utils/task_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_svg/svg.dart';
 import '../_navigation_menu.dart';
 import '../../core/utils/api_service.dart';
 import '../Home/home_shimmer.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/theme_provider.dart';
 
 class TaskScreen extends StatefulWidget {
   const TaskScreen({super.key});
@@ -31,25 +33,35 @@ class _TaskScreenState extends State<TaskScreen> {
       if (mounted) {
         setState(() {
           if (response['success'] == true && response['data'] != null) {
-            final allTasks = response['data'] as List<dynamic>;
-            final pending =
-                allTasks.where((t) {
-                  final isC =
-                      t['is_completed'] == 1 ||
-                      t['is_completed'] == true ||
-                      t['is_completed'] == "1";
-                  return !isC;
-                }).toList();
-            final completed =
-                allTasks.where((t) {
-                  final isC =
-                      t['is_completed'] == 1 ||
-                      t['is_completed'] == true ||
-                      t['is_completed'] == "1";
-                  return isC;
-                }).toList();
+            final allTasks = List<dynamic>.from(response['data']);
 
-            _tasks = [...pending, ...completed.reversed];
+            allTasks.sort((a, b) {
+              final aDone =
+                  a['is_completed'] == 1 ||
+                  a['is_completed'] == true ||
+                  a['is_completed'] == "1";
+              final bDone =
+                  b['is_completed'] == 1 ||
+                  b['is_completed'] == true ||
+                  b['is_completed'] == "1";
+
+              // 1. Primary Sort: Incomplete (false) first
+              if (aDone != bDone) {
+                return aDone ? 1 : -1;
+              }
+
+              // 2. Secondary Sort: Date descending (Newest first)
+              final aDate = TaskHelper.parseDueDate(a['Due_date']?.toString() ?? '');
+              final bDate = TaskHelper.parseDueDate(b['Due_date']?.toString() ?? '');
+
+              if (aDate == null && bDate == null) return 0;
+              if (aDate == null) return 1;
+              if (bDate == null) return -1;
+
+              return bDate.compareTo(aDate);
+            });
+
+            _tasks = allTasks;
           }
           _isLoading = false;
         });
@@ -65,6 +77,9 @@ class _TaskScreenState extends State<TaskScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Explicitly watch ThemeProvider to respond to dark mode toggles instantly
+    context.watch<ThemeProvider>();
+    
     final res = Responsive(context);
 
     return Scaffold(
@@ -212,7 +227,7 @@ class _TaskScreenState extends State<TaskScreen> {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         border: Border.all(
           color: AppColors.cardBorderColor,
           width: 1.0 * scale,
@@ -227,7 +242,7 @@ class _TaskScreenState extends State<TaskScreen> {
         ],
       ),
       child: Material(
-        color: Colors.transparent,
+        color: AppColors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(14 * scale),
           onTap: () async {
