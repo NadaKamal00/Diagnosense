@@ -1,3 +1,4 @@
+import 'package:application/core/theme/app_colors.dart';
 import 'package:application/utils/responsive_helper.dart';
 import 'package:flutter/material.dart';
 
@@ -16,9 +17,9 @@ class _LanguageScreenState extends State<LanguageScreen> {
     final res = Responsive(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAff),
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         elevation: 0,
         toolbarHeight: 56 * res.scale,
         leadingWidth: (res.isTablet ? 100 : 70) * res.scale,
@@ -28,7 +29,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
           child: IconButton(
             icon: Icon(
               Icons.arrow_back_ios,
-              color: const Color(0xFF0E1A34),
+              color: AppColors.primaryTextColor,
               size: 20 * res.scale,
             ),
             onPressed: () => Navigator.pop(context),
@@ -37,7 +38,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
         title: Text(
           'Language',
           style: TextStyle(
-            color: const Color(0xFF0E1A34),
+            color: AppColors.primaryTextColor,
             fontWeight: FontWeight.w600,
             fontSize: 18 * res.scale,
           ),
@@ -55,7 +56,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
             Divider(
               height: 1 * res.scale,
               thickness: 1 * res.scale,
-              color: const Color(0xFFD5D5D5),
+              color: AppColors.dividerColor,
             ),
 
             SizedBox(height: 30 * res.scale),
@@ -105,11 +106,11 @@ class _LanguageScreenState extends State<LanguageScreen> {
           vertical: 18 * scale,
         ),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           borderRadius: BorderRadius.circular(15 * scale),
           border: Border.all(
             color:
-                isSelected ? const Color(0xFF3B82F6) : const Color(0xFFE2E8F0),
+                isSelected ? AppColors.accentColor : AppColors.lightBorderColor,
             width: (isSelected ? 2 : 1.5) * scale,
           ),
         ),
@@ -121,13 +122,13 @@ class _LanguageScreenState extends State<LanguageScreen> {
               style: TextStyle(
                 fontSize: 16 * scale,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                color: const Color(0xFF0E1A34),
+                color: AppColors.primaryTextColor,
               ),
             ),
             if (isSelected)
               CircleAvatar(
                 radius: 5 * scale,
-                backgroundColor: const Color(0xFF3B82F6),
+                backgroundColor: AppColors.accentColor,
               ),
           ],
         ),

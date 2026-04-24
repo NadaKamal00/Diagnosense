@@ -1,3 +1,4 @@
+import 'package:application/core/theme/app_colors.dart';
 import 'package:application/utils/responsive_helper.dart';
 import 'package:flutter/material.dart';
 
@@ -9,9 +10,9 @@ class PrivacyScreen extends StatelessWidget {
     final res = Responsive(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAff),
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         elevation: 0,
         toolbarHeight: 56 * res.scale,
         leadingWidth: (res.isTablet ? 100 : 70) * res.scale,
@@ -21,7 +22,7 @@ class PrivacyScreen extends StatelessWidget {
           child: IconButton(
             icon: Icon(
               Icons.arrow_back_ios,
-              color: const Color(0xFF0E1A34),
+              color: AppColors.primaryTextColor,
               size: 20 * res.scale,
             ),
             onPressed: () => Navigator.pop(context),
@@ -30,7 +31,7 @@ class PrivacyScreen extends StatelessWidget {
         title: Text(
           'Privacy & Policy',
           style: TextStyle(
-            color: const Color(0xFF0E1A34),
+            color: AppColors.primaryTextColor,
             fontWeight: FontWeight.w600,
             fontSize: 18 * res.scale,
           ),
@@ -50,7 +51,7 @@ class PrivacyScreen extends StatelessWidget {
               Divider(
                 height: 1 * res.scale,
                 thickness: 1 * res.scale,
-                color: const Color(0xFFD5D5D5),
+                color: AppColors.dividerColor,
               ),
 
               SizedBox(height: 30 * res.scale),
@@ -59,10 +60,10 @@ class PrivacyScreen extends StatelessWidget {
                 width: double.infinity,
                 padding: EdgeInsets.all(24 * res.scale),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.white,
                   borderRadius: BorderRadius.circular(24 * res.scale),
                   border: Border.all(
-                    color: const Color(0xFFEAEAEA),
+                    color: AppColors.softBorderColor,
                     width: 2 * res.scale,
                   ),
                 ),
@@ -74,7 +75,7 @@ class PrivacyScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 18 * res.scale,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFF0E1A34),
+                        color: AppColors.primaryTextColor,
                       ),
                     ),
                     SizedBox(height: 8 * res.scale),
@@ -82,7 +83,7 @@ class PrivacyScreen extends StatelessWidget {
                       'Your data is encrypted and stored securely. We do not share your personal medical records with third parties without your explicit consent.',
                       style: TextStyle(
                         fontSize: 13 * res.scale,
-                        color: const Color(0xFF0E1A34),
+                        color: AppColors.primaryTextColor,
                         fontWeight: FontWeight.w400,
                         height: 1.5,
                       ),
@@ -95,7 +96,7 @@ class PrivacyScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 15 * res.scale,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFF0E1A34),
+                        color: AppColors.primaryTextColor,
                       ),
                     ),
                     SizedBox(height: 10 * res.scale),
@@ -103,7 +104,7 @@ class PrivacyScreen extends StatelessWidget {
                       'Last access: Today, 10:00 AM, near Cairo, Egypt.',
                       style: TextStyle(
                         fontSize: 13 * res.scale,
-                        color: const Color(0xFF0E1A34),
+                        color: AppColors.primaryTextColor,
                         fontWeight: FontWeight.w400,
                       ),
                     ),

@@ -41,6 +41,7 @@ class AppColors {
   static Color get secondaryBorderColor => _isDark ? const Color(0xFF475569) : const Color(0xFFCDCDCD);
   static Color get lightGrayBorder => _isDark ? const Color(0xFF334155) : const Color(0xFFD8D8D8);
   static Color get dividerColor => _isDark ? const Color(0xFF334155) : const Color(0xFFD5D5D5);
+  static Color get softBorderColor => _isDark ? const Color(0xFF1E293B) : const Color(0xFFEAEAEA);
 
   // --- Surfaces & Shadows ---
   static Color get white => _isDark ? const Color(0xFF1E293B) : const Color(0xFFFFFFFF);
