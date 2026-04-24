@@ -51,8 +51,12 @@ class _TaskScreenState extends State<TaskScreen> {
               }
 
               // 2. Secondary Sort: Date descending (Newest first)
-              final aDate = TaskHelper.parseDueDate(a['Due_date']?.toString() ?? '');
-              final bDate = TaskHelper.parseDueDate(b['Due_date']?.toString() ?? '');
+              final aDate = TaskHelper.parseDueDate(
+                a['Due_date']?.toString() ?? '',
+              );
+              final bDate = TaskHelper.parseDueDate(
+                b['Due_date']?.toString() ?? '',
+              );
 
               if (aDate == null && bDate == null) return 0;
               if (aDate == null) return 1;
@@ -79,7 +83,7 @@ class _TaskScreenState extends State<TaskScreen> {
   Widget build(BuildContext context) {
     // Explicitly watch ThemeProvider to respond to dark mode toggles instantly
     context.watch<ThemeProvider>();
-    
+
     final res = Responsive(context);
 
     return Scaffold(
@@ -309,49 +313,57 @@ class _TaskScreenState extends State<TaskScreen> {
                 ),
                 SizedBox(height: 15 * scale),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SizedBox(width: 2 * scale),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10 * scale,
-                        vertical: 4 * scale,
-                      ),
-                      decoration: BoxDecoration(
-                        color:
-                            isCompleted
-                                ? AppColors.surfaceVariant
-                                : AppColors.lightBlueSurface,
-                        borderRadius: BorderRadius.circular(8 * scale),
-                      ),
-                      child: Row(
-                        children: [
-                          Text(
-                            "Dr. ",
-                            style: TextStyle(
-                              color:
-                                  isCompleted
-                                      ? AppColors.mutedColor
-                                      : AppColors.primaryColor,
-                              fontSize: 12 * scale,
-                              fontWeight: FontWeight.bold,
+                    Flexible(
+                      fit: FlexFit.loose,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10 * scale,
+                          vertical: 4 * scale,
+                        ),
+                        decoration: BoxDecoration(
+                          color:
+                              isCompleted
+                                  ? AppColors.surfaceVariant
+                                  : AppColors.lightBlueSurface,
+                          borderRadius: BorderRadius.circular(8 * scale),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "Dr. ",
+                              style: TextStyle(
+                                color:
+                                    isCompleted
+                                        ? AppColors.mutedColor
+                                        : AppColors.primaryColor,
+                                fontSize: 12 * scale,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          Text(
-                            doctorName,
-                            style: TextStyle(
-                              color:
-                                  isCompleted
-                                      ? AppColors.mutedColor
-                                      : AppColors.primaryColor,
-                              fontSize: 11 * scale,
-                              fontWeight: FontWeight.w600,
+                            Flexible(
+                              child: Text(
+                                doctorName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color:
+                                      isCompleted
+                                          ? AppColors.mutedColor
+                                          : AppColors.primaryColor,
+                                  fontSize: 11 * scale,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                    const Spacer(),
+                    SizedBox(width: 12 * scale),
                     Container(
                       padding: padding,
                       decoration: decoration,
