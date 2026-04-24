@@ -3,7 +3,7 @@ import 'package:application/utils/responsive_helper.dart';
 import 'package:application/utils/task_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import '../Home/home_shimmer.dart';
+import '../../core/theme/shimmer_effect.dart';
 import '../../core/theme/app_colors.dart';
 
 class TaskDetailsScreen extends StatefulWidget {
@@ -253,15 +253,19 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                           // Blue badge + clock icon
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildBadge(
-                                doctorName.isNotEmpty
-                                    ? 'Dr. $doctorName'
-                                    : 'DOCTOR ORDERED',
-                                scaleFactor,
-                                badgeBg,
-                                badgeText,
+                              Expanded(
+                                child: _buildBadge(
+                                  doctorName.isNotEmpty
+                                      ? 'Dr. $doctorName'
+                                      : 'DOCTOR ORDERED',
+                                  scaleFactor,
+                                  badgeBg,
+                                  badgeText,
+                                ),
                               ),
+                              SizedBox(width: 8 * scaleFactor),
                               Container(
                                 padding: EdgeInsets.all(6 * scaleFactor),
                                 decoration: BoxDecoration(
@@ -523,12 +527,16 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
           ),
 
           SizedBox(width: 6 * scale),
-          Text(
-            text,
-            style: TextStyle(
-              color: textColor,
-              fontSize: 11 * scale,
-              fontWeight: FontWeight.w700,
+          Expanded(
+            child: Text(
+              text,
+              softWrap: true,
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                color: textColor,
+                fontSize: 11 * scale,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ],

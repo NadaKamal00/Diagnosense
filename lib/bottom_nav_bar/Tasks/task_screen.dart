@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_svg/svg.dart';
 import '../_navigation_menu.dart';
 import '../../core/utils/api_service.dart';
-import '../Home/home_shimmer.dart';
+import '../../core/theme/shimmer_effect.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/theme_provider.dart';
 

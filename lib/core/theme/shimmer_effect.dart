@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../utils/responsive_helper.dart';
-import '../../core/theme/app_colors.dart';
+import 'app_colors.dart';
 
 class HomeShimmer {
   static Widget buildFullHomeShimmer(BuildContext context, double scale) {

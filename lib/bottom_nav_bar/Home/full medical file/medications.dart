@@ -4,7 +4,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:application/core/theme/app_colors.dart';
 import '../../../core/utils/api_service.dart';
 import '../../../shared/widgets/custom_search_bar.dart';
-import '../home_shimmer.dart';
+import '../../../core/theme/shimmer_effect.dart';
 
 class MedicationsScreen extends StatefulWidget {
   const MedicationsScreen({super.key});
@@ -89,7 +89,8 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
         }
       } else {
         setState(() {
-          _errorMessage = response['message'] ?? 'Unable to parse medication data.';
+          _errorMessage =
+              response['message'] ?? 'Unable to parse medication data.';
           _isLoading = false;
         });
         print('DEBUG: [MedicationsUI] API Error Message: $_errorMessage');
@@ -323,11 +324,14 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
     final bool isCompleted = status.toLowerCase() == "completed";
 
     // Conditional Styling Colors
-    final Color mainIconColor = isCompleted ? AppColors.mutedColor : AppColors.primaryColor;
-    final Color titleColor = isCompleted ? AppColors.mutedColor : AppColors.primaryTextColor;
+    final Color mainIconColor =
+        isCompleted ? AppColors.mutedColor : AppColors.primaryColor;
+    final Color titleColor =
+        isCompleted ? AppColors.mutedColor : AppColors.primaryTextColor;
     final Color textColor =
         isCompleted ? AppColors.completedGrey : AppColors.secondaryTextColor;
-    final Color statusColor = isCompleted ? AppColors.mutedColor : AppColors.activeGreen;
+    final Color statusColor =
+        isCompleted ? AppColors.mutedColor : AppColors.activeGreen;
 
     return Container(
       margin: EdgeInsets.only(bottom: (isTablet ? 10 : 12) * scale),
@@ -408,7 +412,10 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                 ),
                 child: Icon(
                   Icons.access_time,
-                  color: isCompleted ? AppColors.mutedColor.withOpacity(0.5) : AppColors.mutedColor,
+                  color:
+                      isCompleted
+                          ? AppColors.mutedColor.withOpacity(0.5)
+                          : AppColors.mutedColor,
                   size: (isTablet ? 15 : 18) * scale,
                 ),
               ),
@@ -451,11 +458,7 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                     ),
                   ),
                 ),
-                Icon(
-                  Icons.circle,
-                  color: statusColor,
-                  size: 6 * scale,
-                ),
+                Icon(Icons.circle, color: statusColor, size: 6 * scale),
                 SizedBox(width: 6 * scale),
                 Text(
                   status.toUpperCase(),

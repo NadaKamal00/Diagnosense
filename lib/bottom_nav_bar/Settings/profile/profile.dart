@@ -2,7 +2,7 @@ import 'package:application/utils/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../Home/home_shimmer.dart';
+import '../../../core/theme/shimmer_effect.dart';
 import 'edit_identity_screen.dart';
 import '../../../core/theme/app_colors.dart';
 

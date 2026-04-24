@@ -2,7 +2,7 @@ import 'package:application/utils/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/api_service.dart';
-import '../home_shimmer.dart';
+import '../../../core/theme/shimmer_effect.dart';
 
 class VisitTimelineScreen extends StatefulWidget {
   const VisitTimelineScreen({super.key});
@@ -287,8 +287,10 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
               Container(
                 width: 2 * scale,
                 height: 12 * scale,
-                    color:
-                        index == 0 ? AppColors.transparent : AppColors.cardBorderColor,
+                color:
+                    index == 0
+                        ? AppColors.transparent
+                        : AppColors.cardBorderColor,
               ),
               Container(
                 width: 11 * scale,
@@ -301,9 +303,10 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
               Expanded(
                 child: Container(
                   width: 2 * scale,
-                  color: index == timelineData.length - 1
-                      ? AppColors.transparent
-                      : AppColors.cardBorderColor,
+                  color:
+                      index == timelineData.length - 1
+                          ? AppColors.transparent
+                          : AppColors.cardBorderColor,
                 ),
               ),
             ],
@@ -382,7 +385,7 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
                     doctor,
                     style: TextStyle(
                       fontSize: 12 * scale,
-                          color: AppColors.secondaryTextColor,
+                      color: AppColors.secondaryTextColor,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -403,7 +406,7 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
                         notes,
                         style: TextStyle(
                           fontSize: (isTablet ? 11 : 12) * scale,
-                              color: AppColors.secondaryTextColor,
+                          color: AppColors.secondaryTextColor,
                           fontWeight: FontWeight.w500,
                           fontStyle: FontStyle.italic,
                           height: 1.4,

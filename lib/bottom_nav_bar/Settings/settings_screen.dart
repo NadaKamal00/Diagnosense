@@ -1,7 +1,7 @@
 import 'package:provider/provider.dart';
 import '../../core/theme/theme_provider.dart';
 import '../../core/theme/app_colors.dart';
-import '../Home/home_shimmer.dart';
+import '../../core/theme/shimmer_effect.dart';
 import 'support.dart';
 import 'privacy.dart';
 import 'language.dart';
@@ -153,8 +153,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: (20 * res.scale).toDouble()),
-
+              // SizedBox(height: (10 * res.scale).toDouble()),
               _buildProfileSection(context, res.scale, res.isTablet),
 
               SizedBox(height: res.isTablet ? 35 * res.scale : 25 * res.scale),

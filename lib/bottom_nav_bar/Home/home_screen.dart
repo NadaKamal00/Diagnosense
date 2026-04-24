@@ -13,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/utils/api_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/theme_provider.dart';
-import 'home_shimmer.dart';
+import '../../core/theme/shimmer_effect.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -100,17 +100,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _onRefresh() async {
-    await Future.wait([
-      _fetchTasks(),
-      _fetchNextVisit(),
-    ]);
+    await Future.wait([_fetchTasks(), _fetchNextVisit()]);
   }
 
   @override
   Widget build(BuildContext context) {
     // Explicitly watch ThemeProvider to respond to dark mode toggles instantly
     context.watch<ThemeProvider>();
-    
+
     final res = Responsive(context);
 
     return Scaffold(
@@ -127,156 +124,158 @@ class _HomeScreenState extends State<HomeScreen> {
                 physics: const AlwaysScrollableScrollPhysics(
                   parent: BouncingScrollPhysics(),
                 ),
-              padding: EdgeInsets.symmetric(
-                horizontal: res.isTablet ? 5 * res.scale : 20 * res.scale,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 20 * res.scale),
+                padding: EdgeInsets.symmetric(
+                  horizontal: res.isTablet ? 5 * res.scale : 20 * res.scale,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // SizedBox(height: 10 * res.scale),
 
-                  /// Header
-                  _isLoadingUser
-                      ? HomeShimmer.buildHeaderShimmer(context, res.scale)
-                      : Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Hello, ${_patientName ?? 'User'}!',
-                                style: TextStyle(
-                                  fontSize: 18 * res.scale,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.primaryTextColor,
+                    /// Header
+                    _isLoadingUser
+                        ? HomeShimmer.buildHeaderShimmer(context, res.scale)
+                        : Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Hello, ${_patientName ?? 'User'}!',
+                                  style: TextStyle(
+                                    fontSize: 18 * res.scale,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.primaryTextColor,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                'Welcome back.',
-                                style: TextStyle(
-                                  fontSize: 15 * res.scale,
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColors.secondaryTextColor,
+                                Text(
+                                  'Welcome back.',
+                                  style: TextStyle(
+                                    fontSize: 15 * res.scale,
+                                    fontWeight: FontWeight.w400,
+                                    color: AppColors.secondaryTextColor,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          _buildNotificationIcon(context, res.scale),
-                        ],
-                      ),
-
-                  SizedBox(height: 22 * res.scale),
-
-                  /// Upcoming Tasks Card
-                  _buildUpcomingTasksCard(context, res.scale),
-
-                  SizedBox(height: 25 * res.scale),
-
-                  /// Next Visit (Gradient Card)
-                  _buildNextVisitCard(res.scale),
-
-                  SizedBox(height: 30 * res.scale),
-
-                  _isLoadingUser
-                      ? HomeShimmer.buildMedicalFilesShimmer(res.scale)
-                      : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          /// --- Medical File Title ---
-                          Text(
-                            'Medical Files',
-                            style: TextStyle(
-                              fontSize: 18 * res.scale,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.primaryTextColor,
+                              ],
                             ),
-                          ),
-                          SizedBox(height: 15 * res.scale),
+                            _buildNotificationIcon(context, res.scale),
+                          ],
+                        ),
 
-                          /// Medical Items Row (History, Lab, Radiology)
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildMedicalItem(
-                                  context,
-                                  'History',
-                                  'assets/Icons/history.svg',
-                                  AppColors.historyItemBg,
-                                  AppColors.accentColor,
-                                  res.scale,
-                                  () => Navigator.of(
+                    SizedBox(height: 22 * res.scale),
+
+                    /// Upcoming Tasks Card
+                    _buildUpcomingTasksCard(context, res.scale),
+
+                    SizedBox(height: 25 * res.scale),
+
+                    /// Next Visit (Gradient Card)
+                    _buildNextVisitCard(res.scale),
+
+                    SizedBox(height: 30 * res.scale),
+
+                    _isLoadingUser
+                        ? HomeShimmer.buildMedicalFilesShimmer(res.scale)
+                        : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            /// --- Medical File Title ---
+                            Text(
+                              'Medical Files',
+                              style: TextStyle(
+                                fontSize: 18 * res.scale,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.primaryTextColor,
+                              ),
+                            ),
+                            SizedBox(height: 15 * res.scale),
+
+                            /// Medical Items Row (History, Lab, Radiology)
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildMedicalItem(
                                     context,
-                                    rootNavigator: true,
-                                  ).push(
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) =>
-                                              const MedicalHistoryScreen(),
+                                    'History',
+                                    'assets/Icons/history.svg',
+                                    AppColors.historyItemBg,
+                                    AppColors.accentColor,
+                                    res.scale,
+                                    () => Navigator.of(
+                                      context,
+                                      rootNavigator: true,
+                                    ).push(
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) =>
+                                                const MedicalHistoryScreen(),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              SizedBox(width: 12 * res.scale),
-                              Expanded(
-                                child: _buildMedicalItem(
-                                  context,
-                                  'Lab Results',
-                                  'assets/Icons/lap-reports.svg',
-                                  AppColors.labItemBg,
-                                  AppColors.successText,
-                                  res.scale,
-                                  () => Navigator.of(
+                                SizedBox(width: 12 * res.scale),
+                                Expanded(
+                                  child: _buildMedicalItem(
                                     context,
-                                    rootNavigator: true,
-                                  ).push(
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) => const LabResultsScreen(),
+                                    'Lab Results',
+                                    'assets/Icons/lap-reports.svg',
+                                    AppColors.labItemBg,
+                                    AppColors.successText,
+                                    res.scale,
+                                    () => Navigator.of(
+                                      context,
+                                      rootNavigator: true,
+                                    ).push(
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) =>
+                                                const LabResultsScreen(),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              SizedBox(width: 12 * res.scale),
-                              Expanded(
-                                child: _buildMedicalItem(
-                                  context,
-                                  'Radiology',
-                                  'assets/Icons/radiology.svg',
-                                  AppColors.radiologyItemBg,
-                                  AppColors.radiologyIconColor,
-                                  res.scale,
-                                  () => Navigator.of(
+                                SizedBox(width: 12 * res.scale),
+                                Expanded(
+                                  child: _buildMedicalItem(
                                     context,
-                                    rootNavigator: true,
-                                  ).push(
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) => const RadiologyScreen(),
+                                    'Radiology',
+                                    'assets/Icons/radiology.svg',
+                                    AppColors.radiologyItemBg,
+                                    AppColors.radiologyIconColor,
+                                    res.scale,
+                                    () => Navigator.of(
+                                      context,
+                                      rootNavigator: true,
+                                    ).push(
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) =>
+                                                const RadiologyScreen(),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
+                              ],
+                            ),
 
-                          SizedBox(height: 15 * res.scale),
+                            SizedBox(height: 15 * res.scale),
 
-                          /// View Full Medical File Button
-                          _buildFullFileButton(context, res.scale),
-                        ],
-                      ),
+                            /// View Full Medical File Button
+                            _buildFullFileButton(context, res.scale),
+                          ],
+                        ),
 
-                  SizedBox(height: 30 * res.scale),
-                ],
+                    SizedBox(height: 30 * res.scale),
+                  ],
+                ),
               ),
             ),
           ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildNotificationIcon(BuildContext context, double scale) {
     return IconButton(
@@ -399,7 +398,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Row(
                   children:
                       incompleteTasks.map((task) {
-                        final String title = task['title']?.toString() ?? 'Task';
+                        final String title =
+                            task['title']?.toString() ?? 'Task';
                         final String dueDate =
                             task['visit']?['next_visit_date']?.toString() ??
                             'No Date';
@@ -414,7 +414,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             ).push(
                               MaterialPageRoute(
                                 builder:
-                                    (context) => TaskDetailsScreen(taskId: taskId),
+                                    (context) =>
+                                        TaskDetailsScreen(taskId: taskId),
                               ),
                             );
                             if (result == true) {
@@ -432,7 +433,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               vertical: 12 * scale,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.lightBlueSurface.withOpacity(0.7),
+                              color: AppColors.lightBlueSurface.withOpacity(
+                                0.7,
+                              ),
                               borderRadius: BorderRadius.circular(16 * scale),
                               border: Border.all(
                                 color: AppColors.primaryColor.withOpacity(0.1),
@@ -463,7 +466,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 SizedBox(width: 16 * scale),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
