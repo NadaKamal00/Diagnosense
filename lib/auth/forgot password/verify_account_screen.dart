@@ -95,13 +95,14 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
     setState(() => _isResending = true);
 
     try {
-      final Map<String, dynamic> data;
-
-      if (widget.purpose == OTPPurpose.forgotPassword) {
-        data = await ApiService().resendCode(widget.userContact);
-      } else {
-        data = await ApiService().resendOTP(identity: widget.userContact);
-      }
+      // Direct call using the updated forget password endpoint structure as the resend mechanism
+      // Ensure your ApiService has a matching implementation, or directly call the post method if applicable:
+      final Map<String, dynamic> data = await ApiService().post(
+        '/api/v1/auth/forget-password/patient',
+        data: {
+          'contact': widget.userContact.trim(),
+        },
+      ).then((response) => response.data as Map<String, dynamic>);
 
       if (!mounted) return;
 
@@ -153,11 +154,12 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
 
   // ── Verify ─────────────────────────────────────────────────────────────────
   Future<void> _handleVerify() async {
-    final otpCode = _controllers.map((c) => c.text).join();
+    // Trim and sanitize input to remove any accidental whitespaces
+    final otpCode = _controllers.map((c) => c.text.trim()).join('');
 
-    if (otpCode.length < 6) {
+    if (otpCode.length < 6 || !RegExp(r'^\d+$').hasMatch(otpCode)) {
       setState(() {
-        _errorMessage = 'Please enter the full six-digit code';
+        _errorMessage = 'Please enter a valid full six-digit code';
         _isOtpCorrect = false;
       });
       return;
@@ -170,7 +172,12 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
     });
 
     try {
-      final data = await ApiService().verifyOTP(widget.userContact, otpCode);
+      // Cleanly invoking updated service method matching api_service.dart
+      final data = await ApiService().verifyOTP(
+        type: 'patient',
+        contact: widget.userContact.trim(),
+        otp: otpCode,
+      );
 
       if (!mounted) return;
 

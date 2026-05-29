@@ -333,6 +333,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
 
                 try {
                   final data = await ApiService().resetPassword(
+                    type: 'patient',
                     token: widget.resetToken ?? '',
                     password: password,
                     passwordConfirmation: passwordConfirmation,

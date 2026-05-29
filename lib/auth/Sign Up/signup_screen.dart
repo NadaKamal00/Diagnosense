@@ -228,7 +228,7 @@ class _FirstLoginScreenState extends State<FirstLoginScreen> {
         });
 
         try {
-          final data = await ApiService().sendForgotPasswordOTP(identity);
+          final data = await ApiService().sendForgotPasswordOTP('patient', identity);
 
           if (!mounted) return;
 
@@ -237,22 +237,16 @@ class _FirstLoginScreenState extends State<FirstLoginScreen> {
 
           setState(() {
             _isFeedbackSuccess = success;
-            if (success) {
-              _feedbackMessage =
-                  _isEmail(identity)
-                      ? "An OTP has been sent to your email for login. Please check your inbox"
-                      : "An OTP has been sent to your phone number for login. Please check your SMS";
-            } else {
-              // If not successful OR status is 404, show "not registered"
-              if (!success || statusCode == 404) {
-                _feedbackMessage =
-                    _isEmail(identity)
-                        ? "This email is not registered in our system"
-                        : "This phone number is not registered in our system";
-              } else {
-                _feedbackMessage = "An error occurred. Please try again.";
-              }
-            }
+            _feedbackMessage = data['message']?.toString() ??
+                (success
+                    ? (_isEmail(identity)
+                        ? "An OTP has been sent to your email for login. Please check your inbox"
+                        : "An OTP has been sent to your phone number for login. Please check your SMS")
+                    : ((!success || statusCode == 404)
+                        ? (_isEmail(identity)
+                            ? "This email is not registered in our system"
+                            : "This phone number is not registered in our system")
+                        : "An error occurred. Please try again."));
           });
 
           if (success) {

@@ -341,6 +341,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
                 try {
                   final data = await ApiService().resetPassword(
+                    type: 'patient',
                     token: widget.resetToken ?? '',
                     password: password,
                     passwordConfirmation: passwordConfirmation,

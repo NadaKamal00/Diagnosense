@@ -95,7 +95,8 @@ class ApiService {
     }
   }
 
-  /// Handles user login.
+/// ----------------------------- AUTH -----------------------------
+   /// Handles user login.
   /// Endpoint: /api/login/patient
   Future<Map<String, dynamic>> login({
     required String identity,
@@ -147,12 +148,13 @@ class ApiService {
     return response.data;
   }
 
-  /// Sends an OTP to the provided identity (email/phone) for password reset.
-  /// Endpoint: /api/forget-password/patient
-  Future<Map<String, dynamic>> sendForgotPasswordOTP(String identity) async {
+
+  /// Sends an OTP to the provided contact (email/phone) for password reset.
+  /// Endpoint: /api/v1/auth/forget-password/$type
+  Future<Map<String, dynamic>> sendForgotPasswordOTP(String type, String contact) async {
     final response = await post(
-      '/api/forget-password/patient',
-      data: {'identity': identity},
+      '/api/v1/auth/forget-password/$type',
+      data: {'contact': contact},
     );
     if (response.data is Map<String, dynamic>) {
       final data = Map<String, dynamic>.from(response.data);
@@ -166,27 +168,39 @@ class ApiService {
     };
   }
 
-  /// Verifies the OTP for a given identity.
-  /// Endpoint: /api/verify-otp/patient
-  Future<Map<String, dynamic>> verifyOTP(String identity, String otp) async {
+  /// Verifies the OTP for a given contact and user type.
+  /// Endpoint: /api/v1/auth/verify-otp/{type}
+  Future<Map<String, dynamic>> verifyOTP({
+    required String type,
+    required String contact,
+    required String otp,
+  }) async {
     final response = await post(
-      '/api/verify-otp/patient',
-      data: {'identity': identity, 'otp': otp},
+      '/api/v1/auth/verify-otp/$type',
+      data: {
+        'contact': contact,
+        'otp': otp,
+      },
     );
     return response.data;
   }
 
-  /// Resets the password for a given token.
-  /// Endpoint: /api/reset-password/patient
+  /// Resets the password for a given token and user type.
+  /// Endpoint: /api/v1/auth/reset-password/{type}
   Future<Map<String, dynamic>> resetPassword({
+    required String type,
     required String token,
     required String password,
     required String passwordConfirmation,
   }) async {
     final response = await post(
-      '/api/reset-password/patient',
+      '/api/v1/auth/reset-password/$type',
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      ),
       data: {
-        'reset_token': token,
         'password': password,
         'password_confirmation': passwordConfirmation,
       },
@@ -205,23 +219,17 @@ class ApiService {
   }
 
   /// Resends the OTP for the forgot-password flow.
-  /// Endpoint: POST /api/forget-password/patient
+  /// Endpoint: POST /api/v1/auth/forget-password/patient
   Future<Map<String, dynamic>> resendCode(String identity) async {
-    final response = await post(
-      '/api/forget-password/patient',
-      data: {'identity': identity},
-    );
-    if (response.data is Map<String, dynamic>) {
-      return Map<String, dynamic>.from(response.data);
-    }
-    return {'success': false, 'message': 'Unknown error'};
+    return sendForgotPasswordOTP('patient', identity);
   }
 
-  /// Resends the OTP for the signup flow using an auth token.
-  /// Endpoint: GET /api/resend-otp/patient
+  /// Resends the OTP for the signup flow using an auth token or contact.
+  /// Endpoint: GET /api/v1/auth/resend-otp/{type}
   Future<Map<String, dynamic>> resendOTP({
+    required String type,
+    required String contact,
     String? token,
-    String? identity,
   }) async {
     String? finalToken = token;
 
@@ -236,15 +244,11 @@ class ApiService {
       }
     }
 
-    String url = '/api/resend-otp/patient';
+    String url = '/api/v1/auth/resend-otp/$type';
 
     if (finalToken == null || finalToken.isEmpty) {
-      if (identity != null && identity.isNotEmpty) {
-        url = '$url?identity=$identity';
-        print('DEBUG: [0.6] Still NULL, using Identity instead: $identity');
-      } else {
-        print('DEBUG: [ERROR] No Token AND No Identity provided to ApiService');
-      }
+      url = '$url?contact=$contact';
+      print('DEBUG: [0.6] Still NULL, using contact instead: $contact');
     }
 
     final fullUrl = '${_dio.options.baseUrl}$url';
@@ -293,6 +297,9 @@ class ApiService {
       };
     }
   }
+
+
+// ------------------------------- PATIENT ------------------------------- 
 
   /// Fetches the patient's next visit data.
   /// Endpoint: GET /api/patient/next-visit
