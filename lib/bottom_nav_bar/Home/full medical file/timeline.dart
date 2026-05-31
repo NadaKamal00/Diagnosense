@@ -241,7 +241,7 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
     final Map<String, dynamic> data =
         itemData is Map<String, dynamic> ? itemData : {};
 
-    final day = data['date']?.toString() ?? '--';
+    final day = data['day']?.toString() ?? '--';
     final month = data['month']?.toString().toUpperCase() ?? '---';
     final year = data['year']?.toString() ?? '';
     final type = data['type']?.toString().toUpperCase() ?? 'RECORD';

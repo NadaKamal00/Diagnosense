@@ -85,7 +85,8 @@ class _HomeScreenState extends State<HomeScreen> {
       if (mounted) {
         setState(() {
           if (response['success'] == true && response['data'] != null) {
-            _nextVisitData = response['data'];
+            final visitPayload = response['data'] is Map ? response['data'] : null;
+            _nextVisitData = visitPayload;
           }
           _isLoadingNextVisit = false;
         });
@@ -321,10 +322,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final incompleteTasks =
         _tasks.where((task) {
-          final isCompletedValue = task['is_completed'];
-          return isCompletedValue == 0 ||
-              isCompletedValue == false ||
-              isCompletedValue == "0";
+          final String isCompletedValue =
+              task['is_completed']?.toString() ?? '0';
+          return isCompletedValue == '0' ||
+              isCompletedValue.toLowerCase() == 'false';
         }).toList();
 
     return Container(
@@ -400,8 +401,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       incompleteTasks.map((task) {
                         final String title =
                             task['title']?.toString() ?? 'Task';
+                        final Map<String, dynamic>? visitMap =
+                            task['visit'] is Map
+                                ? Map<String, dynamic>.from(
+                                    task['visit'] as Map,
+                                  )
+                                : null;
                         final String dueDate =
-                            task['visit']?['next_visit_date']?.toString() ??
+                            visitMap?['next_visit_date']?.toString() ??
                             'No Date';
                         final int taskId =
                             int.tryParse(task['id']?.toString() ?? '0') ?? 0;
@@ -559,10 +566,10 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
-    final doctorName = _nextVisitData!['doctor_name'] ?? '';
-    final specialization = _nextVisitData!['specialization'] ?? '';
-    final date = _nextVisitData!['date'] ?? '';
-    final time = _nextVisitData!['time'] ?? '';
+    final doctorName = _nextVisitData?['doctor_name']?.toString() ?? '';
+    final specialization = _nextVisitData?['specialization']?.toString() ?? '';
+    final date = _nextVisitData?['date']?.toString() ?? '';
+    final time = _nextVisitData?['time']?.toString() ?? '';
 
     return Container(
       width: double.infinity,

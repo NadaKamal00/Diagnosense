@@ -64,6 +64,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('auth_token');
+      final type = prefs.getString('user_type') ?? 'patient';
 
       if (token == null) {
         await prefs.clear();
@@ -76,22 +77,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         return;
       }
 
-      final data = await ApiService().logout(token);
+      final data = await ApiService().logout(token: token, type: type);
 
       if (!mounted) return;
 
       final bool success = data['success'] == true;
-      final String message =
-          data['message'] ??
-          (success ? 'Logout successfully.' : 'Logout failed.');
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor:
-              success ? AppColors.successGreen : AppColors.errorColor,
-        ),
-      );
 
       if (success) {
         await prefs.clear();
@@ -99,6 +89,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
         Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const LoginScreen()),
           (Route<dynamic> route) => false,
+        );
+      } else {
+        final String message = data['message'] ?? 'Logout failed.';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message),
+            backgroundColor: AppColors.errorColor,
+          ),
         );
       }
     } catch (e) {

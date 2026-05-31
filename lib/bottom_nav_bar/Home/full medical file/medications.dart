@@ -37,21 +37,10 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
       if (!mounted) return;
 
       // The backend returns {"data": [...]}. We check if 'data' key exists.
-      if (response.containsKey('data') && response['data'] is List) {
+        if (response.containsKey('data') && response['data'] is List) {
         final List<dynamic> data = response['data'];
         List<Map<String, dynamic>> fetchedMedications =
             List<Map<String, dynamic>>.from(data);
-
-        // Sorting Logic: Active first, then Completed, then others.
-        fetchedMedications.sort((a, b) {
-          final statusA = (a['status'] ?? '').toString().toLowerCase();
-          final statusB = (b['status'] ?? '').toString().toLowerCase();
-          if (statusA == 'active' && statusB != 'active') return -1;
-          if (statusA != 'active' && statusB == 'active') return 1;
-          if (statusA == 'completed' && statusB != 'completed') return 1;
-          if (statusA != 'completed' && statusB == 'completed') return -1;
-          return 0;
-        });
 
         if (mounted) {
           setState(() {
@@ -68,17 +57,6 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
         final List<dynamic> data = response['data'] ?? [];
         List<Map<String, dynamic>> fetchedMedications =
             List<Map<String, dynamic>>.from(data);
-
-        // Sorting Logic: Active first, then Completed, then others.
-        fetchedMedications.sort((a, b) {
-          final statusA = (a['status'] ?? '').toString().toLowerCase();
-          final statusB = (b['status'] ?? '').toString().toLowerCase();
-          if (statusA == 'active' && statusB != 'active') return -1;
-          if (statusA != 'active' && statusB == 'active') return 1;
-          if (statusA == 'completed' && statusB != 'completed') return 1;
-          if (statusA != 'completed' && statusB == 'completed') return -1;
-          return 0;
-        });
 
         if (mounted) {
           setState(() {
@@ -267,14 +245,14 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                         itemCount: filteredMedications.length,
                         itemBuilder:
                             (context, index) => _buildMedicationCard(
-                              name: filteredMedications[index]['name'],
-                              dosage: filteredMedications[index]['dosage'],
+                              name: filteredMedications[index]['name']?.toString() ?? 'Unknown',
+                              dosage: filteredMedications[index]['dosage']?.toString() ?? '',
                               sig:
-                                  filteredMedications[index]['frequency'] ??
+                                  filteredMedications[index]['frequency']?.toString() ??
                                   'As prescribed',
-                              status:
-                                  filteredMedications[index]['status'] ??
-                                  'UNKNOWN',
+                              duration:
+                                  filteredMedications[index]['duration']?.toString() ??
+                                  'ONGOING',
                               scale: res.scale,
                               isTablet: res.isTablet,
                             ),
@@ -317,11 +295,11 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
     required String name,
     required String dosage,
     required String sig,
-    required String status,
+    required String duration,
     required double scale,
     required bool isTablet,
   }) {
-    final bool isCompleted = status.toLowerCase() == "completed";
+    final bool isCompleted = duration.toLowerCase() == "completed";
 
     // Conditional Styling Colors
     final Color mainIconColor =
@@ -331,7 +309,9 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
     final Color textColor =
         isCompleted ? AppColors.completedGrey : AppColors.secondaryTextColor;
     final Color statusColor =
-        isCompleted ? AppColors.mutedColor : AppColors.activeGreen;
+        isCompleted ? AppColors.mutedColor : AppColors.secondaryTextColor;
+    final Color iconBgColor =
+        isCompleted ? AppColors.surfaceVariant.withOpacity(0.4) : AppColors.primaryColor.withOpacity(0.1);
 
     return Container(
       margin: EdgeInsets.only(bottom: (isTablet ? 10 : 12) * scale),
@@ -357,6 +337,7 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
       child: Column(
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               /// Icon
               Container(
@@ -364,7 +345,7 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                 height: 37 * scale,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: AppColors.surfaceVariant.withOpacity(0.5),
+                  color: iconBgColor,
                   borderRadius: BorderRadius.circular(6 * scale),
                 ),
                 child: Icon(
@@ -382,6 +363,8 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                   children: [
                     Text(
                       name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: (isTablet ? 13 : 15) * scale,
@@ -391,6 +374,8 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                     SizedBox(height: 4 * scale),
                     Text(
                       dosage,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         color: textColor,
@@ -401,24 +386,6 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                 ),
               ),
 
-              /// Time Icon Container
-              Container(
-                alignment: Alignment.center,
-                width: (isTablet ? 30 : 36) * scale,
-                height: (isTablet ? 24 : 28) * scale,
-                decoration: BoxDecoration(
-                  color: AppColors.surfaceVariant.withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(6 * scale),
-                ),
-                child: Icon(
-                  Icons.access_time,
-                  color:
-                      isCompleted
-                          ? AppColors.mutedColor.withOpacity(0.5)
-                          : AppColors.mutedColor,
-                  size: (isTablet ? 15 : 18) * scale,
-                ),
-              ),
             ],
           ),
 
@@ -445,7 +412,7 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                   style: TextStyle(
                     fontWeight: FontWeight.w900,
                     fontSize: (isTablet ? 10 : 12) * scale,
-                    color: titleColor,
+                    color: AppColors.primaryColor.withOpacity(isCompleted ? 0.5 : 0.8),
                   ),
                 ),
                 Expanded(
@@ -458,10 +425,10 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                     ),
                   ),
                 ),
-                Icon(Icons.circle, color: statusColor, size: 6 * scale),
+                Icon(Icons.access_time, color: statusColor, size: (isTablet ? 14 : 16) * scale),
                 SizedBox(width: 6 * scale),
                 Text(
-                  status.toUpperCase(),
+                  duration.toUpperCase(),
                   style: TextStyle(
                     color: statusColor,
                     fontWeight: FontWeight.w600,

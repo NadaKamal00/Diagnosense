@@ -51,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       _rememberMe = prefs.getBool('remember_me') ?? false;
       if (_rememberMe) {
-        _emailController.text = prefs.getString('saved_identity') ?? '';
+        _emailController.text = prefs.getString('saved_contact') ?? '';
         _passwordController.text = prefs.getString('saved_password') ?? '';
       }
     });
@@ -60,12 +60,12 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _handleLogin() async {
     FocusScope.of(context).unfocus();
 
-    final identity = _emailController.text.trim();
+    final contact = _emailController.text.trim();
     final password = _passwordController.text;
 
-    if (identity.isEmpty || password.isEmpty) {
+    if (contact.isEmpty || password.isEmpty) {
       setState(() {
-        _fieldError = 'Please enter both identity and password';
+        _fieldError = 'Please enter both contact and password';
         _fieldSuccess = false;
       });
       return;
@@ -82,8 +82,13 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
+      // Resolve user type from SharedPreferences, defaulting to 'patient'
+      final prefs = await SharedPreferences.getInstance();
+      final String type = prefs.getString('user_type') ?? 'patient';
+
       final data = await ApiService().login(
-        identity: identity,
+        type: type,
+        contact: contact,
         password: password,
       );
 
@@ -92,39 +97,35 @@ class _LoginScreenState extends State<LoginScreen> {
       final bool success = data['success'] == true;
 
       if (success) {
+        // Handle Remember Me (async writes before navigation)
+        if (_rememberMe) {
+          await prefs.setBool('remember_me', true);
+          await prefs.setString('saved_contact', contact);
+          await prefs.setString('saved_password', password);
+        } else {
+          await prefs.remove('remember_me');
+          await prefs.remove('saved_contact');
+          await prefs.remove('saved_password');
+        }
+
+        // Guard context usage after all async calls complete
+        if (!mounted) return;
+
         setState(() {
           _fieldSuccess = true;
           _fieldError = null;
         });
-        final prefs = await SharedPreferences.getInstance();
-
-        // Store Token
-        final token = data['data']?['token'];
-        if (token != null) {
-          await prefs.setString('auth_token', token);
-        }
-
-        // Handle Remember Me
-        if (_rememberMe) {
-          await prefs.setBool('remember_me', true);
-          await prefs.setString('saved_identity', identity);
-          await prefs.setString('saved_password', password);
-        } else {
-          await prefs.remove('remember_me');
-          await prefs.remove('saved_identity');
-          await prefs.remove('saved_password');
-        }
 
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const NavigationMenu()),
         );
       } else {
-        // Identity-based error message
+        // Contact-based error message
         setState(() {
           _fieldSuccess = false;
           _fieldError =
-              _isEmail(identity)
+              _isEmail(contact)
                   ? 'Email or password incorrect. Please try again'
                   : 'Phone number or password incorrect. Please try again';
         });

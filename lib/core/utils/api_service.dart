@@ -96,56 +96,73 @@ class ApiService {
   }
 
 /// ----------------------------- AUTH -----------------------------
-   /// Handles user login.
-  /// Endpoint: /api/login/patient
+  /// Handles user login.
+  /// Endpoint: POST /api/v1/auth/login/{type}
   Future<Map<String, dynamic>> login({
-    required String identity,
+    required String type,
+    required String contact,
     required String password,
   }) async {
     final response = await post(
-      '/api/login/patient',
-      data: {'identity': identity, 'password': password},
+      '/api/v1/auth/login/$type',
+      data: {'contact': contact, 'password': password},
     );
 
-    if (response.statusCode == 200 && response.data['success'] == true) {
+    // Guard: ensure response body is a Map before any field access
+    if (response.data is! Map) {
+      return {'success': false, 'message': 'Unexpected server response format.'};
+    }
+
+    final Map<String, dynamic> responseMap =
+        Map<String, dynamic>.from(response.data as Map);
+
+    if (response.statusCode == 200 && responseMap['success'] == true) {
       final prefs = await SharedPreferences.getInstance();
 
+      // --- Safe extraction of nested 'data' map ---
+      final dynamic rawData = responseMap['data'];
+      final Map<String, dynamic>? dataMap =
+          rawData is Map ? Map<String, dynamic>.from(rawData) : null;
+
       // --- Save Token ---
-      final token = response.data['data']?['token']?.toString() ?? "";
+      final String token = dataMap?['token']?.toString() ?? '';
       if (token.isNotEmpty) {
         await prefs.setString('auth_token', token);
-        print(
-          "API Debug: Saved Token to SharedPreferences: ${token.substring(0, 5)}...",
-        );
+        // Guard substring to avoid RangeError if token is very short
+        final preview = token.length >= 5 ? token.substring(0, 5) : token;
+        print('API Debug: Saved Token to SharedPreferences: $preview...');
       }
 
       // --- Save User Info (Parsing 'data' -> 'user' structure) ---
-      final userData = response.data['data']?['user'];
-      print("API User Data: $userData");
+      final dynamic rawUser = dataMap?['user'];
+      final Map<String, dynamic>? userData =
+          rawUser is Map ? Map<String, dynamic>.from(rawUser) : null;
+      print('API User Data: $userData');
+
       if (userData != null) {
-        final name = userData['name']?.toString() ?? "";
-        final email = userData['email']?.toString() ?? "";
-        final phone = userData['phone']?.toString() ?? "";
+        final String name = userData['name']?.toString() ?? '';
+        final String userContact = userData['contact']?.toString() ?? '';
 
         print(
-          "API Debug: Saving to SharedPreferences -> name: $name, email: $email, phone: $phone",
+          'API Debug: Saving to SharedPreferences -> name: $name, contact: $userContact',
         );
         await prefs.setString('user_name', name);
-        await prefs.setString('user_email', email);
-        await prefs.setString('user_phone', phone);
-        await prefs.setString(
-          'saved_user_phone',
-          userData['phone']?.toString() ?? "",
-        );
+        await prefs.setString('user_contact', userContact);
 
-        final savedName = prefs.getString('user_name');
+        // Fallback: always populate both legacy keys so screens relying on
+        // either 'user_email' or 'user_phone' never receive a null/empty value.
+        await prefs.setString('user_email', userContact);
+        await prefs.setString('user_phone', userContact);
+        await prefs.setString('saved_user_phone', userContact);
+
+        final String? savedName = prefs.getString('user_name');
         print(
-          "API Debug: Verification after save -> key: 'user_name', value in prefs: $savedName",
+          'API Debug: Verification after save -> key: user_name, value in prefs: $savedName',
         );
       }
     }
 
-    return response.data;
+    return responseMap;
   }
 
 
@@ -182,7 +199,10 @@ class ApiService {
         'otp': otp,
       },
     );
-    return response.data;
+    if (response.data is Map) {
+      return Map<String, dynamic>.from(response.data as Map);
+    }
+    return {'success': false, 'message': 'Unexpected server response format.'};
   }
 
   /// Resets the password for a given token and user type.
@@ -205,17 +225,26 @@ class ApiService {
         'password_confirmation': passwordConfirmation,
       },
     );
-    return response.data;
+    if (response.data is Map) {
+      return Map<String, dynamic>.from(response.data as Map);
+    }
+    return {'success': false, 'message': 'Unexpected server response format.'};
   }
 
   /// Handles user logout.
-  /// Endpoint: /api/logout/patient
-  Future<Map<String, dynamic>> logout(String token) async {
+  /// Endpoint: POST /api/v1/auth/logout/{type}
+  Future<Map<String, dynamic>> logout({
+    required String token,
+    required String type,
+  }) async {
     final response = await post(
-      '/api/logout/patient',
+      '/api/v1/auth/logout/$type',
       options: Options(headers: {'Authorization': 'Bearer $token'}),
     );
-    return response.data;
+    if (response.data is Map) {
+      return Map<String, dynamic>.from(response.data as Map);
+    }
+    return {'success': false, 'message': 'Unexpected server response format.'};
   }
 
   /// Resends the OTP for the forgot-password flow.
@@ -238,9 +267,8 @@ class ApiService {
       final prefs = await SharedPreferences.getInstance();
       finalToken = prefs.getString('auth_token');
       if (finalToken != null && finalToken.isNotEmpty) {
-        print(
-          'DEBUG: [0.5] Token retrieved from Storage fallback: ${finalToken.substring(0, 10)}...',
-        );
+        final preview = finalToken.length >= 10 ? finalToken.substring(0, 10) : finalToken;
+        print('DEBUG: [0.5] Token retrieved from Storage fallback: $preview...');
       }
     }
 
@@ -307,28 +335,32 @@ class ApiService {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
 
-    final response = await get(
-      '/api/patient/next-visit',
-      options: Options(
-        headers: {if (token != null) 'Authorization': 'Bearer $token'},
-      ),
-    );
+    try {
+      final response = await get(
+        '/api/v1/next-visit',
+        options: Options(
+          headers: {if (token != null) 'Authorization': 'Bearer $token'},
+        ),
+      );
 
-    if (response.data is Map<String, dynamic>) {
-      return Map<String, dynamic>.from(response.data);
+      if (response.data is Map) {
+        return Map<String, dynamic>.from(response.data as Map);
+      }
+      return {'success': false, 'message': 'Unknown error', 'data': null};
+    } catch (e) {
+      return {'success': false, 'message': e.toString(), 'data': null};
     }
-    return {'success': false, 'message': 'Unknown error', 'data': null};
   }
 
   /// Fetches the patient's medical history timeline.
-  /// Endpoint: GET /api/patient/timeline
+  /// Endpoint: GET /api/v1/timeline
   Future<Map<String, dynamic>> getPatientTimeline() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
 
     try {
       final response = await get(
-        '/api/patient/timeline',
+        '/api/v1/timeline',
         options: Options(
           headers: {if (token != null) 'Authorization': 'Bearer $token'},
         ),
@@ -353,17 +385,21 @@ class ApiService {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
 
-    final response = await get(
-      '/api/patient/tasks',
-      options: Options(
-        headers: {if (token != null) 'Authorization': 'Bearer $token'},
-      ),
-    );
+    try {
+      final response = await get(
+        '/api/patient/tasks',
+        options: Options(
+          headers: {if (token != null) 'Authorization': 'Bearer $token'},
+        ),
+      );
 
-    if (response.data is Map<String, dynamic>) {
-      return Map<String, dynamic>.from(response.data);
+      if (response.data is Map) {
+        return Map<String, dynamic>.from(response.data as Map);
+      }
+      return {'success': false, 'message': 'Unknown error', 'data': null};
+    } catch (e) {
+      return {'success': false, 'message': e.toString(), 'data': null};
     }
-    return {'success': false, 'message': 'Unknown error', 'data': null};
   }
 
   /// Fetches details for a specific task.
@@ -422,12 +458,13 @@ class ApiService {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
 
-    print('DEBUG: [MedicationsAPI] GET /api/patient/medications');
-    print('DEBUG: [MedicationsAPI] Token: ${token?.substring(0, 5)}...');
+    print('DEBUG: [MedicationsAPI] GET /api/v1/medications');
+    final _medTokenPreview = (token != null && token.length >= 5) ? token.substring(0, 5) : (token ?? 'null');
+    print('DEBUG: [MedicationsAPI] Token: $_medTokenPreview...');
 
     try {
       final response = await get(
-        '/api/patient/medications',
+        '/api/v1/medications',
         options: Options(
           headers: {
             if (token != null) 'Authorization': 'Bearer $token',
@@ -466,7 +503,8 @@ class ApiService {
     final token = prefs.getString('auth_token');
 
     print('DEBUG: [ProfileAPI] PUT /api/patient/profile');
-    print('DEBUG: [ProfileAPI] Token: ${token?.substring(0, 5)}...');
+    final _profTokenPreview = (token != null && token.length >= 5) ? token.substring(0, 5) : (token ?? 'null');
+    print('DEBUG: [ProfileAPI] Token: $_profTokenPreview...');
     print('DEBUG: [ProfileAPI] Body: name=$name, email=$email, phone=$phone');
 
     try {
@@ -589,7 +627,8 @@ class ApiService {
     final token = prefs.getString('auth_token');
 
     print('DEBUG: [RadiologyAPI] GET /api/patient/radiology-reports');
-    print('DEBUG: [RadiologyAPI] Token: ${token?.substring(0, 5)}...');
+    final _radTokenPreview = (token != null && token.length >= 5) ? token.substring(0, 5) : (token ?? 'null');
+    print('DEBUG: [RadiologyAPI] Token: $_radTokenPreview...');
 
     try {
       final response = await get(
