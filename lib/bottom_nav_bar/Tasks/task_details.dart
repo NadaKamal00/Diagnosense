@@ -107,7 +107,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
 
     // Extract fields safely from API response
     final String title = _taskData?['title']?.toString() ?? '';
-    final String dueDate = _taskData?['Due_date']?.toString() ?? '';
+    final String dueDate = _taskData?['due_date']?.toString() ?? '';
 
     final String rawDescription = _taskData?['description']?.toString() ?? '';
     final String description =
@@ -116,8 +116,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
     final String rawNotes = _taskData?['notes']?.toString() ?? '';
     final String notes = rawNotes.isEmpty ? 'No Instructions Needed' : rawNotes;
 
-    final String doctorName =
-        _taskData?['visit']?['doctor_name']?.toString() ?? '';
+    final String doctorName = _taskData?['doctor_name']?.toString() ?? '';
 
     final bool isCompleted =
         _taskData?['is_completed'] == 1 ||
@@ -258,7 +257,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                               Expanded(
                                 child: _buildBadge(
                                   doctorName.isNotEmpty
-                                      ? 'Dr. $doctorName'
+                                      ? (doctorName.startsWith('Dr.') ? doctorName : 'Dr. $doctorName')
                                       : 'DOCTOR ORDERED',
                                   scaleFactor,
                                   badgeBg,

@@ -380,14 +380,14 @@ class ApiService {
   }
 
   /// Fetches the patient's tasks.
-  /// Endpoint: GET /api/patient/tasks
+  /// Endpoint: GET /api/v1/tasks
   Future<Map<String, dynamic>> getPatientTasks() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
 
     try {
       final response = await get(
-        '/api/patient/tasks',
+        '/api/v1/tasks',
         options: Options(
           headers: {if (token != null) 'Authorization': 'Bearer $token'},
         ),
@@ -403,14 +403,14 @@ class ApiService {
   }
 
   /// Fetches details for a specific task.
-  /// Endpoint: GET /api/patient/tasks/{id}
+  /// Endpoint: GET /api/v1/tasks/{id}
   Future<Map<String, dynamic>> getTaskDetails(int id) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
 
     try {
       final response = await get(
-        '/api/patient/tasks/$id',
+        '/api/v1/tasks/$id',
         options: Options(
           headers: {if (token != null) 'Authorization': 'Bearer $token'},
         ),
@@ -428,16 +428,16 @@ class ApiService {
       return {'success': false, 'message': e.toString(), 'data': null};
     }
   }
-
+  
   /// Toggles the completion status of a specific task.
-  /// Endpoint: PATCH /api/patient/tasks/{id}/complete
+  /// Endpoint: PATCH /api/v1/tasks/{id}/complete
   Future<Map<String, dynamic>> toggleTaskStatus(int id) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
 
     try {
       final response = await patch(
-        '/api/patient/tasks/$id/complete',
+        '/api/v1/tasks/$id/complete',
         options: Options(
           headers: {if (token != null) 'Authorization': 'Bearer $token'},
         ),

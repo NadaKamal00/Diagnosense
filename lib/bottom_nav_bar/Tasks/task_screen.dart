@@ -52,10 +52,10 @@ class _TaskScreenState extends State<TaskScreen> {
 
               // 2. Secondary Sort: Date descending (Newest first)
               final aDate = TaskHelper.parseDueDate(
-                a['Due_date']?.toString() ?? '',
+                a['due_date']?.toString() ?? '',
               );
               final bDate = TaskHelper.parseDueDate(
-                b['Due_date']?.toString() ?? '',
+                b['due_date']?.toString() ?? '',
               );
 
               if (aDate == null && bDate == null) return 0;
@@ -169,13 +169,13 @@ class _TaskScreenState extends State<TaskScreen> {
                           final title = task['title']?.toString() ?? '';
                           final subtitle =
                               task['description']?.toString() ?? '';
-                          final dueDate = task['Due_date']?.toString() ?? '';
+                          final dueDate = task['due_date']?.toString() ?? '';
                           final isCompleted =
                               task['is_completed'] == 1 ||
                               task['is_completed'] == true ||
                               task['is_completed'] == "1";
                           final doctorName =
-                              task['visit']?['doctor_name']?.toString() ?? '';
+                              task['doctor_name']?.toString() ?? '';
                           final taskId =
                               task['id'] is int
                                   ? task['id'] as int

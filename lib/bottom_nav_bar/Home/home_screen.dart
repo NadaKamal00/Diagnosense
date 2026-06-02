@@ -1,4 +1,5 @@
 import 'package:application/utils/responsive_helper.dart';
+import 'package:application/utils/task_helper.dart';
 import 'package:application/bottom_nav_bar/Home/full%20medical%20file/medical_file.dart';
 import 'package:application/bottom_nav_bar/Tasks/task_details.dart';
 import 'package:application/bottom_nav_bar/Home/history/history.dart';
@@ -401,15 +402,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       incompleteTasks.map((task) {
                         final String title =
                             task['title']?.toString() ?? 'Task';
-                        final Map<String, dynamic>? visitMap =
-                            task['visit'] is Map
-                                ? Map<String, dynamic>.from(
-                                    task['visit'] as Map,
-                                  )
-                                : null;
-                        final String dueDate =
-                            visitMap?['next_visit_date']?.toString() ??
-                            'No Date';
+                        final String rawDueDate = task['due_date']?.toString() ?? '';
+                        String dueDate = 'No Date';
+                        if (rawDueDate.isNotEmpty) {
+                          final parsedDate = TaskHelper.parseDueDate(rawDueDate);
+                          if (parsedDate != null) {
+                            dueDate = "${parsedDate.day.toString().padLeft(2, '0')}-${parsedDate.month.toString().padLeft(2, '0')}-${parsedDate.year}";
+                          } else {
+                            dueDate = rawDueDate;
+                          }
+                        }
                         final int taskId =
                             int.tryParse(task['id']?.toString() ?? '0') ?? 0;
 
