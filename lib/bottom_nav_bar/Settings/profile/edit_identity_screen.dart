@@ -37,13 +37,17 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
   }
 
   void _validateRealTime(String val) {
+    final trimmed = val.trim();
     bool isInvalid = false;
-    if (val.trim().isEmpty) {
+    
+    if (trimmed.isEmpty) {
       isInvalid = true;
-    } else if (widget.type == 'email') {
-      isInvalid = !val.contains('@gmail.com');
+    } else if (trimmed.contains('@')) {
+      // If it contains an '@', validate it strictly as an email
+      isInvalid = !trimmed.contains('@gmail.com');
     } else {
-      isInvalid = val.length != 11 || double.tryParse(val) == null;
+      // Otherwise, treat it dynamically as an Egyptian phone number
+      isInvalid = trimmed.length != 11 || double.tryParse(trimmed) == null;
     }
 
     if (_hasError != isInvalid) {
@@ -66,24 +70,8 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
     });
 
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final currentName = prefs.getString('user_name') ?? '';
-      final currentEmail = prefs.getString('user_email') ?? '';
-      final currentPhone = prefs.getString('user_phone') ?? '';
-
-      String updateEmail = currentEmail;
-      String updatePhone = currentPhone;
-
-      if (widget.type == 'email') {
-        updateEmail = _controller.text.trim();
-      } else {
-        updatePhone = _controller.text.trim();
-      }
-
       final response = await ApiService().updateProfile(
-        name: currentName,
-        email: updateEmail,
-        phone: updatePhone,
+        contact: _controller.text.trim(),
       );
 
       if (!mounted) return;
@@ -112,13 +100,13 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
   @override
   Widget build(BuildContext context) {
     final res = Responsive(context);
-    final isEmail = widget.type == 'email';
+    final bool isEmail = _controller.text.trim().contains('@');
     final bool isErrorState = _hasError || _apiErrorText != null;
 
     String instructionText;
     if (_apiErrorText != null) {
       instructionText = _apiErrorText!;
-    } else if (isEmail) {
+    } else if (_controller.text.trim().contains('@') || _controller.text.trim().isEmpty) {
       instructionText = 'Email Address must contain @gmail.com';
     } else {
       instructionText = 'Must be exactly 11 digits';
@@ -138,7 +126,7 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Edit ${isEmail ? "Email" : "Phone"}',
+          'Edit Contact',
           style: TextStyle(
             color: AppColors.black,
             fontWeight: FontWeight.bold,
@@ -155,7 +143,7 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  isEmail ? 'EMAIL ADDRESS' : 'PHONE NUMBER',
+                  'CONTACT',
                   style: TextStyle(
                     fontSize: (12 * res.scale).toDouble(),
                     color: AppColors.secondaryTextColor,
@@ -177,10 +165,7 @@ class _EditIdentityScreenState extends State<EditIdentityScreen> {
                   child: TextFormField(
                     controller: _controller,
                     autofocus: false,
-                    keyboardType:
-                        isEmail
-                            ? TextInputType.emailAddress
-                            : TextInputType.number,
+                    keyboardType: TextInputType.text,
                     style: TextStyle(
                       fontSize: (16 * res.scale).toDouble(),
                       color: AppColors.headingColor,

@@ -15,8 +15,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   String? userName;
-  String? userEmail;
-  String? userPhone;
+  String? userContact;
   bool _isLoading = true;
 
   @override
@@ -28,18 +27,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
     final name = prefs.getString('user_name');
-    final email = prefs.getString('user_email');
-    final phone = prefs.getString('user_phone');
+    final contact = prefs.getString('user_contact');
 
     print("DEBUG: [PROFILE_SCREEN] Fetching data from prefs:");
     print("DEBUG: [PROFILE_SCREEN] - user_name: $name");
-    print("DEBUG: [PROFILE_SCREEN] - user_email: $email");
-    print("DEBUG: [PROFILE_SCREEN] - user_phone: $phone");
+    print("DEBUG: [PROFILE_SCREEN] - user_contact: $contact");
 
     setState(() {
       userName = name;
-      userEmail = email;
-      userPhone = phone;
+      userContact = contact;
       _isLoading = false;
     });
   }
@@ -69,30 +65,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
 
-    if (userEmail != null && userEmail!.isNotEmpty) {
+    if (userContact != null && userContact!.isNotEmpty) {
       rows.add(
         _buildProfileRow(
           res: res,
-          icon: Icons.email_outlined,
-          label: "Email Address",
-          value: userEmail!,
-          onTap: () => _navigateToEditIdentity("email", userEmail),
-          onLongPress: () => _showContextMenu(context, "Email", userEmail),
-          showArrow: true,
-        ),
-      );
-    }
-
-    if (userPhone != null && userPhone!.isNotEmpty) {
-      rows.add(
-        _buildProfileRow(
-          res: res,
-          icon: Icons.phone_android,
-          label: "Phone Number",
-          value: userPhone!,
-          onTap: () => _navigateToEditIdentity("phone", userPhone),
-          onLongPress:
-              () => _showContextMenu(context, "Phone Number", userPhone),
+          icon: Icons.contact_mail_outlined,
+          label: "Contact",
+          value: userContact!,
+          onTap: () => _navigateToEditIdentity("contact", userContact),
+          onLongPress: () => _showContextMenu(context, "Contact", userContact),
           showArrow: true,
         ),
       );
@@ -264,11 +245,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 title: Text('Edit $type'),
                 onTap: () {
                   Navigator.pop(bottomSheetContext);
-                  if (type == 'Email') {
-                    _navigateToEditIdentity('email', value);
-                  } else {
-                    _navigateToEditIdentity('phone', value);
-                  }
+                  _navigateToEditIdentity(type.toLowerCase(), value);
                 },
               ),
             ],

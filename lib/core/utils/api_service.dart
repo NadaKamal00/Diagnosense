@@ -493,24 +493,22 @@ class ApiService {
   }
 
   /// Updates the patient's profile information.
-  /// Endpoint: PUT /api/patient/profile
+  /// Endpoint: PATCH /api/v1/profile
   Future<Map<String, dynamic>> updateProfile({
-    required String name,
-    required String email,
-    required String phone,
+    required String contact,
   }) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
 
-    print('DEBUG: [ProfileAPI] PUT /api/patient/profile');
+    print('DEBUG: [ProfileAPI] PATCH /api/v1/profile');
     final _profTokenPreview = (token != null && token.length >= 5) ? token.substring(0, 5) : (token ?? 'null');
     print('DEBUG: [ProfileAPI] Token: $_profTokenPreview...');
-    print('DEBUG: [ProfileAPI] Body: name=$name, email=$email, phone=$phone');
+    print('DEBUG: [ProfileAPI] Body: contact=$contact');
 
     try {
-      final response = await _dio.put(
-        '/api/patient/profile',
-        data: {'name': name, 'email': email, 'phone': phone},
+      final response = await _dio.patch(
+        '/api/v1/profile',
+        data: {'contact': contact},
         options: Options(
           headers: {
             if (token != null) 'Authorization': 'Bearer $token',
@@ -530,16 +528,14 @@ class ApiService {
             'DEBUG: [ProfileAPI] Success! Attempting to persist updated info...',
           );
           print(
-            'DEBUG: [ProfileAPI] Data to save: name: $name, email: $email, phone: $phone',
+            'DEBUG: [ProfileAPI] Data to save: contact: $contact',
           );
 
-          await prefs.setString('user_name', name);
-          await prefs.setString('user_email', email);
-          await prefs.setString('user_phone', phone);
+          await prefs.setString('user_contact', contact);
 
-          final verifyName = prefs.getString('user_name');
+          final verifyContact = prefs.getString('user_contact');
           print(
-            'DEBUG: [ProfileAPI] Verification check after setString -> user_name: $verifyName',
+            'DEBUG: [ProfileAPI] Verification check after setString -> user_contact: $verifyContact',
           );
         }
         return result;
