@@ -4,11 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:application/core/theme/app_colors.dart';
 import 'package:application/bottom_nav_bar/Home/full%20medical%20file/timeline.dart';
-import 'package:application/bottom_nav_bar/Home/history/history.dart';
-import 'package:application/bottom_nav_bar/Home/lab%20results/lab_reports.dart';
+import 'package:application/bottom_nav_bar/Home/full%20medical%20file/history.dart';
+import 'package:application/bottom_nav_bar/Home/full%20medical%20file/lab_reports.dart';
 import 'package:application/bottom_nav_bar/Settings/profile/profile.dart';
 import '../../../shared/widgets/custom_search_bar.dart';
-import '../radiology/radiology.dart';
+import 'radiology.dart';
 import 'medications.dart';
 
 class MedicalFilesScreen extends StatefulWidget {

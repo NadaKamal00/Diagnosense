@@ -134,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
       setState(() {
         _fieldSuccess = false;
-        _fieldError = 'Login failed. Please check your connection.';
+        _fieldError = 'Login failed. Please check your internet connection.';
       });
     } finally {
       if (mounted) {

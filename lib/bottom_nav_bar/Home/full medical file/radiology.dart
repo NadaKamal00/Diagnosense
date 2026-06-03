@@ -1,4 +1,5 @@
-import 'package:application/bottom_nav_bar/Home/radiology/radiology_details.dart';
+// import 'package:application/bottom_nav_bar/Home/radiology/radiology_details.dart';
+import 'package:application/bottom_nav_bar/Home/full%20medical%20file/view_file.dart';
 import 'package:application/utils/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -26,7 +27,7 @@ class _RadiologyScreenState extends State<RadiologyScreen> {
 
   Future<void> _fetchRadiologyData() async {
     try {
-      final response = await ApiService().getRadiologyReports();
+      final response = await ApiService().getMedicalFiles(type: 'radiology');
       debugPrint("DEBUG: [RadiologyScreen] Raw Response: $response");
 
       if (response['success'] == true && response['data'] != null) {
@@ -56,14 +57,13 @@ class _RadiologyScreenState extends State<RadiologyScreen> {
     if (enteredKeyword.isEmpty) {
       results = allRadiology;
     } else {
-      results =
-          allRadiology
-              .where(
-                (item) => (item['name'] ?? '').toLowerCase().contains(
+      results = allRadiology
+          .where(
+            (item) => (item['name'] ?? '').toLowerCase().contains(
                   enteredKeyword.toLowerCase(),
                 ),
-              )
-              .toList();
+          )
+          .toList();
     }
     setState(() {
       filteredRadiology = results;
@@ -79,11 +79,11 @@ class _RadiologyScreenState extends State<RadiologyScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.transparent,
         elevation: 0,
-        toolbarHeight: (56 * res.scale).toDouble(),
-        leadingWidth: ((res.isTablet ? 90 : 70) * res.scale).toDouble(),
+        toolbarHeight: 56 * res.scale,
+        leadingWidth: (res.isTablet ? 90 : 70) * res.scale,
         leading: Container(
           margin: EdgeInsets.only(
-            left: ((res.isTablet ? 20 : 12) * res.scale).toDouble(),
+            left: (res.isTablet ? 20 : 12) * res.scale,
           ),
           alignment: Alignment.centerLeft,
           child: ClipOval(
@@ -92,11 +92,11 @@ class _RadiologyScreenState extends State<RadiologyScreen> {
               child: InkWell(
                 onTap: () => Navigator.pop(context),
                 child: Padding(
-                  padding: EdgeInsets.all((8 * res.scale).toDouble()),
+                  padding: EdgeInsets.all(8 * res.scale),
                   child: Icon(
                     Icons.arrow_back_ios,
                     color: AppColors.primaryTextColor,
-                    size: (20 * res.scale).toDouble(),
+                    size: 20 * res.scale,
                   ),
                 ),
               ),
@@ -108,7 +108,7 @@ class _RadiologyScreenState extends State<RadiologyScreen> {
           style: TextStyle(
             color: AppColors.primaryTextColor,
             fontWeight: FontWeight.w600,
-            fontSize: (18 * res.scale).toDouble(),
+            fontSize: 18 * res.scale,
           ),
         ),
         centerTitle: true,
@@ -123,59 +123,66 @@ class _RadiologyScreenState extends State<RadiologyScreen> {
           Expanded(
             child: RefreshIndicator(
               onRefresh: _fetchRadiologyData,
-              child:
-                  isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : filteredRadiology.isNotEmpty
+              child: isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : filteredRadiology.isNotEmpty
                       ? ListView.builder(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        padding: EdgeInsets.symmetric(
-                          horizontal:
-                              ((res.isTablet ? 24 : 20) * res.scale).toDouble(),
-                          vertical: (20 * res.scale).toDouble(),
-                        ),
-                        itemCount: filteredRadiology.length,
-                        itemBuilder:
-                            (context, index) => Padding(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: (res.isTablet ? 24 : 20) * res.scale,
+                            vertical: 20 * res.scale,
+                          ),
+                          itemCount: filteredRadiology.length,
+                          itemBuilder: (context, index) {
+                            final item = filteredRadiology[index];
+
+                            /// --- معالجة وتصحيح اسم الدكتور ---
+                            String rawReferredBy = item['referred_by'] ?? 'Unknown';
+                            String cleanDoctor = rawReferredBy.replaceAll('Ref: ', '').trim();
+                            if (cleanDoctor.toLowerCase() == 'unknown' || cleanDoctor.isEmpty) {
+                              cleanDoctor = 'Unknown Doctor';
+                            }
+
+                            return Padding(
                               padding: EdgeInsets.only(
-                                bottom: (16 * res.scale).toDouble(),
+                                bottom: 16 * res.scale,
                               ),
                               child: _buildRadiologyCard(
                                 context,
-                                res.scale.toDouble(),
-                                type: filteredRadiology[index]['type'] ?? '',
-                                title: filteredRadiology[index]['name'] ?? '',
-                                date: filteredRadiology[index]['date'] ?? '',
-                                ref: filteredRadiology[index]['doctor'] ?? '',
+                                res.scale,
+                                title: item['name'] ?? 'Unknown Report',
+                                date: item['date'] ?? 'Unknown Date',
+                                ref: cleanDoctor,
                                 onTap: () {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
-                                      builder:
-                                          (_) => RadiologyDetailsScreen(
-                                            report: filteredRadiology[index],
-                                          ),
+                                      builder: (_) => ViewFileScreen(
+                                        historyItem: item,
+                                      ),
                                     ),
                                   );
                                 },
                               ),
-                            ),
-                      )
+                            );
+                          },
+                        )
                       : ListView(
-                        children: [
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.3,
-                          ),
-                          Center(
-                            child: Text(
-                              "No radiology reports found",
-                              style: TextStyle(
-                                fontSize: (14 * res.scale).toDouble(),
-                                color: AppColors.hintGrey,
+                          children: [
+                            Spacer(),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.3,
+                            ),
+                            Center(
+                              child: Text(
+                                "No radiology reports found",
+                                style: TextStyle(
+                                  fontSize: 14 * res.scale,
+                                  color: AppColors.hintGrey,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
+                          ],
+                        ),
             ),
           ),
         ],
@@ -186,7 +193,6 @@ class _RadiologyScreenState extends State<RadiologyScreen> {
   Widget _buildRadiologyCard(
     BuildContext context,
     double scaleFactor, {
-    required String type,
     required String title,
     required String date,
     required String ref,
@@ -211,8 +217,9 @@ class _RadiologyScreenState extends State<RadiologyScreen> {
           ],
         ),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center, // يجعل الأيقونة والسطر الأول متناسقين في المحاذاة
           children: [
+            /// --- بوكس الأيقونة على اليسار ---
             Container(
               width: 44 * scaleFactor,
               height: 40 * scaleFactor,
@@ -232,42 +239,14 @@ class _RadiologyScreenState extends State<RadiologyScreen> {
               ),
             ),
             SizedBox(width: 14 * scaleFactor),
+            
+            /// --- محتوى النصوص ---
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 10 * scaleFactor,
-                          vertical: 4 * scaleFactor,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.lightBlueSurface,
-                          borderRadius: BorderRadius.circular(6 * scaleFactor),
-                        ),
-                        child: Text(
-                          type,
-                          style: TextStyle(
-                            color: AppColors.primaryColor,
-                            fontSize: 12 * scaleFactor,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        date,
-                        style: TextStyle(
-                          color: AppColors.mutedColor,
-                          fontSize: 11 * scaleFactor,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 8 * scaleFactor),
+                  /// السطر الأول: الاسم (قصاد الأيقونة مباشرة) والتاريخ في الآخر
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -282,24 +261,43 @@ class _RadiologyScreenState extends State<RadiologyScreen> {
                           ),
                         ),
                       ),
+                      SizedBox(width: 8 * scaleFactor),
                       Text(
-                        'Open',
+                        date,
                         style: TextStyle(
-                          color: AppColors.primaryColor,
+                          color: AppColors.mutedColor,
+                          fontSize: 11 * scaleFactor,
                           fontWeight: FontWeight.w600,
-                          fontSize: 12 * scaleFactor,
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 4 * scaleFactor),
-                  Text(
-                    'Ref: $ref',
-                    style: TextStyle(
-                      color: AppColors.mutedColor,
-                      fontSize: 11 * scaleFactor,
-                      fontWeight: FontWeight.w600,
+                  SizedBox(height: 6 * scaleFactor),
+                  
+                  /// السطر الثاني: اسم الطبيب وكلمة Open
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Ref: $ref',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: AppColors.mutedColor,
+                            fontSize: 11 * scaleFactor,
+                            fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
+                    Text(
+                      'Open',
+                      style: TextStyle(
+                        color: AppColors.primaryColor,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12 * scaleFactor,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

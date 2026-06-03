@@ -3,7 +3,7 @@ import 'package:application/utils/responsive_helper.dart';
 import '../../../shared/widgets/custom_search_bar.dart';
 import '../../../core/utils/api_service.dart';
 import '../../../core/theme/app_colors.dart';
-import 'view_history.dart';
+import 'view_file.dart';
 
 class MedicalHistoryScreen extends StatefulWidget {
   const MedicalHistoryScreen({super.key});
@@ -26,12 +26,32 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
 
   Future<void> _fetchHistory() async {
     try {
-      final response = await ApiService().getMedicalHistory();
-      print('API Response: $response'); // Debug print
-      if (response['data'] != null || response['success'] == true) {
-        final List<dynamic> data = response['data'];
-        final List<Map<String, dynamic>> list =
-            data.map((item) => Map<String, dynamic>.from(item)).toList();
+      final response = await ApiService().getMedicalFiles(type: 'medical_history');
+      debugPrint('API Response: $response'); // Debug print
+
+      if (!mounted) return;
+
+      if (response['success'] == true) {
+        final dynamic rawData = response['data'];
+        List<dynamic> dataList = [];
+
+        // Safely extract the list from potential nested wrappers
+        if (rawData is List) {
+          dataList = rawData;
+        } else if (rawData is Map && rawData['data'] is List) {
+          dataList = rawData['data'];
+        }
+
+        final List<Map<String, dynamic>> list = [];
+        
+        // Iterating safely with a clear exit condition
+        for (int i = 0; i < dataList.length; i++) {
+          final item = dataList[i];
+          if (item is Map) {
+            list.add(Map<String, dynamic>.from(item));
+          }
+        }
+
         setState(() {
           allHistory = list;
           filteredHistory = list;
@@ -39,16 +59,17 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
         });
       } else {
         setState(() {
-          errorMessage =
-              response['message'] ?? "Failed to load medical history";
+          errorMessage = response['message']?.toString() ?? "Failed to load medical history";
           isLoading = false;
         });
       }
     } catch (e) {
-      setState(() {
-        errorMessage = "An error occurred: $e";
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          errorMessage = "An error occurred: $e";
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -186,7 +207,7 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
   Widget _buildHistoryCard(Map<String, dynamic> item, double scaleFactor) {
     final String title = item['name'] ?? "";
     final String date = item['date'] ?? "";
-    final String size = item['size'] ?? "";
+    final String referredBy = item['referred_by'] ?? "";
     final String extension = (item['extension'] ?? "").toString().toUpperCase();
 
     Color typeColor;
@@ -228,7 +249,7 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ViewHistoryScreen(historyItem: item),
+                builder: (context) => ViewFileScreen(historyItem: item),
               ),
             );
           },
@@ -274,7 +295,7 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
                       ),
                       SizedBox(height: 4 * scaleFactor),
                       Text(
-                        "$date • $size",
+                        referredBy.isNotEmpty ? "$date • $referredBy" : date,
                         style: TextStyle(
                           color: AppColors.secondaryTextColor,
                           fontSize: 12 * scaleFactor,

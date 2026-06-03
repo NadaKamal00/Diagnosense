@@ -1,4 +1,5 @@
-import 'package:application/bottom_nav_bar/Home/lab%20results/view_report_details.dart';
+// import 'package:application/bottom_nav_bar/Home/lab%20results/view_report_details.dart';
+import 'package:application/bottom_nav_bar/Home/full%20medical%20file/view_file.dart';
 import 'package:application/core/utils/api_service.dart';
 import 'package:application/utils/responsive_helper.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,7 @@ class _LabResultsScreenState extends State<LabResultsScreen> {
   @override
   void initState() {
     super.initState();
-    _reportsFuture = ApiService().getLabReports();
+    _reportsFuture = ApiService().getMedicalFiles(type: 'lab');
   }
 
   void _runSearch(String enteredKeyword) {
@@ -31,7 +32,7 @@ class _LabResultsScreenState extends State<LabResultsScreen> {
 
   Future<void> _onRefresh() async {
     setState(() {
-      _reportsFuture = ApiService().getLabReports();
+      _reportsFuture = ApiService().getMedicalFiles(type: 'lab');
     });
     await _reportsFuture;
   }
@@ -140,11 +141,10 @@ class _LabResultsScreenState extends State<LabResultsScreen> {
 
                   final List<dynamic> allReports = data['data'] ?? [];
 
-                  final filteredReports =
-                      allReports.where((report) {
-                        final title = (report['name'] ?? '').toLowerCase();
-                        return title.contains(_searchQuery.toLowerCase());
-                      }).toList();
+                  final filteredReports = allReports.where((report) {
+                    final title = (report['name'] ?? '').toLowerCase();
+                    return title.contains(_searchQuery.toLowerCase());
+                  }).toList();
 
                   if (filteredReports.isEmpty) {
                     return ListView(
@@ -175,26 +175,28 @@ class _LabResultsScreenState extends State<LabResultsScreen> {
                       final report = filteredReports[index];
                       final bool isEven = index % 2 == 0;
 
+                      /// --- استخراج وتصحيح اسم الطبيب من الـ API ---
+                      String rawReferredBy = report['referred_by'] ?? 'Unknown';
+                      // إزالة الـ Prefix "Ref: " ليكون النص نقيّاً
+                      String cleanDoctor = rawReferredBy.replaceAll('Ref: ', '').trim();
+                      if (cleanDoctor.toLowerCase() == 'unknown' || cleanDoctor.isEmpty) {
+                        cleanDoctor = 'Unknown Doctor';
+                      }
+
                       return _buildLabCard(
                         context,
                         res.scale,
                         res.isTablet,
                         title: report['name'] ?? 'Unknown Report',
-                        doctor: report['doctor'] ?? 'Unknown Doctor',
+                        doctor: cleanDoctor, // الاسم النظيف يمرر هنا مباشرة
                         date: report['date'] ?? 'Unknown Date',
-                        iconColor:
-                            isEven
-                                ? AppColors.successLight
-                                : AppColors.warningLight,
+                        iconColor: isEven
+                            ? AppColors.successLight
+                            : AppColors.warningLight,
                         onView: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder:
-                                  (_) => ViewReportDetailsScreen(
-                                    name: report['name'] ?? 'Unknown Report',
-                                    date: report['date'] ?? '',
-                                    viewUrl: report['view_url'] ?? '',
-                                  ),
+                              builder: (_) => ViewFileScreen(historyItem: report),
                             ),
                           );
                         },
@@ -234,7 +236,6 @@ class _LabResultsScreenState extends State<LabResultsScreen> {
           BoxShadow(
             color: AppColors.black.withOpacity(0.03),
             blurRadius: 10 * scaleFactor,
-            // offset: Offset(0, 4 * scaleFactor),
           ),
         ],
       ),
@@ -276,7 +277,7 @@ class _LabResultsScreenState extends State<LabResultsScreen> {
                 ),
                 SizedBox(height: 4 * scaleFactor),
                 Text(
-                  "Dr. $doctor",
+                  doctor, // يعرض النص كما هو لأنه تم تنظيفه بالأعلى
                   style: TextStyle(
                     color: AppColors.secondaryTextColor,
                     fontSize: 12 * scaleFactor,

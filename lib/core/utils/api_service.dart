@@ -556,79 +556,22 @@ class ApiService {
     }
   }
 
-  /// Fetches the patient's medical history.
-  /// Endpoint: GET /api/patient/medical-history
-  Future<Map<String, dynamic>> getMedicalHistory() async {
+  /// Fetches patient medical files based on type.
+  /// Endpoint: GET /api/v1/patient/medical-files
+  Future<Map<String, dynamic>> getMedicalFiles({
+    required String type,
+    String? search,
+  }) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
 
     try {
       final response = await get(
-        '/api/patient/medical-history',
-        options: Options(
-          headers: {if (token != null) 'Authorization': 'Bearer $token'},
-        ),
-      );
-
-      if (response.data is Map<String, dynamic>) {
-        final Map<String, dynamic> responseData = Map<String, dynamic>.from(
-          response.data,
-        );
-        if (response.statusCode == 200) {
-          responseData['success'] = true;
-        }
-        return responseData;
-      }
-      return {
-        'success': false,
-        'message': 'Invalid response format',
-        'data': null,
-      };
-    } catch (e) {
-      return {'success': false, 'message': e.toString(), 'data': null};
-    }
-  }
-
-  /// Fetches the patient's lab reports.
-  /// Endpoint: GET /api/patient/lab-reports
-  Future<Map<String, dynamic>> getLabReports() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('auth_token');
-
-    try {
-      final response = await get(
-        '/api/patient/lab-reports',
-        options: Options(
-          headers: {if (token != null) 'Authorization': 'Bearer $token'},
-        ),
-      );
-
-      if (response.data is Map<String, dynamic>) {
-        return Map<String, dynamic>.from(response.data);
-      }
-      return {
-        'success': false,
-        'message': 'Invalid response format',
-        'data': null,
-      };
-    } catch (e) {
-      return {'success': false, 'message': e.toString(), 'data': null};
-    }
-  }
-
-  /// Fetches the patient's radiology reports.
-  /// Endpoint: GET /api/patient/radiology-reports
-  Future<Map<String, dynamic>> getRadiologyReports() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('auth_token');
-
-    print('DEBUG: [RadiologyAPI] GET /api/patient/radiology-reports');
-    final _radTokenPreview = (token != null && token.length >= 5) ? token.substring(0, 5) : (token ?? 'null');
-    print('DEBUG: [RadiologyAPI] Token: $_radTokenPreview...');
-
-    try {
-      final response = await get(
-        '/api/patient/radiology-reports',
+        '/api/v1/patient/medical-files',
+        queryParameters: {
+          'type': type,
+          if (search != null && search.isNotEmpty) 'search': search,
+        },
         options: Options(
           headers: {
             if (token != null) 'Authorization': 'Bearer $token',
@@ -638,30 +581,19 @@ class ApiService {
         ),
       );
 
-      print('DEBUG: [RadiologyAPI] Status: ${response.statusCode}');
-
       if (response.data is Map<String, dynamic>) {
         final Map<String, dynamic> responseData = Map<String, dynamic>.from(
           response.data,
         );
 
-        // Normalize response: if the actual list is inside responseData['data']['data']
-        final nestedData = responseData['data'];
-        if (nestedData is Map &&
-            nestedData.containsKey('data') &&
-            nestedData['data'] is List) {
-          print('DEBUG: [RadiologyAPI] Found nested data list. Normalizing.');
-          return {
-            'success': responseData['success'] ?? (response.statusCode == 200),
-            'data': nestedData['data'],
-            'message': responseData['message'],
-          };
-        }
+        // Standardize the response scheme properly
+        final data = responseData['data'];
 
-        if (response.statusCode == 200) {
-          responseData['success'] = true;
-        }
-        return responseData;
+        return {
+          'success': responseData['success'] ?? (response.statusCode == 200),
+          'data': data,
+          'message': responseData['message'],
+        };
       }
       return {
         'success': false,
@@ -669,7 +601,6 @@ class ApiService {
         'data': null,
       };
     } catch (e) {
-      print('DEBUG: [RadiologyAPI] CATCH: $e');
       return {'success': false, 'message': e.toString(), 'data': null};
     }
   }

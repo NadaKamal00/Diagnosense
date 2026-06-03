@@ -1,57 +1,66 @@
 import 'package:application/utils/responsive_helper.dart';
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_colors.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:dio/dio.dart';
+import '../../../core/theme/app_colors.dart';
 
-class RadiologyDetailsScreen extends StatefulWidget {
-  final Map<String, dynamic>? report;
-  const RadiologyDetailsScreen({super.key, this.report});
+class ViewFileScreen extends StatefulWidget {
+  final Map<String, dynamic> historyItem;
+  const ViewFileScreen({super.key, required this.historyItem});
 
   @override
-  State<RadiologyDetailsScreen> createState() => _RadiologyDetailsScreenState();
+  State<ViewFileScreen> createState() => _ViewFileScreenState();
 }
 
-class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
+class _ViewFileScreenState extends State<ViewFileScreen> {
   String localPath = "";
   bool isLoading = true;
   bool isImage = false;
-  String? openUrl;
+  String? downloadUrl;
 
   @override
   void initState() {
     super.initState();
-    openUrl = widget.report?['open_url'];
-    _loadReport();
+    // Prefer the new 'file_url' key over the deprecated 'download_url'
+    downloadUrl = widget.historyItem['file_url']?.toString() ??
+        widget.historyItem['download_url']?.toString();
+    _loadHistoryFile();
   }
 
-  Future<void> _loadReport() async {
-    if (openUrl == null || openUrl!.isEmpty) {
-      debugPrint("DEBUG: [RadiologyDetails] No open_url found, using fallback.");
+  Future<void> _loadHistoryFile() async {
+    if (downloadUrl == null || downloadUrl!.isEmpty) {
+      debugPrint("DEBUG: [ViewHistory] No download_url found, using fallback.");
       await _prepareAssetPdf();
       return;
     }
 
-    final String url = openUrl!.toLowerCase();
-    if (url.endsWith('.pdf')) {
-      debugPrint("DEBUG: [RadiologyDetails] Detected PDF. Downloading...");
-      await _downloadRemotePdf(openUrl!);
-    } else if (url.endsWith('.png') ||
-        url.endsWith('.jpg') ||
-        url.endsWith('.jpeg')) {
+    final String url = downloadUrl!.toLowerCase();
+    final String cleanUrl = url.split('?').first;
+    final String explicitExt =
+        widget.historyItem['extension']?.toString().toLowerCase() ?? '';
+
+    if (cleanUrl.endsWith('.pdf') || explicitExt == 'pdf') {
+      debugPrint("DEBUG: [ViewHistory] Detected PDF. Downloading...");
+      await _downloadRemotePdf(downloadUrl!);
+    } else if (cleanUrl.endsWith('.png') ||
+        cleanUrl.endsWith('.jpg') ||
+        cleanUrl.endsWith('.jpeg') ||
+        explicitExt == 'png' ||
+        explicitExt == 'jpg' ||
+        explicitExt == 'jpeg') {
       debugPrint(
-        "DEBUG: [RadiologyDetails] Detected Image. Downloading for local use...",
+        "DEBUG: [ViewHistory] Detected Image. Downloading for local use...",
       );
-      await _downloadRemoteImage(openUrl!);
+      await _downloadRemoteImage(downloadUrl!);
     } else {
       debugPrint(
-        "DEBUG: [RadiologyDetails] Unknown format, attempting PDF download.",
+        "DEBUG: [ViewHistory] Unknown format, attempting PDF download.",
       );
-      await _downloadRemotePdf(openUrl!);
+      await _downloadRemotePdf(downloadUrl!);
     }
   }
 
@@ -59,7 +68,7 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
     try {
       final dir = await getTemporaryDirectory();
       final String fileName =
-          "radiology_${DateTime.now().millisecondsSinceEpoch}.pdf";
+          "history_${DateTime.now().millisecondsSinceEpoch}.pdf";
       final String path = "${dir.path}/$fileName";
 
       await Dio().download(url, path);
@@ -72,9 +81,9 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
         });
       }
     } catch (e) {
-      debugPrint("ERROR: [RadiologyDetails] PDF download failed: $e");
+      debugPrint("ERROR: [ViewHistory] PDF download failed: $e");
       if (mounted) {
-        await _prepareAssetPdf(); // Fallback to asset
+        await _prepareAssetPdf(); // Fallback to local asset
       }
     }
   }
@@ -82,9 +91,12 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
   Future<void> _downloadRemoteImage(String url) async {
     try {
       final dir = await getTemporaryDirectory();
-      final String ext = url.toLowerCase().contains('.png') ? '.png' : '.jpg';
+      final String cleanUrl = url.split('?').first.toLowerCase();
+      final String explicitExt =
+          widget.historyItem['extension']?.toString().toLowerCase() ?? '';
+      final String ext = cleanUrl.endsWith('.png') || explicitExt == 'png' ? '.png' : '.jpg';
       final String fileName =
-          "radiology_${DateTime.now().millisecondsSinceEpoch}$ext";
+          "history_${DateTime.now().millisecondsSinceEpoch}$ext";
       final String path = "${dir.path}/$fileName";
 
       await Dio().download(url, path);
@@ -97,7 +109,7 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
         });
       }
     } catch (e) {
-      debugPrint("ERROR: [RadiologyDetails] Image download failed: $e");
+      debugPrint("ERROR: [ViewHistory] Image download failed: $e");
       if (mounted) {
         setState(() {
           isImage = true;
@@ -107,24 +119,27 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
     }
   }
 
-
   Future<void> _prepareAssetPdf() async {
     const String assetPath = "assets/pdf/report.pdf";
     try {
       final dir = await getTemporaryDirectory();
-      final file = File("${dir.path}/temp_asset_report.pdf");
+      final file = File("${dir.path}/temp_history_fallback.pdf");
       final data = await rootBundle.load(assetPath);
       final bytes = data.buffer.asUint8List();
       await file.writeAsBytes(bytes, flush: true);
 
-      setState(() {
-        localPath = file.path;
-        isImage = false;
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          localPath = file.path;
+          isImage = false;
+          isLoading = false;
+        });
+      }
     } catch (e) {
-      debugPrint("ERROR: [RadiologyDetails] Asset fallback failed: $e");
-      setState(() => isLoading = false);
+      debugPrint("ERROR: [ViewHistory] Asset fallback failed: $e");
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
     }
   }
 
@@ -143,41 +158,51 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
       }
 
       final String extension = isImage ? ".jpg" : ".pdf";
+      final String itemName = (widget.historyItem['name']?.toString() ??
+              'History_File')
+          .replaceAll(RegExp(r'[^a-zA-Z0-9_]'), '_');
       final String savePath =
-          "${directory!.path}/Radiology_Report_${DateTime.now().millisecondsSinceEpoch}$extension";
+          "${directory!.path}/${itemName}_${DateTime.now().millisecondsSinceEpoch}$extension";
       final File saveFile = File(savePath);
 
       final bytes = await File(localPath).readAsBytes();
       await saveFile.writeAsBytes(bytes);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("File saved to: ${saveFile.path}"),
-          backgroundColor: AppColors.successGreen,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("File saved to: ${saveFile.path}"),
+            backgroundColor: AppColors.successGreen,
+          ),
+        );
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Could not save file to Downloads")),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Could not save file to Downloads")),
+        );
+      }
     }
   }
 
   Future<void> _shareFile() async {
+    final String itemName =
+        widget.historyItem['name']?.toString() ?? 'History File';
     if (localPath.isNotEmpty) {
       final String extension = isImage ? ".jpg" : ".pdf";
       await Share.shareXFiles([
-        XFile(localPath, name: 'Radiology_Report$extension'),
-      ], text: 'Sharing my Radiology Report');
-    } else if (isImage && openUrl != null) {
-      // If we don't have localPath for image yet, share URL
-      await Share.share('Radiology Report: $openUrl');
+        XFile(localPath, name: '$itemName$extension'),
+      ], text: 'Sharing my medical history: $itemName');
+    } else if (downloadUrl != null) {
+      await Share.share('Medical History - $itemName: $downloadUrl');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final res = Responsive(context);
+    final String title =
+        widget.historyItem['name']?.toString() ?? 'Medical History';
 
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
@@ -207,7 +232,7 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
           ),
         ),
         title: Text(
-          widget.report?['name'] ?? 'Radiology Report',
+          title,
           style: TextStyle(
             color: AppColors.primaryTextColor,
             fontWeight: FontWeight.bold,
@@ -218,7 +243,7 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
       ),
       body: Column(
         children: [
-          // Report Content Container
+          // File Content Container
           Expanded(
             child: Container(
               margin: EdgeInsets.symmetric(
@@ -246,7 +271,8 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
                 child:
                     isLoading
                         ? const Center(child: CircularProgressIndicator())
-                        : isImage && (localPath.isNotEmpty || openUrl != null)
+                        : isImage &&
+                            (localPath.isNotEmpty || downloadUrl != null)
                         ? InteractiveViewer(
                           child:
                               localPath.isNotEmpty
@@ -255,7 +281,7 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
                                     fit: BoxFit.contain,
                                   )
                                   : Image.network(
-                                    openUrl!,
+                                    downloadUrl!,
                                     fit: BoxFit.contain,
                                     loadingBuilder: (context, child, progress) {
                                       if (progress == null) return child;
@@ -265,13 +291,13 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
                                     },
                                     errorBuilder: (context, error, stackTrace) {
                                       return const Center(
-                                        child:
-                                            Text("Error loading image content"),
+                                        child: Text(
+                                          "Error loading image content",
+                                        ),
                                       );
                                     },
                                   ),
                         )
-
                         : localPath.isNotEmpty
                         ? PDFView(
                           filePath: localPath,
@@ -279,7 +305,9 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
                           autoSpacing: true,
                           pageSnap: true,
                         )
-                        : const Center(child: Text("Report content not found")),
+                        : const Center(
+                          child: Text("File content not available"),
+                        ),
               ),
             ),
           ),
@@ -333,12 +361,14 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
     required bool isEnabled,
     required VoidCallback? onPressed,
   }) {
-    final Color primaryBg = isEnabled
-        ? AppColors.primaryColor
-        : AppColors.primaryColor.withOpacity(0.5);
-    final Color secondaryTextIconColor = isEnabled
-        ? AppColors.primaryTextColor
-        : AppColors.primaryTextColor.withOpacity(0.5);
+    final Color primaryBg =
+        isEnabled
+            ? AppColors.primaryColor
+            : AppColors.primaryColor.withOpacity(0.5);
+    final Color secondaryTextIconColor =
+        isEnabled
+            ? AppColors.primaryTextColor
+            : AppColors.primaryTextColor.withOpacity(0.5);
 
     return ElevatedButton.icon(
       onPressed: onPressed,
@@ -370,4 +400,3 @@ class _RadiologyDetailsScreenState extends State<RadiologyDetailsScreen> {
     );
   }
 }
-
