@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/utils/api_service.dart';
+import '../../providers/data_provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/theme_provider.dart';
 import '../../core/theme/shimmer_effect.dart';
@@ -37,6 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadUserData();
     _fetchNextVisit();
     _fetchTasks();
+    _fetchNotifications();
   }
 
   Future<void> _loadUserData() async {
@@ -101,8 +103,25 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<void> _fetchNotifications() async {
+    try {
+      final response = await ApiService().getNotifications();
+      if (response['success'] == true && response['data'] != null) {
+        final dataPayload = response['data'] is Map ? response['data'] : null;
+        final List<dynamic> notifications = dataPayload != null && dataPayload['data'] is List 
+            ? dataPayload['data'] as List<dynamic> 
+            : [];
+        if (notifications.isNotEmpty && mounted) {
+          Provider.of<DataProvider>(context, listen: false).setNewNotificationsAvailable(true);
+        }
+      }
+    } catch (e) {
+      // Ignore
+    }
+  }
+
   Future<void> _onRefresh() async {
-    await Future.wait([_fetchTasks(), _fetchNextVisit()]);
+    await Future.wait([_fetchTasks(), _fetchNextVisit(), _fetchNotifications()]);
   }
 
   @override
@@ -280,39 +299,46 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildNotificationIcon(BuildContext context, double scale) {
-    return IconButton(
-      onPressed:
-          () => Navigator.of(context, rootNavigator: true).push(
-            MaterialPageRoute(
-              builder: (context) => const NotificationsScreen(),
-            ),
-          ),
-      constraints: const BoxConstraints(),
-      padding: EdgeInsets.zero,
-      icon: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          SvgPicture.asset(
-            'assets/Icons/notification.svg',
-            width: 22 * scale,
-            height: 22 * scale,
-            colorFilter: ColorFilter.mode(AppColors.iconGrey, BlendMode.srcIn),
-          ),
-          Positioned(
-            right: -2 * scale,
-            top: -4 * scale,
-            child: Container(
-              width: 8 * scale,
-              height: 8 * scale,
-              decoration: BoxDecoration(
-                color: AppColors.warningText,
-                shape: BoxShape.circle,
-                border: Border.all(color: AppColors.white, width: 1.2 * scale),
+    return Consumer<DataProvider>(
+      builder: (context, dataProvider, child) {
+        return IconButton(
+          onPressed: () {
+            Provider.of<DataProvider>(context, listen: false).setNewNotificationsAvailable(false);
+            Navigator.of(context, rootNavigator: true).push(
+              MaterialPageRoute(
+                builder: (context) => const NotificationsScreen(),
               ),
-            ),
+            );
+          },
+          constraints: const BoxConstraints(),
+          padding: EdgeInsets.zero,
+          icon: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              SvgPicture.asset(
+                'assets/Icons/notification.svg',
+                width: 22 * scale,
+                height: 22 * scale,
+                colorFilter: ColorFilter.mode(AppColors.iconGrey, BlendMode.srcIn),
+              ),
+              if (dataProvider.hasNewNotifications)
+                Positioned(
+                  right: -2 * scale,
+                  top: -4 * scale,
+                  child: Container(
+                    width: 8 * scale,
+                    height: 8 * scale,
+                    decoration: BoxDecoration(
+                      color: AppColors.warningText,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.white, width: 1.2 * scale),
+                    ),
+                  ),
+                ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
