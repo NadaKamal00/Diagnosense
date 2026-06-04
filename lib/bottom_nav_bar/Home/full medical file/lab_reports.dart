@@ -177,7 +177,6 @@ class _LabResultsScreenState extends State<LabResultsScreen> {
 
                       /// --- استخراج وتصحيح اسم الطبيب من الـ API ---
                       String rawReferredBy = report['referred_by'] ?? 'Unknown';
-                      // إزالة الـ Prefix "Ref: " ليكون النص نقيّاً
                       String cleanDoctor = rawReferredBy.replaceAll('Ref: ', '').trim();
                       if (cleanDoctor.toLowerCase() == 'unknown' || cleanDoctor.isEmpty) {
                         cleanDoctor = 'Unknown Doctor';
@@ -188,7 +187,7 @@ class _LabResultsScreenState extends State<LabResultsScreen> {
                         res.scale,
                         res.isTablet,
                         title: report['name'] ?? 'Unknown Report',
-                        doctor: cleanDoctor, // الاسم النظيف يمرر هنا مباشرة
+                        doctor: cleanDoctor, 
                         date: report['date'] ?? 'Unknown Date',
                         iconColor: isEven
                             ? AppColors.successLight
@@ -222,12 +221,13 @@ class _LabResultsScreenState extends State<LabResultsScreen> {
     required Color iconColor,
     required VoidCallback onView,
   }) {
+    final borderRadius = BorderRadius.circular(14 * scaleFactor);
+
     return Container(
       margin: EdgeInsets.only(bottom: 15 * scaleFactor),
-      padding: EdgeInsets.all(16 * scaleFactor),
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(14 * scaleFactor),
+        borderRadius: borderRadius,
         border: Border.all(
           color: AppColors.secondaryBorderColor,
           width: .5 * scaleFactor,
@@ -239,96 +239,107 @@ class _LabResultsScreenState extends State<LabResultsScreen> {
           ),
         ],
       ),
-      child: Row(
-        children: [
-          /// --- Icon Container ---
-          Container(
-            padding: EdgeInsets.all(12 * scaleFactor),
-            decoration: BoxDecoration(color: iconColor, shape: BoxShape.circle),
-            child: SvgPicture.asset(
-              'assets/Icons/lap-reports.svg',
-              colorFilter: ColorFilter.mode(
-                iconColor == AppColors.successLight
-                    ? AppColors.successText
-                    : AppColors.warningText,
-                BlendMode.srcIn,
-              ),
-              width: 22 * scaleFactor,
-              height: 22 * scaleFactor,
-            ),
-          ),
-
-          SizedBox(width: 15 * scaleFactor),
-
-          /// Text Info
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13 * scaleFactor,
-                    color: AppColors.primaryTextColor,
+      // استخدمنا InkWell هنا لكي يصبح الكارد بالكامل قابلاً للضغط مع تأثير مرئي مميز
+      child: InkWell(
+        onTap: onView,
+        borderRadius: borderRadius, // لضمان عدم خروج تأثير الضغط عن حواف الكارد الدائرية
+        child: Padding(
+          padding: EdgeInsets.all(16 * scaleFactor),
+          child: Row(
+            children: [
+              /// --- Icon Container ---
+              Container(
+                padding: EdgeInsets.all(12 * scaleFactor),
+                decoration: BoxDecoration(
+                  color: iconColor, 
+                  borderRadius: BorderRadius.circular(8 * scaleFactor),
+                ),
+                child: SvgPicture.asset(
+                  'assets/Icons/lap-reports.svg',
+                  colorFilter: ColorFilter.mode(
+                    iconColor == AppColors.successLight
+                        ? AppColors.successText
+                        : AppColors.warningText,
+                    BlendMode.srcIn,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 4 * scaleFactor),
-                Text(
-                  doctor, // يعرض النص كما هو لأنه تم تنظيفه بالأعلى
-                  style: TextStyle(
-                    color: AppColors.secondaryTextColor,
-                    fontSize: 12 * scaleFactor,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 4 * scaleFactor),
-                Text(
-                  date,
-                  style: TextStyle(
-                    color: AppColors.secondaryTextColor,
-                    fontSize: 11 * scaleFactor,
-                  ),
-                  maxLines: 1,
-                ),
-              ],
-            ),
-          ),
-
-          SizedBox(width: 10 * scaleFactor),
-
-          /// --- View Button ---
-          SizedBox(
-            height: 34 * scaleFactor,
-            width: 50 * scaleFactor,
-            child: OutlinedButton(
-              onPressed: onView,
-              style: OutlinedButton.styleFrom(
-                backgroundColor: AppColors.surfaceVariant.withOpacity(0.5),
-                side: BorderSide(
-                  color: AppColors.secondaryBorderColor,
-                  width: .5 * scaleFactor,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(6 * scaleFactor),
-                ),
-                padding: EdgeInsets.symmetric(horizontal: 5 * scaleFactor),
-              ),
-              child: Text(
-                'View',
-                style: TextStyle(
-                  fontSize: 12 * scaleFactor,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.primaryTextColor,
+                  width: 22 * scaleFactor,
+                  height: 22 * scaleFactor,
                 ),
               ),
-            ),
+
+              SizedBox(width: 15 * scaleFactor),
+
+              /// Text Info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13 * scaleFactor,
+                        color: AppColors.primaryTextColor,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                ),
+                    SizedBox(height: 4 * scaleFactor),
+                    Text(
+                      doctor, 
+                      style: TextStyle(
+                        color: AppColors.secondaryTextColor,
+                        fontSize: 12 * scaleFactor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 4 * scaleFactor),
+                    Text(
+                      date,
+                      style: TextStyle(
+                        color: AppColors.secondaryTextColor,
+                        fontSize: 11 * scaleFactor,
+                      ),
+                      maxLines: 1,
+                    ),
+                  ],
+                ),
+              ),
+
+              SizedBox(width: 10 * scaleFactor),
+
+              /// --- View Button ---
+              SizedBox(
+                height: 34 * scaleFactor,
+                width: 50 * scaleFactor,
+                child: OutlinedButton(
+                  onPressed: onView,
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: AppColors.surfaceVariant.withOpacity(0.5),
+                    side: BorderSide(
+                      color: AppColors.secondaryBorderColor,
+                      width: .5 * scaleFactor,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6 * scaleFactor),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 5 * scaleFactor),
+                  ),
+                  child: Text(
+                    'View',
+                    style: TextStyle(
+                      fontSize: 12 * scaleFactor,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primaryTextColor,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

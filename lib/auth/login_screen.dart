@@ -1,6 +1,7 @@
 import 'package:application/auth/forgot%20password/forgot%20password_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:application/utils/responsive_helper.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:application/core/theme/app_colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../bottom_nav_bar/_navigation_menu.dart';
@@ -106,6 +107,23 @@ class _LoginScreenState extends State<LoginScreen> {
           await prefs.remove('remember_me');
           await prefs.remove('saved_contact');
           await prefs.remove('saved_password');
+        }
+
+        // Synchronous FCM token sync
+        try {
+          debugPrint("FCM Debug: Fetching token from Firebase...");
+          String? fcmToken = await FirebaseMessaging.instance.getToken();
+          debugPrint("FCM Debug: Retrieved Token = $fcmToken");
+          
+          if (fcmToken != null) {
+            debugPrint("FCM Debug: Sending token to backend via ApiService...");
+            await ApiService().updateFcmToken(fcmToken);
+            debugPrint("FCM Debug: Token successfully synced with backend!");
+          } else {
+            debugPrint("FCM Debug: Firebase returned a NULL token.");
+          }
+        } catch (e) {
+          debugPrint("FCM Debug: Exception caught during sync: $e");
         }
 
         // Guard context usage after all async calls complete

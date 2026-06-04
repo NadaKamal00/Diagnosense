@@ -26,7 +26,8 @@ class _ViewFileScreenState extends State<ViewFileScreen> {
   void initState() {
     super.initState();
     // Prefer the new 'file_url' key over the deprecated 'download_url'
-    downloadUrl = widget.historyItem['file_url']?.toString() ??
+    downloadUrl =
+        widget.historyItem['file_url']?.toString() ??
         widget.historyItem['download_url']?.toString();
     _loadHistoryFile();
   }
@@ -94,7 +95,8 @@ class _ViewFileScreenState extends State<ViewFileScreen> {
       final String cleanUrl = url.split('?').first.toLowerCase();
       final String explicitExt =
           widget.historyItem['extension']?.toString().toLowerCase() ?? '';
-      final String ext = cleanUrl.endsWith('.png') || explicitExt == 'png' ? '.png' : '.jpg';
+      final String ext =
+          cleanUrl.endsWith('.png') || explicitExt == 'png' ? '.png' : '.jpg';
       final String fileName =
           "history_${DateTime.now().millisecondsSinceEpoch}$ext";
       final String path = "${dir.path}/$fileName";
@@ -210,7 +212,10 @@ class _ViewFileScreenState extends State<ViewFileScreen> {
         backgroundColor: AppColors.transparent,
         elevation: 0,
         toolbarHeight: 56 * res.scale,
-        leadingWidth: (res.isTablet ? 90 : 70) * res.scale,
+        leadingWidth: (res.isTablet ? 70 : 56) * res.scale,
+        titleSpacing: 0 * res.scale,
+        centerTitle: false,
+
         leading: Container(
           margin: EdgeInsets.only(left: (res.isTablet ? 20 : 12) * res.scale),
           alignment: Alignment.centerLeft,
@@ -239,7 +244,6 @@ class _ViewFileScreenState extends State<ViewFileScreen> {
             fontSize: 18 * res.scale,
           ),
         ),
-        centerTitle: true,
       ),
       body: Column(
         children: [
@@ -390,7 +394,10 @@ class _ViewFileScreenState extends State<ViewFileScreen> {
         padding: EdgeInsets.symmetric(vertical: 16 * scale),
         elevation: isPrimary ? 2 : 0,
         side: BorderSide(
-          color: isPrimary ? AppColors.transparent : AppColors.secondaryBorderColor,
+          color:
+              isPrimary
+                  ? AppColors.transparent
+                  : AppColors.secondaryBorderColor,
           width: .5 * scale,
         ),
         shape: RoundedRectangleBorder(

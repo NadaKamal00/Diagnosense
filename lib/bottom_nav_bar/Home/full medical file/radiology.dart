@@ -229,7 +229,7 @@ class _RadiologyScreenState extends State<RadiologyScreen> {
                 borderRadius: BorderRadius.circular(8 * scaleFactor),
               ),
               child: SvgPicture.asset(
-                'assets/Icons/file-icon.svg',
+                'assets/Icons/radiology.svg',
                 width: 16.25 * scaleFactor,
                 height: 20.71 * scaleFactor,
                 colorFilter: ColorFilter.mode(
@@ -246,7 +246,6 @@ class _RadiologyScreenState extends State<RadiologyScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  /// السطر الأول: الاسم (قصاد الأيقونة مباشرة) والتاريخ في الآخر
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -274,7 +273,6 @@ class _RadiologyScreenState extends State<RadiologyScreen> {
                   ),
                   SizedBox(height: 6 * scaleFactor),
                   
-                  /// السطر الثاني: اسم الطبيب وكلمة Open
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

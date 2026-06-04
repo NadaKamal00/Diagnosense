@@ -606,14 +606,14 @@ class ApiService {
   }
 
   /// Fetches the patient's notifications.
-  /// Endpoint: GET /api/patient/notifications
+  /// Endpoint: GET /api/v1/mobile-notifications
   Future<Map<String, dynamic>> getNotifications() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
 
     try {
       final response = await get(
-        '/api/patient/notifications',
+        '/api/v1/mobile-notifications',
         options: Options(
           headers: {
             if (token != null) 'Authorization': 'Bearer $token',
@@ -639,6 +639,38 @@ class ApiService {
       };
     } catch (e) {
       return {'success': false, 'message': e.toString(), 'data': null};
+    }
+  }
+
+  /// Updates the FCM token for push notifications.
+  /// Endpoint: PATCH /api/v1/fcm-token
+  Future<Map<String, dynamic>> updateFcmToken(String fcmToken) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
+
+    try {
+      final response = await patch(
+        '/api/v1/fcm-token',
+        data: {'fcm_token': fcmToken},
+        options: Options(
+          headers: {
+            if (token != null) 'Authorization': 'Bearer $token',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (response.data is Map<String, dynamic>) {
+        final result = Map<String, dynamic>.from(response.data);
+        if (response.statusCode == 200 && !result.containsKey('success')) {
+          result['success'] = true;
+        }
+        return result;
+      }
+      return {'success': false, 'message': 'Invalid response format'};
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
     }
   }
 }

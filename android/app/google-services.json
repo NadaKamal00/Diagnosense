@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "445663178847",
+    "project_id": "diagnosense-1f386",
+    "storage_bucket": "diagnosense-1f386.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:445663178847:android:43c256be38f662fca92bea",
+        "android_client_info": {
+          "package_name": "com.example.diagnosense"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwuMNn89I4VQnZM1oGD_Ha1vWlJ6djTTE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

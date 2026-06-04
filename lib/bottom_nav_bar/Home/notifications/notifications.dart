@@ -106,7 +106,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   }
 
                   final response = snapshot.data;
-                  final List<dynamic> notifications = response?['data'] ?? [];
+                  final dynamic responseData = response?['data'];
+                  final List<dynamic> notifications = responseData is Map 
+                      ? (responseData['data'] as List<dynamic>?) ?? []
+                      : [];
+
+                  print("LIVE BACKEND NOTIFICATIONS COUNT: ${notifications.length}");
 
                   if (notifications.isEmpty) {
                     return ListView(
@@ -137,13 +142,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       final notification = notifications[index];
                       final String title = notification['title'] ?? 'No Title';
                       final String subtitle =
-                          notification['description'] ?? 'No Description';
-                      final String time = notification['time'] ?? '';
+                          notification['body'] ?? 'No Description';
+                      final String time = notification['time_ago'] ?? '';
+                      final String type = notification['type'] ?? '';
 
                       Widget iconWidget;
                       Color defaultIconColor = AppColors.primaryColor;
 
-                      if (title == "Task") {
+                      if (type == "TASK") {
                         iconWidget = SvgPicture.asset(
                           'assets/Icons/tasks.svg',
                           width: 20 * scaleFactor,
@@ -153,13 +159,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             BlendMode.srcIn,
                           ),
                         );
-                      } else if (title == "Medication") {
+                      } else if (type == "MEDICATION") {
                         iconWidget = Icon(
                           Symbols.pill,
                           color: AppColors.primaryMediumLight,
                           size: 20 * scaleFactor,
                         );
-                      } else if (title == "Next Visit" || title == "New Visit") {
+                      } else if (type == "VISIT") {
                         iconWidget = SvgPicture.asset(
                           'assets/Icons/clock.svg',
                           width: 17 * scaleFactor, // Visually adjusted size

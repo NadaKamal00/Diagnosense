@@ -7,8 +7,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:application/core/services/notification_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: const FirebaseOptions(
+      apiKey: "AIzaSyCwuMNn89I4VQnZM1oGD_Ha1vWlJ6djTTE",
+      appId: "1:445663178847:android:43c256be38f662fca92bea",
+      messagingSenderId: "445663178847",
+      projectId: "diagnosense-1f386",
+      storageBucket: "diagnosense-1f386.firebasestorage.app",
+    ),
+  );
+  await NotificationService().initialize();
+  
   runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeProvider(),
