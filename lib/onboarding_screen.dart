@@ -21,12 +21,12 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
       "body": "Access all your medical records anytime, securely and easily.",
     },
     {
-      "image": "assets/images/on2.png",
+      "image": "assets/images/onbord_2_0-Photoroom.png",
       "title": "Stay on Track With\nYour Care",
       "body": "Follow your tasks, visits, and tests\nwith clear instructions.",
     },
     {
-      "image": "assets/images/on3.png",
+      "image": "assets/images/onbord_3.png",
       "title": "Get Notified Instantly",
       "body": "Receive alerts for updates,\nappointments, and new records.",
     },

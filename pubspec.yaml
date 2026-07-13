@@ -29,6 +29,7 @@ dependencies:
   intl: ^0.19.0
   # firebase_core: ^4.7.0
   firebase_messaging: ^16.2.0
+  url_launcher: ^6.3.2
   # flutter_local_notifications: ^19.5.0
   
 
@@ -78,13 +79,12 @@ flutter:
 
 flutter_native_splash:
   color: "#F8FAFF"
-  image: assets/images/Logo.png
+
   android: true
   ios: true
 
-flutter_launcher_icons:
-  android: "launcher_icon"
-  ios: true
-  image_path: "assets/images/app_image.png" 
-  adaptive_icon_background: "#ffffff" 
-  adaptive_icon_foreground: "assets/images/app_image.png" 
+  background_image: assets/images/test.jpg
+
+  android_12:
+    color: "#F8FAFF"
+    image: assets/images/Logo.png

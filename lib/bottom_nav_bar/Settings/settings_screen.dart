@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:application/utils/responsive_helper.dart';
+import '../../core/services/notification_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -42,6 +43,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _userName = prefs.getString('user_name');
           _userEmail = prefs.getString('user_email');
           _userPhone = prefs.getString('saved_user_phone');
+          _notificationsEnabled = prefs.getBool('notifications_enabled') ?? true;
           print("Loaded Phone from Prefs: $_userPhone");
         });
       }
@@ -53,6 +55,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _isProfileLoading = false;
         });
       }
+    }
+  }
+
+  Future<void> _toggleNotifications(bool value) async {
+    setState(() {
+      _notificationsEnabled = value;
+    });
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('notifications_enabled', value);
+    if (value) {
+      await NotificationService().initialize();
     }
   }
 
@@ -172,15 +185,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       value: _notificationsEnabled,
                       activeColor: AppColors.successGreen,
                       onChanged: (value) {
-                        setState(() {
-                          _notificationsEnabled = value;
-                        });
+                        _toggleNotifications(value);
                       },
                     ),
                     onTap: () {
-                      setState(() {
-                        _notificationsEnabled = !_notificationsEnabled;
-                      });
+                      _toggleNotifications(!_notificationsEnabled);
                     },
                   ),
                   _buildSettingsItem(
@@ -397,7 +406,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     required VoidCallback onTap,
   }) {
     return ListTile(
-      onTap: trailingOverride != null ? null : onTap,
+      onTap: onTap,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20 * scale),
       ),

@@ -1,5 +1,6 @@
 import 'package:application/utils/responsive_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/api_service.dart';
 import '../../../core/theme/shimmer_effect.dart';
@@ -342,23 +343,42 @@ class _VisitTimelineScreenState extends State<VisitTimelineScreen> {
                     children: [
                       Container(
                         padding: EdgeInsets.symmetric(
-                          horizontal: 8 * scale,
+                          horizontal: 6 * scale,
                           vertical: 4 * scale,
                         ),
                         decoration: BoxDecoration(
                           color: AppColors.inputBackgroundColor,
                           borderRadius: BorderRadius.circular(6 * scale),
                         ),
-                        child: Text(
-                          type,
-                          style: TextStyle(
-                            fontSize: 12 * scale,
-                            fontWeight: FontWeight.w500,
-                            color:
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              type == "TASK"
+                                  ? 'assets/Icons/tasks.svg'
+                                  : 'assets/Icons/walking-icon.svg',
+                              width: 16 * scale,
+                              height: 16 * scale,
+                              colorFilter: ColorFilter.mode(
                                 type == "TASK"
                                     ? AppColors.deepSuccessColor
                                     : AppColors.primaryColor,
-                          ),
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                            SizedBox(width: 4 * scale),
+                            Text(
+                              type,
+                              style: TextStyle(
+                                fontSize: 12 * scale,
+                                fontWeight: FontWeight.w500,
+                                color: type == "TASK"
+                                    ? AppColors.deepSuccessColor
+                                    : AppColors.primaryColor,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       Text(

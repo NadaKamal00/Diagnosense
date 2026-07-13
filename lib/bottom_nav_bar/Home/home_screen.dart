@@ -569,13 +569,29 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Next Visit',
-              style: TextStyle(
-                color: AppColors.white.withOpacity(0.7),
-                fontSize: 18 * scale,
-                fontWeight: FontWeight.w600,
-              ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                  'assets/Icons/walking-icon.svg',
+                  width: 16 * scale,
+                  height: 16 * scale,
+                  colorFilter: ColorFilter.mode(
+                    AppColors.white.withOpacity(0.7),
+                    BlendMode.srcIn,
+                  ),
+                ),
+                SizedBox(width: 6 * scale),
+                Text(
+                  'Next Visit',
+                  style: TextStyle(
+                    color: AppColors.white.withOpacity(0.7),
+                    fontSize: 18 * scale,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
             SizedBox(height: 16 * scale),
             Center(
@@ -621,13 +637,29 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Next Visit',
-            style: TextStyle(
-              color: AppColors.white.withOpacity(0.7),
-              fontSize: 18 * scale,
-              fontWeight: FontWeight.w600,
-            ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                'assets/Icons/walking-icon.svg',
+                width: 16 * scale,
+                height: 16 * scale,
+                colorFilter: ColorFilter.mode(
+                  AppColors.white.withOpacity(0.7),
+                  BlendMode.srcIn,
+                ),
+              ),
+              SizedBox(width: 6 * scale),
+              Text(
+                'Next Visit',
+                style: TextStyle(
+                  color: AppColors.white.withOpacity(0.7),
+                  fontSize: 18 * scale,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ),
           SizedBox(height: 8 * scale),
           Text(
