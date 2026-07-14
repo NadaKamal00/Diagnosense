@@ -19,7 +19,8 @@ class ApiService {
         // baseUrl: 'https://nontelepathically-pamphletary-cyndi.ngrok-free.dev',
         // baseUrl: 'https://unallegedly-wrinkly-claribel.ngrok-free.dev',
         // baseUrl: 'https://diagnosense-production-5a2d.up.railway.app',
-        baseUrl: 'https://diagnosense-web-production-b391d.up.railway.app',
+        // baseUrl: 'https://diagnosense-web-production-b391d.up.railway.app',
+        baseUrl: 'https://diagnosense-web-production.up.railway.app/',
         connectTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10),
         headers: {
